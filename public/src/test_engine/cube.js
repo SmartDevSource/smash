@@ -7,16 +7,10 @@ export class Cube{
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
         this.position = position
 
-        this.offset = 20
-        this.base_compensation = 15
-        this.height_screen_compensation = 0
-        this.rib_length = 30
-        this.line_width = 2
-        this.line_color = "white"
-        this.plane_width = 2
-        this.plane_color = "lime"
+        this.offset = 30
+        this.rib_length = 15
 
-        this.collide_distance = 1100
+        this.collide_distance = 1200
         this.bounce_offset = .15
         this.mass = 1
 
@@ -34,13 +28,20 @@ export class Cube{
             bottom_left: {x: this.position.x, y: this.position.y + this.offset},
         }
 
+        this.box_colors = {
+            bottom: "rgb(100,100,100)",
+            left: "rgb(80,80,80)",
+            top: "rgb(150,150,150)",
+            right: "rgb(200,200,200)",
+            face: "rgb(255,255,255)"
+        }
+
         this.current_delta_time = 0
         this.directions = {horizontal: '', vertical: ''}
     }
 
     update(current_delta_time){
         this.current_delta_time = current_delta_time
-        this.height_screen_compensation = this.base_compensation * Math.abs(window.innerHeight - window.innerWidth) / this.screen.h
         this.move()
         this.draw()
     }
@@ -77,86 +78,194 @@ export class Cube{
             y: (this.position.y + (this.offset / 2))
         }, this.half_screen)
 
-       const distance_to_center = getDistanceTo({
-        x: (this.position.x + (this.offset / 2)), 
-        y: (this.position.y + (this.offset / 2))
-       }, this.half_screen)
+        const distance_to_center = getDistanceTo({
+            x: (this.position.x + (this.offset / 2)), 
+            y: (this.position.y + (this.offset / 2))
+        }, this.half_screen)
 
-       // RIBS //
-       const top_left_rib = {
-           x: (this.box_struct.top_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
-           y: (this.box_struct.top_left.y + (distance_to_center.x < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
-       }
-       const top_right_rib = {
-           x: (this.box_struct.top_right.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
-           y: (this.box_struct.top_right.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
-       }
-       const bottom_right_rib = {
-           x: (this.box_struct.bottom_right.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
-           y: (this.box_struct.bottom_right.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
-       }
-       const bottom_left_rib = {
-           x: (this.box_struct.bottom_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
-           y: (this.box_struct.bottom_left.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
-       }
+        console.log(distance_to_center)
 
-       this.ctx.save()
-       this.ctx.beginPath()
-       this.ctx.strokeStyle = this.line_color
-       this.ctx.lineWidth = this.line_width
-       // TOP LEFT RIB //
-       this.ctx.moveTo(this.box_struct.top_left.x, this.box_struct.top_left.y)
-       this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
-       // TOP RIGHT RIB //
-       this.ctx.moveTo(this.box_struct.top_right.x, this.box_struct.top_right.y)
-       this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
-       // BOTTOM RIGHT RIB //
-       this.ctx.moveTo(this.box_struct.bottom_right.x, this.box_struct.bottom_right.y)
-       this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
-       // BOTTOM LEFT RIB //
-       this.ctx.moveTo(this.box_struct.bottom_left.x, this.box_struct.bottom_left.y)
-       this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
+        // RIBS //
+        const top_left_rib = {
+            x: (this.box_struct.top_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
+            y: (this.box_struct.top_left.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
+        }
+        const top_right_rib = {
+            x: (this.box_struct.top_right.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
+            y: (this.box_struct.top_right.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
+        }
+        const bottom_right_rib = {
+            x: (this.box_struct.bottom_right.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
+            y: (this.box_struct.bottom_right.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
+        }
+        const bottom_left_rib = {
+            x: (this.box_struct.bottom_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
+            y: (this.box_struct.bottom_left.y + (distance_to_center.y < this.rib_length ? distance_to_center.y : this.rib_length) * Math.sin(angle_to_center))
+        }
 
-       ////////////////////// RIBS JOINTS //////////////////////
-       // TOP LEFT => RIGHT //
-       this.ctx.moveTo(top_left_rib.x, top_left_rib.y)
-       this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
-       // // TOP RIGHT TO BOTTOM RIGHT //
-       this.ctx.moveTo(top_right_rib.x, top_right_rib.y)
-       this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
-       // // BOTTOM RIGHT TO BOTTOM LEFT//
-       this.ctx.moveTo(bottom_right_rib.x, bottom_right_rib.y)
-       this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
-       // // BOTTOM LEFT TO TOP LEFT//
-       this.ctx.moveTo(bottom_left_rib.x, bottom_left_rib.y)
-       this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
-   
-       this.ctx.stroke()
-       this.ctx.restore()
+        switch(true){
+            case this.position.y + this.offset / 2 >= this.half_screen.y && this.position.x + this.offset / 2 >= this.half_screen.x:
+                this.getCulling({
+                    type: 'bottom-right', 
+                    top_left_rib: top_left_rib,
+                    top_right_rib: top_right_rib,
+                    bottom_right_rib: bottom_right_rib,
+                    bottom_left_rib: bottom_left_rib
+                })
+            break
+            case this.position.y + this.offset / 2 >= this.half_screen.y && this.position.x + this.offset / 2 < this.half_screen.x:
+                this.getCulling({
+                    type: 'bottom-left', 
+                    top_left_rib: top_left_rib,
+                    top_right_rib: top_right_rib,
+                    bottom_right_rib: bottom_right_rib,
+                    bottom_left_rib: bottom_left_rib
+                })
+            break
+            case this.position.y + this.offset / 2 <= this.half_screen.y && this.position.x + this.offset / 2 <= this.half_screen.x:
+                this.getCulling({
+                    type: 'top-left', 
+                    top_left_rib: top_left_rib,
+                    top_right_rib: top_right_rib,
+                    bottom_right_rib: bottom_right_rib,
+                    bottom_left_rib: bottom_left_rib
+                })
+            break
+            case this.position.y + this.offset / 2 < this.half_screen.y && this.position.x + this.offset / 2 > this.half_screen.x:
+                this.getCulling({
+                    type: 'top-right', 
+                    top_left_rib: top_left_rib,
+                    top_right_rib: top_right_rib,
+                    bottom_right_rib: bottom_right_rib,
+                    bottom_left_rib: bottom_left_rib
+                })
+            break
+        }
 
-       // FILL BOX//
-    //    this.ctx.save()
-    //    this.ctx.fillStyle = "white"
-    //    this.ctx.fillRect(
-    //        this.position.x,
-    //        this.position.y,
-    //        this.offset,
-    //        this.offset + this.height_screen_compensation
-    //    )
-    //    this.ctx.restore()
-       // STROKE BOX //
-       this.ctx.save()
-       this.ctx.beginPath()
-       this.ctx.lineWidth = this.line_width
-       this.ctx.strokeStyle = "white"
-       this.ctx.strokeRect(
-           this.position.x,
-           this.position.y,
-           this.offset,
-           this.offset + this.height_screen_compensation
-       )
-       this.ctx.stroke()
-       this.ctx.restore()
+        // FILL TOP BOX//
+        this.ctx.save()
+        this.ctx.fillStyle = this.box_colors.face
+        this.ctx.fillRect(
+            this.position.x,
+            this.position.y,
+            this.offset,
+            this.offset
+        )
+        this.ctx.restore()
+        // STROKE TOP BOX //
+        this.ctx.save()
+        this.ctx.beginPath()
+        this.ctx.lineWidth = 1
+        this.ctx.strokeStyle = "black"
+        this.ctx.strokeRect(
+            this.position.x,
+            this.position.y,
+            this.offset,
+            this.offset
+        )
+        this.ctx.stroke()
+        this.ctx.restore()
+    }
+
+    getCulling({type, top_left_rib, top_right_rib, bottom_right_rib, bottom_left_rib}){
+        switch(type){
+            case "bottom-right":
+                // LEFT SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.left
+                this.ctx.lineTo(this.box_struct.bottom_left.x, this.box_struct.bottom_left.y)
+                this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
+                this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
+                this.ctx.lineTo(this.box_struct.top_left.x, this.box_struct.top_left.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+                // TOP SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.top
+                this.ctx.moveTo(this.box_struct.top_left.x, this.box_struct.top_left.y)
+                this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
+                this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
+                this.ctx.lineTo(this.box_struct.top_right.x, this.box_struct.top_right.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+            break
+            case "bottom-left":
+                // RIGHT SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.right
+                this.ctx.moveTo(this.box_struct.top_right.x, this.box_struct.top_right.y)
+                this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
+                this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
+                this.ctx.lineTo(this.box_struct.bottom_right.x, this.box_struct.bottom_right.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+                // TOP SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.top
+                this.ctx.moveTo(this.box_struct.top_left.x, this.box_struct.top_left.y)
+                this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
+                this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
+                this.ctx.lineTo(this.box_struct.top_right.x, this.box_struct.top_right.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+            break
+            case "top-left":
+                // BOTTOM SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.bottom
+                this.ctx.moveTo(this.box_struct.bottom_right.x, this.box_struct.bottom_right.y)
+                this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
+                this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
+                this.ctx.lineTo(this.box_struct.bottom_left.x, this.box_struct.bottom_left.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+                // RIGHT SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.right
+                this.ctx.moveTo(this.box_struct.top_right.x, this.box_struct.top_right.y)
+                this.ctx.lineTo(top_right_rib.x, top_right_rib.y)
+                this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
+                this.ctx.lineTo(this.box_struct.bottom_right.x, this.box_struct.bottom_right.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+            break
+            case "top-right":
+                // BOTTOM SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.bottom
+                this.ctx.moveTo(this.box_struct.bottom_right.x, this.box_struct.bottom_right.y)
+                this.ctx.lineTo(bottom_right_rib.x, bottom_right_rib.y)
+                this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
+                this.ctx.lineTo(this.box_struct.bottom_left.x, this.box_struct.bottom_left.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+                // LEFT SIDE //
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = this.box_colors.left
+                this.ctx.lineTo(this.box_struct.bottom_left.x, this.box_struct.bottom_left.y)
+                this.ctx.lineTo(bottom_left_rib.x, bottom_left_rib.y)
+                this.ctx.lineTo(top_left_rib.x, top_left_rib.y)
+                this.ctx.lineTo(this.box_struct.top_left.x, this.box_struct.top_left.y)
+                this.ctx.closePath()
+                this.ctx.fill()
+                this.ctx.restore()
+            break
+        }
     }
 
     move(){
@@ -224,8 +333,8 @@ export class Cube{
         this.box_struct = {
             top_left: {x: this.position.x, y: this.position.y},
             top_right: {x: this.position.x + this.offset, y: this.position.y},
-            bottom_right: {x: this.position.x + this.offset , y: this.position.y + this.offset + this.height_screen_compensation},
-            bottom_left: {x: this.position.x, y: this.position.y + this.offset + this.height_screen_compensation},
+            bottom_right: {x: this.position.x + this.offset , y: this.position.y + this.offset},
+            bottom_left: {x: this.position.x, y: this.position.y + this.offset},
         }
 
         this.directions.horizontal = ''

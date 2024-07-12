@@ -7,8 +7,8 @@ import { preloadRessources } from "../preload.js"
 //////////////// DECLARATIONS ////////////////
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d")
-canvas.width = 800
-canvas.height = 800
+canvas.width = 1280
+canvas.height = 720
 const screen = {w: canvas.width, h: canvas.height}
 
 // let title_ost = null
