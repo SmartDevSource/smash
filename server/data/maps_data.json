@@ -1,0 +1,176 @@
+{
+    "isle":{
+        "spawns":{
+            "first": {
+                "position": {"x": 10, "y": 10, "z": 115},
+                "angle": 0.5,
+                "flag_color": "blue_flag"
+            },
+            "second": {
+                "position": {"x": 750, "y": 750, "z": 115},
+                "angle": 3.2,
+                "flag_color": "red_flag"
+            }
+        },
+        "objects":[
+            {
+                "name": "blue_flag",
+                "position": {"x": 20, "y": 20, "z": 100}
+            },
+            {
+                "name": "red_flag",
+                "position": {"x": 760, "y": 760, "z": 100}
+            },
+            {
+                "name": "bonus_speedup",
+                "position": {"x": 256, "y": 300, "z": 200}
+            },
+            {
+                "name": "bonus_health",
+                "position": {"x": 400, "y": 200, "z": 180}
+            },
+            {
+                "name": "bonus_damage",
+                "position": {"x": 200, "y": 200, "z": 180}
+            },
+            {
+                "name": "zeppelin",
+                "position": {"x": 512, "y": 256, "z": 200},
+                "angle": 1.8,
+                "bullets_count": 4
+            },
+            {
+                "name": "zeppelin",
+                "position": {"x": 512, "y": 512, "z": 170},
+                "angle": 1.8,
+                "bullets_count": 4
+            },
+            {
+                "name": "zeppelin",
+                "position": {"x": 800, "y": 400, "z": 220},
+                "angle": 1.8,
+                "bullets_count": 4
+            },
+            {
+                "name": "zeppelin",
+                "position": {"x": 300, "y": 600, "z": 170},
+                "angle": 1.8,
+                "bullets_count": 4
+            },
+            {
+                "name": "zeppelin",
+                "position": {"x": 150, "y": 750, "z": 280},
+                "angle": 1.8,
+                "bullets_count": 4
+            },
+            {
+                "name": "floating_isle_1",
+                "position": {"x": 380, "y": 380, "z": 240}
+            },
+            {
+                "name": "floating_isle_1",
+                "position": {"x": 120, "y": 120, "z": 290}
+            },
+            {
+                "name": "floating_isle_1",
+                "position": {"x": 550, "y": 550, "z": 180}
+            },
+            {
+                "name": "floating_isle_1",
+                "position": {"x": 100, "y": 750, "z": 130}
+            },
+            {
+                "name": "floating_isle_1",
+                "position": {"x": 500, "y": 150, "z": 230}
+            }
+        ]
+    },
+    "sand":{
+        "spawns":{
+            "first": {
+                "position": {"x": 10, "y": 10, "z": 115},
+                "angle": 0.5,
+                "flag_color": "blue_flag"
+            },
+            "second": {
+                "position": {"x": 750, "y": 750, "z": 115},
+                "angle": 3.2,
+                "flag_color": "red_flag"
+            }
+        },
+        "objects":[
+            {
+                "name": "blue_flag",
+                "position": {"x": 20, "y": 20, "z": 100}
+            },
+            {
+                "name": "red_flag",
+                "position": {"x": 760, "y": 760, "z": 100}
+            },
+            {
+                "name": "bonus_speedup",
+                "position": {"x": 256, "y": 300, "z": 200}
+            },
+            {
+                "name": "bonus_health",
+                "position": {"x": 400, "y": 200, "z": 180}
+            },
+            {
+                "name": "bonus_damage",
+                "position": {"x": 200, "y": 200, "z": 180}
+            },
+            {
+                "name": "floating_sand",
+                "position": {"x": 380, "y": 380, "z": 240}
+            },
+            {
+                "name": "floating_sand",
+                "position": {"x": 500, "y": 500, "z": 320}
+            },
+            {
+                "name": "floating_sand",
+                "position": {"x": 100, "y": 600, "z": 240}
+            },
+            {
+                "name": "floating_sand",
+                "position": {"x": 700, "y": 650, "z": 320}
+            },
+            {
+                "name": "floating_sand",
+                "position": {"x": 100, "y": 50, "z": 320}
+            },
+            {
+                "name": "fire",
+                "position": {"x": 400, "y": 230, "z": 200}
+            },
+            {
+                "name": "fire",
+                "position": {"x": 100, "y": 400, "z": 150}
+            },
+            {
+                "name": "fire",
+                "position": {"x": 600, "y": 800, "z": 220}
+            },
+            {
+                "name": "fire",
+                "position": {"x": 700, "y": 300, "z": 100}
+            },
+            {
+                "name": "electric",
+                "position": {"x": 50, "y": 300, "z": 180}
+            },
+            {
+                "name": "electric",
+                "position": {"x": 500, "y": 700, "z": 210}
+            },
+            {
+                "name": "electric",
+                "position": {"x": 180, "y": 120, "z": 230}
+            },
+            {
+                "name": "electric",
+                "position": {"x": 200, "y": 400, "z": 150}
+            }
+        ]
+    }
+}

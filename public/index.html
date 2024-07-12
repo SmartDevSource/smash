@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href="style.css">
+    <link rel = "manifest" href = "manifest.json">
+    <meta name = "theme-color" content = "#525151"/>
+    <title>Smash!</title>
+</head>
+<body>
+    <span id = "askMobile"
+          class = "askMobile"
+    >
+        Lancez l'application sur mobile
+    </span>
+    <button id = "installButton"
+            style ="display: none;" 
+            class = "installButton"
+    >
+        Installer l'application
+    </button>
+    <canvas id = "canvas"></canvas>
+    <script type = "module" src="./src/index.js"></script>
+    <script type = "module" src = "./pwa.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</body>
+</html>

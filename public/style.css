@@ -1,0 +1,122 @@
+@font-face {
+    font-family: operator;
+    src: url("./assets/fonts/operator.ttf");
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgb(19, 19, 19);
+}
+
+.installButton{
+    position: absolute;
+    z-index: 10;
+    width: 250px;
+    height: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: .9;
+    border: none;
+    font-weight: bold;
+    background: none;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    font-size: 24px;
+    top: 70%;
+    cursor: pointer;
+    user-select: none;
+    animation: wobble 1s linear infinite;
+}
+
+.askMobile{
+    position: absolute;
+    z-index: 10;
+    height: 80px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: .9;
+    border: none;
+    font-weight: bold;
+    background: none;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    font-size: 20px;
+    top: 65%;
+    color: rgb(255, 255, 49);
+    user-select: none;
+    font-weight: bold;
+    animation: blinking 1s linear infinite;
+}
+
+canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.map{
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.map-container {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    perspective: 500px;
+    pointer-events: none;
+}
+
+#hidden_input {
+    position: absolute;
+    left: 50%;
+    top: 65%;
+    transform: translateX(-50%);
+    padding-left: 5px;
+    padding-right: 5px;
+    font-family: operator;
+    font-size: 20px;
+    z-index: 10;
+    width: 180px;
+    height: 25px;
+    cursor: default;
+    border: none;
+    background-color: white;
+    user-select: none;
+    border-radius: 3px;
+}
+
+#hidden_input:focus{
+    outline: none;
+}
+
+@keyframes wobble {
+    0%{
+        transform: translateX(-50%) scale(1, 1);
+    }
+    50%{
+        transform: translateX(-50%) scale(1.1, 1.1);
+    }
+    100%{
+        transform: translateX(-50%) scale(1, 1);
+    }
+}
+
+@keyframes blinking {
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: .2;
+    }
+    100%{
+        opacity: 1;
+    }
+}
