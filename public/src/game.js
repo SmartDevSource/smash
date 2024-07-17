@@ -1,4 +1,4 @@
-import { drawPoint, drawLine, screenLog, loadImage, isIOS } from "./misc_functions.js"
+import { loadImage, isIOS } from "./misc_functions.js"
 
 export class Game{
     constructor(is_mobile, ctx, screen, images, audios, map_data, player_data, opponent_data, socket){

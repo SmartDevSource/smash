@@ -1,4 +1,4 @@
-import { loadJson, screenLog, isMobile, isIOS, isStandalone } from "./misc_functions.js"
+import { loadJson, isMobile, isIOS, isStandalone } from "./misc_functions.js"
 import { Game } from "./game.js"
 import { Menu } from "./menu.js"
 import { InstallMenu } from "./installmenu.js"
@@ -287,12 +287,8 @@ const screen = {w: canvas.width, h: canvas.height}
 
 import { TestEngine } from "./test_engine/test_engine.js"
 let socket = null,
-    test_engine = null
-
-const device_motion = {
-    default: null,
-    current: {x: 0, y: 0, z: 0} 
-}
+    test_engine = null,
+    is_mobile = false
 
 const keys = {'left': {isPressed: false},
               'right': {isPressed: false},
@@ -322,39 +318,12 @@ window.addEventListener("keyup", e=> {
     }
 })
 
-const initMotionModule = () => {
-    if (isIOS()){
-        if (typeof DeviceMotionEvent.requestPermission === 'function'){
-            DeviceMotionEvent.requestPermission().then(response=>{
-                if (response == 'granted'){
-                    ondevicemotion = e => handleMotion(e)
-                }
-            }).catch(console.error)
-        } else {
-            ondevicemotion = e => handleMotion(e)
-        }
-    } else {
-        ondevicemotion = e => handleMotion(e)
-    }
-}
-
-const handleMotion = e => {
-    if (!device_motion.default){
-        device_motion.default = e.accelerationIncludingGravity
-    }
-    device_motion.current = {
-        x: device_motion.default.x - e.accelerationIncludingGravity.x,
-        y: device_motion.default.y - e.accelerationIncludingGravity.y,
-        z: device_motion.default.z - e.accelerationIncludingGravity.z
-    }
-}
-
 try{
     socket = io()
     if (socket){
         socket.on('connect', () => {
-            test_engine = new TestEngine(ctx, screen)
-            initMotionModule()
+            const is_mobile = isMobile()
+            test_engine = new TestEngine(ctx, screen, is_mobile)
         })
     }
 } catch (err) {
@@ -365,7 +334,7 @@ const update = () => {
     requestAnimationFrame(update)
     ctx.clearRect(0, 0, screen.w, screen.h)
     if (test_engine){
-        test_engine.update(keys, device_motion)
+        test_engine.update(keys)
     }
 }
 

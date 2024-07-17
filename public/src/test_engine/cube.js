@@ -83,8 +83,6 @@ export class Cube{
             y: (this.position.y + (this.offset / 2))
         }, this.half_screen)
 
-        console.log(distance_to_center)
-
         // RIBS //
         const top_left_rib = {
             x: (this.box_struct.top_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
