@@ -7,7 +7,6 @@ export class Menu{
         this.players_online = 0
         this.username = ""
 
-        // this.html_input.onkeydown = e => /[0-9a-zA-Z]/i.test(e.key)
         this.current_map = 0
         this.maps = {
             0: {name: "isle", img: images.isle},
@@ -18,6 +17,10 @@ export class Menu{
             select: audios.select
         }
 
+        this.span_alert = null
+        this.button_connect = null
+        this.input_username = null
+    
         this.is_menu_loaded = false
         this.loadHtml()
         this.networkListener()
@@ -35,11 +38,38 @@ export class Menu{
                 .then(res => res.text())
                 .then(data => {
                     document.getElementById("menu_container").innerHTML = data
-                    this.is_menu_loaded = true
+                    this.initWidgetsAndListeners()
                 })
         } catch (err) {
             console.error(err)
         }
+    }
+
+    initWidgetsAndListeners(){
+        this.span_alert = document.getElementById("span_alert")
+        this.button_connect = document.getElementById("button_connect")
+        this.input_username = document.getElementById("input_username")
+        this.button_connect.onclick = () => {
+            const username = this.input_username.value
+            if (username.length < 3){
+                this.popup("warning", "Votre pseudo doit contenir au moins 3 lettres.")
+            }
+        }
+        this.is_menu_loaded = true
+    }
+
+    popup(type, message){
+        this.span_alert.textContent = message
+        switch(type){
+            case "warning":
+                this.span_alert.style.backgroundColor = "rgb(255, 66, 66)"
+                this.span_alert.style.borderColor = "rgb(192, 51, 51)"
+            break
+        }
+        this.span_alert.style.display = "block"
+        setTimeout(() => {
+            this.span_alert.style.display = "none"
+        }, 2000)
     }
 
     quickLaunch({map_name}){
