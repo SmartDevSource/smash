@@ -91,6 +91,7 @@ const preload = async () => {
         title_ost.loop = true
         title_ost.volume = .8
         struct.ressources_preloaded = true
+        connectToServer()
     })
 }
 
@@ -110,10 +111,6 @@ const connectToServer = () =>{
 
 const reload = () => {
     location.reload()
-}
-
-const message = ({text_alert, is_persistent}) => {
-
 }
 
 const loadScene = async data => {
@@ -157,5 +154,4 @@ const update = () => {
 }
 
 preload()
-connectToServer()
 update()
