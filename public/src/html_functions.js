@@ -3,10 +3,10 @@ const restrictInput = event =>{
 }
 
 const wobble = element => {
-    if (!element.classList.contains("single_wobble")){
-        element.classList.add("single_wobble")
+    if (!element.classList.contains("wobble")){
+        element.classList.add("wobble")
         setTimeout(() => {
-            element.classList.remove("single_wobble")
+            element.classList.remove("wobble")
         }, 600)
     }
 }

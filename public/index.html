@@ -9,14 +9,17 @@
     <title>Smash!</title>
 </head>
 <body>
-    <button id = "installButton"
-            style ="display: none;" 
-            class = "installButton"
-    >
-        Installer l'application
-    </button>
+    <video autoplay muted loop id ="bg_video">
+        <source src = "./assets/videos/scifi_background.mp4" type = "video/mp4">
+    </video>
     <div id = "menu_container"></div>
-
+    <div class="flex_col" style="top:46%">
+        <button id = "installButton"
+                style ="display: none;" 
+        >
+            Installer l'application
+        </button>
+    </div>
     <canvas id = "canvas"></canvas>
     <script src = "/src/html_functions.js" defer></script>
     <script type = "module" src="./src/index.js"></script>

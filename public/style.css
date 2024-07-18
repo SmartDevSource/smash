@@ -11,30 +11,43 @@
     user-select: none;
 }
 
+#bg_video {
+    position: absolute !important;
+    z-index: -1;
+    right: 0;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
 .flex_col {
+    z-index: 1;
+    position: absolute;
     display: flex;
     align-items: center;
     flex-direction: column;
+    background: none;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
 }
 
-.installButton{
-    position: absolute;
+#installButton{
     z-index: 10;
-    width: 250px;
-    height: 80px;
-    left: 50%;
-    transform: translateX(-50%);
     opacity: .9;
+    padding: 10px;
     border: none;
     font-weight: bold;
     background: none;
-    color: rgb(255, 255, 255);
+    color: rgb(253, 244, 137);
     border-radius: 5px;
     font-size: 24px;
-    top: 20%;
     cursor: pointer;
     user-select: none;
-    animation: wobble_translate 1s linear infinite;
+    transform-origin: center;
+    animation: wobble 1s linear infinite;
 }
 
 canvas {
@@ -45,15 +58,17 @@ canvas {
 }
 
 .title {
-    font-size: 48px;
+    font-size: 62px;
     color: white;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
+    background: none;
 }
 
 .text {
     font-size: 22px;
     color: white;
     padding: 10px;
+    background: none;
 }
 
 input {
@@ -73,18 +88,25 @@ input:focus{
 }
 
 .cstm_button {
-    background-color: orange;
-    font-size: 18px;
+    background: none;
+    font-size: 22px;
     border-radius: 20px;
-    border: 1px solid black;
+    border: 1px solid white;
+    color: white;
     padding: 5px;
-    margin: 10px;
+    margin: 15px;
     cursor: pointer;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
-.single_wobble {
+.wobble {
     animation: wobble .5s forwards;
+}
+
+@media (max-width:515px) {
+    #installButton{
+        font-size: 18px;
+    }
 }
 
 @keyframes wobble {
@@ -96,18 +118,6 @@ input:focus{
     }
     100%{
         transform: scale(1, 1);
-    }
-}
-
-@keyframes wobble_translate {
-    0%{
-        transform: translate(-50%, -50%) scale(1, 1);
-    }
-    50%{
-        transform: translate(-50%, -50%) scale(1.1, 1.1);
-    }
-    100%{
-        transform: translate(-50%, -50%) scale(1, 1);
     }
 }
 
