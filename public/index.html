@@ -9,18 +9,16 @@
     <title>Smash!</title>
 </head>
 <body>
-    <!-- <span id = "askMobile"
-          class = "askMobile"
-    >
-        Lancez l'application sur mobile
-    </span> -->
     <button id = "installButton"
             style ="display: none;" 
             class = "installButton"
     >
         Installer l'application
     </button>
+    <div id = "menu_container"></div>
+
     <canvas id = "canvas"></canvas>
+    <script src = "/src/html_functions.js" defer></script>
     <script type = "module" src="./src/index.js"></script>
     <script type = "module" src = "./pwa.js"></script>
     <script src="/socket.io/socket.io.js"></script>

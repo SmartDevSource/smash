@@ -1,15 +1,20 @@
 @font-face {
-    font-family: operator;
-    src: url("./assets/fonts/operator.ttf");
+    font-family: quicksand;
+    src: url("./assets/fonts/quicksand.ttf");
 }
 
 *{
     margin: 0;
     padding: 0;
-    width: 80%;
-    height: 100%;
     overflow: hidden;
     background-color: rgb(19, 19, 19);
+    user-select: none;
+}
+
+.flex_col {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .installButton{
@@ -26,31 +31,10 @@
     color: rgb(255, 255, 255);
     border-radius: 5px;
     font-size: 24px;
-    top: 70%;
+    top: 20%;
     cursor: pointer;
     user-select: none;
-    animation: wobble 1s linear infinite;
-}
-
-.askMobile{
-    position: absolute;
-    z-index: 10;
-    height: 80px;
-    text-align: center;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: .9;
-    border: none;
-    font-weight: bold;
-    background: none;
-    color: rgb(255, 255, 255);
-    border-radius: 5px;
-    font-size: 20px;
-    top: 65%;
-    color: rgb(255, 255, 49);
-    user-select: none;
-    font-weight: bold;
-    animation: blinking 1s linear infinite;
+    animation: wobble_translate 1s linear infinite;
 }
 
 canvas {
@@ -60,52 +44,70 @@ canvas {
     background-color: rgba(0, 0, 0, 0);
 }
 
-.map{
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+.title {
+    font-size: 48px;
+    color: white;
+    margin-bottom: 100px;
 }
 
-.map-container {
-    position: absolute;
-    top: 100px;
-    width: 100%;
-    perspective: 500px;
-    pointer-events: none;
+.text {
+    font-size: 22px;
+    color: white;
+    padding: 10px;
 }
 
-#hidden_input {
-    position: absolute;
-    left: 50%;
-    top: 65%;
-    transform: translateX(-50%);
+input {
+    background-color: white;
+    border-radius: 7px;
+    border: none;
     padding-left: 5px;
     padding-right: 5px;
-    font-family: operator;
-    font-size: 20px;
-    z-index: 10;
-    width: 180px;
-    height: 25px;
-    cursor: default;
-    border: none;
-    background-color: white;
-    user-select: none;
-    border-radius: 3px;
+    font-size: 22px;
+    text-align: center;
+    transform-origin: center;
 }
 
-#hidden_input:focus{
+input:focus{
     outline: none;
+    background-color: rgb(253, 253, 183);
+}
+
+.cstm_button {
+    background-color: orange;
+    font-size: 18px;
+    border-radius: 20px;
+    border: 1px solid black;
+    padding: 5px;
+    margin: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.single_wobble {
+    animation: wobble .5s forwards;
 }
 
 @keyframes wobble {
     0%{
-        transform: translateX(-50%) scale(1, 1);
+        transform: scale(1, 1);
     }
     50%{
-        transform: translateX(-50%) scale(1.1, 1.1);
+        transform: scale(1.1, 1.1);
     }
     100%{
-        transform: translateX(-50%) scale(1, 1);
+        transform: scale(1, 1);
+    }
+}
+
+@keyframes wobble_translate {
+    0%{
+        transform: translate(-50%, -50%) scale(1, 1);
+    }
+    50%{
+        transform: translate(-50%, -50%) scale(1.1, 1.1);
+    }
+    100%{
+        transform: translate(-50%, -50%) scale(1, 1);
     }
 }
 

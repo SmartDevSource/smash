@@ -1,7 +1,7 @@
 import { Cube } from "./cube.js"
 import { Joystick } from "./joystick.js"
 
-export class TestEngine{
+export class GameEngine{
     constructor(ctx, screen, is_mobile){
         this.ctx = ctx
         this.screen = screen
