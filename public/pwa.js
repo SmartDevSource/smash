@@ -3,12 +3,6 @@ import { isStandalone } from "./src/misc_functions.js"
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     const ask_mobile = document.getElementById("askMobile")
 
-    if (!isStandalone()){
-      ask_mobile.style.display = "block"
-    } else {
-      ask_mobile.style.display = "none"
-    }
-  
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then(registration => {

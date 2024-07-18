@@ -17,7 +17,10 @@ export class Cube{
         this.velocity = {
             vertical: 0,
             horizontal: 0,
-            max: 5,
+            vertical_max_default: 6,
+            horizontal_max_default: 6,
+            vertical_max: 6,
+            horizontal_max: 6,
             step: .006
         }
 
@@ -44,31 +47,6 @@ export class Cube{
         this.current_delta_time = current_delta_time
         this.move()
         this.draw()
-    }
-
-    handleColliding(cube){
-        if (getDistance(cube.position, this.position) <= this.collide_distance){
-            switch(true){
-                case cube.velocity.horizontal > 0:
-                    cube.velocity.horizontal = -cube.velocity.horizontal - this.bounce_offset
-                    this.velocity.horizontal -= cube.velocity.horizontal / this.mass
-                break
-                case cube.velocity.horizontal < 0:
-                    cube.velocity.horizontal = Math.abs(cube.velocity.horizontal) + this.bounce_offset
-                    this.velocity.horizontal -= cube.velocity.horizontal / this.mass
-                break
-            }
-            switch(true){
-                case cube.velocity.vertical > 0:
-                    cube.velocity.vertical = -cube.velocity.vertical - this.bounce_offset
-                    this.velocity.vertical -= cube.velocity.vertical / this.mass
-                break
-                case cube.velocity.vertical < 0:
-                    cube.velocity.vertical = Math.abs(cube.velocity.vertical) + this.bounce_offset
-                    this.velocity.vertical -= cube.velocity.vertical / this.mass
-                break
-            }
-        }
     }
 
     draw(){
@@ -266,19 +244,44 @@ export class Cube{
         }
     }
 
+    handleColliding(cube){
+        if (getDistance(cube.position, this.position) <= this.collide_distance){
+            switch(true){
+                case cube.velocity.horizontal > 0:
+                    cube.velocity.horizontal = -cube.velocity.horizontal - this.bounce_offset
+                    this.velocity.horizontal -= cube.velocity.horizontal / this.mass
+                break
+                case cube.velocity.horizontal < 0:
+                    cube.velocity.horizontal = Math.abs(cube.velocity.horizontal) + this.bounce_offset
+                    this.velocity.horizontal -= cube.velocity.horizontal / this.mass
+                break
+            }
+            switch(true){
+                case cube.velocity.vertical > 0:
+                    cube.velocity.vertical = -cube.velocity.vertical - this.bounce_offset
+                    this.velocity.vertical -= cube.velocity.vertical / this.mass
+                break
+                case cube.velocity.vertical < 0:
+                    cube.velocity.vertical = Math.abs(cube.velocity.vertical) + this.bounce_offset
+                    this.velocity.vertical -= cube.velocity.vertical / this.mass
+                break
+            }
+        }
+    }
+
     move(){
         switch(this.directions.horizontal){
             case 'l':
-                if (this.velocity.horizontal > -this.velocity.max)
+                if (this.velocity.horizontal > -this.velocity.horizontal_max)
                     this.velocity.horizontal -= this.velocity.step * this.current_delta_time
-                if (this.velocity.horizontal < -this.velocity.max)
-                    this.velocity.horizontal = -this.velocity.max
+                if (this.velocity.horizontal < -this.velocity.horizontal_max)
+                    this.velocity.horizontal = -this.velocity.horizontal_max
             break
             case 'r':
-                if (this.velocity.horizontal < this.velocity.max)
+                if (this.velocity.horizontal < this.velocity.horizontal_max)
                     this.velocity.horizontal += this.velocity.step * this.current_delta_time
-                if (this.velocity.horizontal > this.velocity.max)
-                    this.velocity.horizontal = this.velocity.max
+                if (this.velocity.horizontal > this.velocity.horizontal_max)
+                    this.velocity.horizontal = this.velocity.horizontal_max
             break
             default:
                 if (this.velocity.horizontal < 0){
@@ -298,16 +301,16 @@ export class Cube{
 
         switch(this.directions.vertical){
             case 'u':
-                if (this.velocity.vertical > -this.velocity.max)
+                if (this.velocity.vertical > -this.velocity.vertical_max)
                     this.velocity.vertical -= this.velocity.step * this.current_delta_time
-                if (this.velocity.vertical < -this.velocity.max)
-                    this.velocity.vertical = -this.velocity.max
+                if (this.velocity.vertical < -this.velocity.vertical_max)
+                    this.velocity.vertical = -this.velocity.vertical_max
             break
             case 'd':
-                if (this.velocity.vertical < this.velocity.max)
+                if (this.velocity.vertical < this.velocity.vertical_max)
                     this.velocity.vertical += this.velocity.step * this.current_delta_time
-                if (this.velocity.vertical > this.velocity.max)
-                    this.velocity.vertical = this.velocity.max
+                if (this.velocity.vertical > this.velocity.vertical_max)
+                    this.velocity.vertical = this.velocity.vertical_max
             break
             default:
                 if (this.velocity.vertical < 0){
@@ -337,5 +340,8 @@ export class Cube{
 
         this.directions.horizontal = ''
         this.directions.vertical = ''
+        this.velocity.horizontal_max = this.velocity.horizontal_max_default
+        this.velocity.vertical_max = this.velocity.vertical_max_default
+
     }
 }

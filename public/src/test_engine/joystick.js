@@ -13,16 +13,22 @@ export class Joystick{
 
         this.initial_position = {...this.position}
 
-        this.max_joystick_distance = 50
-
         this.mouse = {
             is_down: false,
             is_pressed: false,
             coords: {x: 0, y: 0}
         }
 
-        this.joystick_radius = 30
-        this.backcircle_radius = 100
+        this.params = {
+            pad_radius: 30,
+            back_radius: 100,
+            max_distance: 120,
+            is_picked: false
+        }
+
+        this.distance_to_center = 0
+        this.angle_to_center = 0
+
         this.initListeners()
     }
 
@@ -63,6 +69,8 @@ export class Joystick{
             break
             case "mouse_up":
                 this.mouse.is_down = false
+                this.params.is_picked = false
+                this.position = {...this.initial_position}
             break
             case "touch_move":
                 if (this.mouse.is_down){
@@ -86,6 +94,8 @@ export class Joystick{
             break
             case "touch_end":
                 this.mouse.is_down = false
+                this.params.is_picked = false
+                this.position = {...this.initial_position}
             break
         }
     }
@@ -97,13 +107,25 @@ export class Joystick{
     }
 
     handleMouse(){
-        if (this.mouse.is_down){
-            const angle_to_center = getAngleTo(this.mouse.coords, this.initial_position)
+        if (this.mouse.is_pressed && !this.params.is_picked){
             const distance_to_center = getPythagoreanDistance(this.mouse.coords, this.initial_position)
-            console.log("mouse_coords", this.mouse.coords)
-            console.log("angle_to_center", angle_to_center)
-            console.log("distance_to_center", distance_to_center)
-            console.log()
+            if (distance_to_center <= this.params.max_distance){
+                this.params.is_picked = true
+            }
+        }
+        if (this.mouse.is_down){
+            if (this.params.is_picked){
+                const angle_to_center = getAngleTo(this.mouse.coords, this.initial_position)
+                let distance_to_center = getPythagoreanDistance(this.mouse.coords, this.initial_position)
+                distance_to_center = distance_to_center > this.params.max_distance ?
+                                    this.params.max_distance : distance_to_center
+                this.position = {
+                    x: this.initial_position.x - distance_to_center * Math.cos(angle_to_center),
+                    y: this.initial_position.y - distance_to_center * Math.sin(angle_to_center),
+                }
+                this.distance_to_center = distance_to_center
+                this.angle_to_center = angle_to_center
+            }
         }
     }
 
@@ -115,9 +137,9 @@ export class Joystick{
         this.ctx.lineWidth = 6
         this.ctx.fillStyle = "white"
         this.ctx.arc(
-            this.position.x, 
-            this.position.y,
-            this.backcircle_radius,
+            this.initial_position.x, 
+            this.initial_position.y,
+            this.params.back_radius,
             0, 
             Math.PI * 2)
         this.ctx.fill()
@@ -133,7 +155,7 @@ export class Joystick{
         this.ctx.arc(
             this.position.x, 
             this.position.y, 
-            this.joystick_radius,
+            this.params.pad_radius,
             0, 
             Math.PI * 2)
         this.ctx.stroke()
