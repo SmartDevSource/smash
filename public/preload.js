@@ -63,6 +63,8 @@ const images = [
     './assets/gfx/sprites/orange_glow.png',
     './assets/gfx/sprites/purple_glow.png',
     './assets/gfx/sprites/yellow_glow.png',
+    './assets/gfx/sprites/blue_glow.png',
+    './assets/gfx/sprites/ship.png',
     './assets/gfx/maps/first.png',
     './assets/gfx/maps/second.png'
 ]

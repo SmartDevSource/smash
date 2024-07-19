@@ -20,13 +20,13 @@ class Room{
         console.log("*".repeat(50))
     }
 
-    addPlayer({id, username}){
+    addPlayer({id, username, color}){
         if (!this.players[id]){
             const position = {
                 x: rndBetween(20, 70),
                 y: rndBetween(20, 70)
             }
-            this.players[id] = new Player(id, username, position)
+            this.players[id] = new Player(id, username, color, position)
         }
         this.toMainThread({
             ids: [id],
@@ -55,7 +55,8 @@ parentPort.on('message', data => {
         case "connection":
             room.addPlayer({
                 id: data.id,
-                username: data.username
+                username: data.username,
+                color: data.color
             })
         break
         case "disconnection":

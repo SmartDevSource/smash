@@ -10,3 +10,12 @@ const wobble = element => {
         }, 600)
     }
 }
+
+const reverseColor = element => {
+    if (!element.classList.contains("reverse_color")){
+        element.classList.add("reverse_color")
+        setTimeout(() => {
+            element.classList.remove("reverse_color")
+        }, 300)
+    }
+}

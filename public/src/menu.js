@@ -8,10 +8,6 @@ export class Menu{
         this.username = ""
 
         this.current_map = 0
-        this.maps = {
-            0: {name: "isle", img: images.isle},
-            1: {name: "sand", img: images.sand}
-        }
 
         this.sounds = {
             select: audios.select
@@ -32,7 +28,10 @@ export class Menu{
             button_back: null,
             input_username: null,
             first_players_count: null,
-            second_players_count: null
+            second_players_count: null,
+            img_color_choice: null,
+            left_color_arrow: null,
+            right_color_arrow: null
         }
 
         this.server_images = {
@@ -43,6 +42,20 @@ export class Menu{
         this.server_selected = {
             current: "",
             last: ""
+        }
+
+        this.colors = {
+            current: 0,
+            max: 6,
+            images: {
+                0: "./assets/gfx/sprites/green_glow.png",
+                1: "./assets/gfx/sprites/orange_glow.png",
+                2: "./assets/gfx/sprites/purple_glow.png",
+                3: "./assets/gfx/sprites/red_glow.png",
+                4: "./assets/gfx/sprites/white_glow.png",
+                5: "./assets/gfx/sprites/yellow_glow.png",
+                6: "./assets/gfx/sprites/blue_glow.png"
+            }
         }
 
         this.last_page = ""
@@ -97,6 +110,9 @@ export class Menu{
         this.widgets.input_username = document.getElementById("input_username")
         this.widgets.first_players_count = document.getElementById("first_players_count")
         this.widgets.second_players_count = document.getElementById("second_players_count")
+        this.widgets.img_color_choice = document.getElementById("img_color_choice")
+        this.widgets.left_color_arrow = document.getElementById("left_color_arrow")
+        this.widgets.right_color_arrow = document.getElementById("right_color_arrow")
         ///////// MAPS IMAGES //////////
         this.server_images.first = document.getElementById("first_map")
         this.server_images.second = document.getElementById("second_map")
@@ -105,9 +121,8 @@ export class Menu{
             const username = this.widgets.input_username.value
             if (username.length < 3)
                 this.popup("warning", "Pseudo : minimum 3 lettres.")
-            else {
+            else
                 this.loadMapPage(username)
-            }
         }
 
         this.widgets.button_back.onclick = () => {
@@ -124,6 +139,22 @@ export class Menu{
                 this.joinServer()
             }
         }
+        
+        this.widgets.left_color_arrow.onclick = () => {
+            this.colors.current--
+            if (this.colors.current < 0){
+                this.colors.current = this.colors.max
+            }
+            this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
+        }
+
+        this.widgets.right_color_arrow.onclick = () => {
+            this.colors.current++
+            if (this.colors.current > this.colors.max){
+                this.colors.current = 0
+            }
+            this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
+        }
 
         for (const key in this.server_images){
             this.server_images[key].onclick = () => {
@@ -131,6 +162,7 @@ export class Menu{
             }
         }
 
+        this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
         this.is_menu_loaded = true
     }
 
@@ -162,9 +194,13 @@ export class Menu{
     }
 
     joinServer(){
+        const color = this.colors.images[this.colors.current]
+                    .split('/').at(-1).split('.').at(0)
+
         if (this.socket){
             this.socket.emit("join_server", {
                 username: this.username,
+                color: color,
                 server: this.server_selected.current
             })
         }

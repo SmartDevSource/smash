@@ -117,6 +117,7 @@ io.on('connection', socket => {
             maps[data.server].postMessage({
                 header: "connection", 
                 id: socket.id,
+                color: data.color,
                 username: data.username
             })
             sendPlayersCount(sockets)
