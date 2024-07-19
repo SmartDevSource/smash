@@ -51,7 +51,7 @@ const setRoomListeners = room => {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-const max_room_players = 2
+const max_room_players = 8
 
 const maps = {
     first: new Worker("./server/src/room.js"),

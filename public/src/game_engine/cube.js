@@ -8,8 +8,8 @@ export class Cube{
         this.position = position
         this.images = images
 
-        this.offset = 30
-        this.rib_length = 15
+        this.offset = 25
+        this.rib_length = 10
 
         this.collide_distance = 1200
         this.bounce_offset = .15
@@ -142,9 +142,15 @@ export class Cube{
         this.ctx.restore()
         // GLOW //
         this.ctx.drawImage(
-            this.images.purple_glow,
-            this.position.x - this.offset,
-            this.position.y - this.offset
+            this.images.green_glow,
+            0,
+            0,
+            this.images.green_glow.width,
+            this.images.green_glow.height,
+            this.position.x - this.offset / 1.5,
+            this.position.y - this.offset / 1.5,
+            this.offset * 2.5,
+            this.offset * 2.5
         )
     }
 
@@ -347,6 +353,5 @@ export class Cube{
         this.directions.vertical = ''
         this.velocity.horizontal_max = this.velocity.horizontal_max_default
         this.velocity.vertical_max = this.velocity.vertical_max_default
-
     }
 }
