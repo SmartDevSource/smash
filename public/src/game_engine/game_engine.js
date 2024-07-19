@@ -2,12 +2,21 @@ import { Cube } from "./cube.js"
 import { Joystick } from "./joystick.js"
 
 export class GameEngine{
-    constructor(ctx, screen, is_mobile){
+    constructor(ctx, screen, is_mobile, map_struct, init_data, images, audios){
         this.ctx = ctx
         this.screen = screen
+        this.images = images
+        this.audios = audios
         this.position = {x: 100, y: 100}
         this.joystick = new Joystick(this.ctx, this.screen, is_mobile)
         this.force_divider = 20
+
+        this.id = init_data.id
+        this.username = init_data.username
+        this.map_data = init_data.map_data
+        this.tiles_images = map_struct.images
+        
+        this.tile_offset = 50
 
         this.main_cube = new Cube(this.ctx, this.screen, this.position)
         this.cubes = [
@@ -22,12 +31,12 @@ export class GameEngine{
     }
 
     update(keys){
-        this.height_screen_compensation = this.base_compensation * Math.abs(window.innerHeight - window.innerWidth) / this.screen.h
+        // this.height_screen_compensation = this.base_compensation * Math.abs(window.innerHeight - window.innerWidth) / this.screen.h
         this.current_delta_time = (Date.now() - this.last_delta_time)
         this.last_delta_time = Date.now()
         this.events(keys)
-        this.main_cube.update(this.current_delta_time)
         this.draw()
+        this.main_cube.update(this.current_delta_time)
         this.joystick.update()
     }
     
@@ -74,6 +83,20 @@ export class GameEngine{
     }
 
     draw(){
+        // MAP//
+        for(let y = 0 ; y < this.map_data.tiles.length ; y++){
+            for(let x = 0 ; x < this.map_data.tiles[y].length ; x++){
+                const tile = this.map_data.tiles[y][x]
+                if (tile > 0){
+                    const image = this.images[this.tiles_images[tile]]
+                    this.ctx.drawImage(
+                        image,
+                        x * this.tile_offset,
+                        y * this.tile_offset
+                    )
+                }
+            }
+        }
         // CUBES //
         for (const cube of this.cubes){
             cube.update(this.current_delta_time)

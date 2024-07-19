@@ -57,7 +57,10 @@ const audios = [
 ]
 
 const images = [
-    './assets/gfx/hud/crosshair.png'
+    './assets/gfx/tiles/tile1.png',
+    './assets/gfx/tiles/tile2.png',
+    './assets/gfx/tiles/tile3.png',
+    './assets/gfx/tiles/tile4.png'
 ]
 
 export const preloadRessources = async () => {

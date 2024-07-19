@@ -13,8 +13,7 @@ const screen = {w: canvas.width, h: canvas.height}
 
 let title_ost = null
 
-const scene_objects = await loadJson("../data/structs/scene_objects.json")
-let is_mobile = isMobile()
+const maps_structs = await loadJson("../data/structs/maps.json")
 
 const keys = {'left': {isPressed: false},
               'right': {isPressed: false},
@@ -52,39 +51,31 @@ window.addEventListener("keyup", e=> {
 
 ////////////////// SOCKET LISTENERS //////////////////
 const initSocketListeners = () => {
-    struct.socket.on("opponent_leave", ()=>{
-        message({
-            text_alert: "L'adversaire s'est déconnecté.", 
-            is_persistent: false
-        })
-        reload()
-    })
     struct.socket.on("disconnect", () => {
-        // message({
-        //     text_alert: "Serveur hors ligne", 
-        //     is_persistent: false
-        // })
         reload()
     })
-    struct.socket.on("load_scene", data => {
-        message({
-            text_alert: "Chargement de la scène", 
-            is_persistent: false
-        })
-    })
-    struct.socket.on("endgame", () => {
-        message({
-            text_alert: "Fin de partie", 
-            is_persistent: false
-        })
-        reload()
+    struct.socket.on("init_game", init_data => {
+        struct.game_engine = new GameEngine(
+            ctx,
+            screen,
+            isMobile(),
+            maps_structs[init_data.map_data.name], 
+            init_data,
+            struct.images,
+            struct.audios
+        )
+        const json_string = JSON.stringify(init_data)
+        const bytes_size = new TextEncoder().encode(json_string).length
+        console.log("Taille de l'objet init_game en octets :", bytes_size)
+        struct.menu.clear()
+        struct.menu = null
+        struct.is_game_started = true
     })
 }
 
 ////////////////// FUNCTIONS //////////////////
 const preload = async () => {
     await preloadRessources().then(res=>{
-        console.log(res)
         struct.audios = res.audios
         struct.images = res.images
         title_ost = struct.audios.title_ost
@@ -112,20 +103,6 @@ const connectToServer = () =>{
 const reload = () => {
     console.log("Rechargement de la page")
     location.reload()
-}
-
-const loadScene = async data => {
-    title_ost.currentTime = 0
-    title_ost.pause()
-
-    map_data = await loadJson(`../data/maps/${data.map_name}.json`)
-
-    const json_string = JSON.stringify(data)
-    const bytes_size = new TextEncoder().encode(json_string).length
-    console.log("Taille de l'objet load_scene en octets :", bytes_size)
-    map_data.objects = data.map_objects
-
-    struct.is_game_started = true
 }
 
 const updateGame = () => {

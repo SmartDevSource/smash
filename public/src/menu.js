@@ -17,6 +17,9 @@ export class Menu{
             select: audios.select
         }
 
+        this.menu_container = document.getElementById("menu_container")
+        this.bg_video = document.getElementById("bg_video")
+
         this.pages = {
             username: null,
             maps: null
@@ -65,12 +68,17 @@ export class Menu{
         }
     }
 
+    clear(){
+        this.menu_container.innerHTML = null
+        this.bg_video.remove()
+    }
+
     loadHtml(){
         try{
             fetch('/src/html/menu.html')
                 .then(res => res.text())
                 .then(data => {
-                    document.getElementById("menu_container").innerHTML = data
+                    this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
                 })
         } catch (err) {
@@ -112,6 +120,7 @@ export class Menu{
             if (this.server_selected.current == ""){
                 this.popup("warning", "Veuillez choisir un serveur.")
             } else {
+                this.widgets.button_join.disabled = true
                 this.joinServer()
             }
         }

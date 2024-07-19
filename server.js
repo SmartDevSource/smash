@@ -22,8 +22,13 @@ const sockets = {}
 
 ////////////////////////// SETTING UP FUNCTIONS /////////////////////////////////
 const initRooms = () => {
+    const maps_data = JSON.parse(fs.readFileSync("./server/data/maps_data.json", {encoding: "utf-8"}))
+    
     for (const key in maps){
-        maps[key].postMessage({header: "instantiate"})
+        maps[key].postMessage({
+            header: "instantiate",
+            map_data: maps_data[key]
+        })
         setRoomListeners(maps[key])
     }
 }
@@ -33,6 +38,12 @@ const setRoomListeners = room => {
         switch(data.header){
             case "test":
                 sendToPlayers(data.ids, "test", data)
+            break
+            case "init_game":
+                sendToPlayers(data.ids, "init_game", {
+                    map_data: data.map_data,
+                    id: data.id
+                })
             break
         }
     })
@@ -123,6 +134,8 @@ io.on('connection', socket => {
             delete players_ids[socket.id]
             delete sockets[socket.id]
             sendPlayersCount(sockets)
+        } else if (sockets[socket.id]){
+            delete socket[sockets.id]
         }
         showInfos()
     })

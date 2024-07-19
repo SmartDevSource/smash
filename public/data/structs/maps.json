@@ -1,0 +1,14 @@
+{
+    "first":{
+        "images":{
+            "1": "tile1",
+            "2": "tile2"
+        }
+    },
+    "second":{
+        "images":{
+        "1": "tile3",
+        "2": "tile4"
+        }
+    }
+}

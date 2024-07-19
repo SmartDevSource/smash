@@ -5,7 +5,8 @@ const ShortUniqueId = require('short-unique-id')
 const { rndBetween } = require('./server_misc_functions.js')
 
 class Room{
-    constructor(){
+    constructor(map_data){
+        this.map_data = map_data
         this.players = {}
     }
 
@@ -25,9 +26,15 @@ class Room{
                 x: rndBetween(20, 70),
                 y: rndBetween(20, 70)
             }
-            this.players[id] = new Player(username, position)
+            this.players[id] = new Player(id, username, position)
         }
-        this.showInfos()
+        this.toMainThread({
+            ids: [id],
+            header: "init_game",
+            map_data: this.map_data,
+            my: id
+        })
+        // this.showInfos()
     }
 
     removePlayer({id}){
@@ -43,7 +50,7 @@ let room = null
 parentPort.on('message', data => {
     switch(data.header){
         case "instantiate":
-            room = new Room()
+            room = new Room(data.map_data)
         break
         case "connection":
             room.addPlayer({
