@@ -1,18 +1,44 @@
-<span id = "span_alert">sqdsqd</span>
+<span id = "span_alert"></span>
 
-<div class="flex_col outline_container">
+<div id = "username_page" class="flex_container outline_container">
     <span class="title">Smash!</span>
     <span class="text">Pseudo</span>
     <input id="input_username"
         type = "text"
+        value="test"
         spellcheck="false"
         maxlength="10"
         onkeydown="restrictInput(event)"
         autocomplete="off">
     </input>
-    <button id="button_connect" 
+    <button id="button_to_maps_page" 
             class="cstm_button"
             onmouseenter="wobble(this)">
         Rejoindre une partie
+    </button>
+</div>
+
+<div id = "maps_page" class="flex_container outline_container" style="display: none;">
+    <span class="title">Smash!</span>
+    <span class="text">Choix du serveur</span>
+    <div class = "flex_row">
+        <div class = "flex_col">
+            <span class = "text" id ="first_players_count"></span>
+            <img class = "img_server_choice" id="first_map" src="../../assets/gfx/maps/first.png">
+        </div>
+        <div class = "flex_col">
+            <span class = "text" id ="second_players_count"></span>
+            <img class = "img_server_choice" id="second_map" src="../../assets/gfx/maps/second.png">
+        </div>
+    </div>
+    <button id="button_join" 
+            class="cstm_button"
+            onmouseenter="wobble(this)">
+        C'est parti !
+    </button>
+    <button id="button_back" 
+            class="cstm_button"
+            onmouseenter="wobble(this)">
+        Retour
     </button>
 </div>

@@ -39,11 +39,11 @@
 
 .outline_container{
     border: 1px solid white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
 }
 
-.flex_col {
+.flex_container {
     z-index: 1;
     position: absolute;
     display: flex;
@@ -55,14 +55,29 @@
     transform: translate(-50%, -50%);
 }
 
+.flex_col {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background: none;
+}
+
+.flex_row {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    background: none;
+}
+
 #installButton{
     z-index: 2;
-    opacity: .9;
     padding: 10px;
     border: none;
     font-weight: bold;
     background: none;
-    color: rgb(253, 244, 137);
+    color: rgb(255, 241, 82);
     border-radius: 5px;
     font-size: 24px;
     cursor: pointer;
@@ -81,14 +96,21 @@ canvas {
 .title {
     font-size: 62px;
     color: white;
-    margin-bottom: 50px;
     background: none;
+}
+
+.img_server_choice{
+    width: 120px;
+    height: 70px;
+    margin: 5px;
+    background: none;
+    cursor: pointer;
 }
 
 .text {
     font-size: 22px;
     color: white;
-    padding: 10px;
+    padding: 5px;
     background: none;
 }
 
@@ -115,7 +137,7 @@ input:focus{
     border: 1px solid white;
     color: white;
     padding: 5px;
-    margin: 15px;
+    margin-top: 10px;
     cursor: pointer;
     /* font-weight: bold; */
 }

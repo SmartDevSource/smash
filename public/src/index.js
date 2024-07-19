@@ -60,10 +60,10 @@ const initSocketListeners = () => {
         reload()
     })
     struct.socket.on("disconnect", () => {
-        message({
-            text_alert: "Serveur hors ligne", 
-            is_persistent: false
-        })
+        // message({
+        //     text_alert: "Serveur hors ligne", 
+        //     is_persistent: false
+        // })
         reload()
     })
     struct.socket.on("load_scene", data => {
@@ -110,6 +110,7 @@ const connectToServer = () =>{
 }
 
 const reload = () => {
+    console.log("Rechargement de la page")
     location.reload()
 }
 
