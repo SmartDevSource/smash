@@ -12,6 +12,26 @@ class Room{
     toMainThread(data){
         parentPort.postMessage(data)
     }
+
+    showInfos(){
+        console.log("*".repeat(10), "[room.js] showInfos", "*".repeat(10))
+        console.log("Joueurs dans la room : ", this.players)
+        console.log("*".repeat(50))
+    }
+
+    addPlayer({id, username}){
+        if (!this.players[id]){
+            this.players[id] = new Player(username)
+        }
+        this.showInfos()
+    }
+
+    removePlayer({id}){
+        if (this.players[id]){
+            delete this.players[id]
+        }
+        this.showInfos()
+    }
 }
 
 let room = null
@@ -21,17 +41,16 @@ parentPort.on('message', data => {
         case "instantiate":
             room = new Room()
         break
-        case "coords":
-            room.handleCoords(data.socket_id, data.coords)
+        case "connection":
+            room.addPlayer({
+                id: data.id,
+                username: data.username
+            })
         break
-        case "is_shooting":
-            room.handleShooting(data.socket_id, data.target)
-        break
-        case "collision":
-            room.handleCollision(data.socket_id, data.object.object_type, data.object.object_id)
-        break
-        case "use_bonus":
-            room.handleBonus(data.socket_id, data.type)
+        case "disconnection":
+            room.removePlayer({
+                id: data.id
+            })
         break
     }
 })

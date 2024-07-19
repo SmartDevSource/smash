@@ -65,7 +65,10 @@ app.get('/', (req, res) => {
 
 /////////////////////////////////// FUNCTIONS ///////////////////////////////////
 const showInfos = () => {
+    console.log("*".repeat(10), "[server.js] showInfos", "*".repeat(10))
     console.log("Players ids :", players_ids)
+    console.log("Sockets length :", Object.keys(sockets).length)
+    console.log("*".repeat(50))
 }
 
 const sendToPlayers = (ids, header, data) => {
@@ -74,31 +77,38 @@ const sendToPlayers = (ids, header, data) => {
             sockets[id].emit(header, data)
 }
 
-const sendToAll = (header, data) => {
-    for (const socket in sockets)
-        sockets[socket].emit(header, data)
+const sendPlayersCount = sockets => {
+    const players_count = {}
+    for (const key in maps){
+        const player_in_room = Object.values(players_ids).filter(e=>e==key).length
+        players_count[`${key}_players_count`] = `${player_in_room}/${max_room_players}`
+    }
+
+    for(const id in sockets){
+        sockets[id].emit("players_count", players_count)
+    }
 }
 
 /////////////////////////////////// NETWORKING ///////////////////////////////////
 /////////////////////////////////// SOCKETS ///////////////////////////////////
 io.on('connection', socket => {
     console.log(`Connexion entrante ${socket.id}`)
-
-    sendToAll("players_online", Object.keys(sockets).length)
+    sockets[socket.id] = socket
 
     socket.on("get_players_count", () => {
-        const players_count = {}
-        for (const key in maps){
-            const player_in_room = Object.values(players_ids).reduce((acc, curr) => acc += curr == key ? 1 : 0, 0)
-            players_count[`${key}_players_count`] = `${player_in_room}/${max_room_players}`
-        }
-        socket.emit("players_count", players_count)
+        sendPlayersCount({[socket.id]: socket})
     })
 
     socket.on("join_server", data => {
-        const players_in_room = Object.values(players_ids).reduce((acc, curr) => acc += curr == data.server ? 1 : 0, 0)
+        const players_in_room = Object.values(players_ids).filter(e=>e==data.server).length
         if (players_in_room < max_room_players){
             players_ids[socket.id] = data.server
+            maps[data.server].postMessage({
+                header: "connection", 
+                id: socket.id,
+                username: data.username
+            })
+            sendPlayersCount(sockets)
         } else {
             socket.emit("server_full")
         }
@@ -108,18 +118,16 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         console.log(`Déconnexion de l'id ${socket.id}`)
         if (players_ids[socket.id]){
+            const map_name = players_ids[socket.id]
+            maps[map_name].postMessage({header: "disconnection", id: socket.id})
             delete players_ids[socket.id]
+            delete sockets[socket.id]
+            sendPlayersCount(sockets)
         }
-        console.log(players_ids)
+        showInfos()
     })
 })
 
-const getRoom = (socket_id) =>{
-    const room_id = rooms_structs.players_rooms_id[socket_id]
-    const room = rooms_structs.rooms[room_id]
-    if (room) return room
-    return null
-}
 /////////////////////////////////// HANDLE SERVER DISCONNECTION / CRASH ///////////////////////////////////
 process.on("SIGINT", () => {
     server.close(()=>{
