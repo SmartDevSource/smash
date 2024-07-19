@@ -57,10 +57,14 @@ const audios = [
 ]
 
 const images = [
-    './assets/gfx/tiles/tile1.png',
-    './assets/gfx/tiles/tile2.png',
-    './assets/gfx/tiles/tile3.png',
-    './assets/gfx/tiles/tile4.png'
+    './assets/gfx/sprites/white_glow.png',
+    './assets/gfx/sprites/green_glow.png',
+    './assets/gfx/sprites/red_glow.png',
+    './assets/gfx/sprites/orange_glow.png',
+    './assets/gfx/sprites/purple_glow.png',
+    './assets/gfx/sprites/yellow_glow.png',
+    './assets/gfx/maps/first.png',
+    './assets/gfx/maps/second.png'
 ]
 
 export const preloadRessources = async () => {

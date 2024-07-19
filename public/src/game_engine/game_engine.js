@@ -2,7 +2,7 @@ import { Cube } from "./cube.js"
 import { Joystick } from "./joystick.js"
 
 export class GameEngine{
-    constructor(ctx, screen, is_mobile, map_struct, init_data, images, audios){
+    constructor(ctx, screen, is_mobile, init_data, images, audios){
         this.ctx = ctx
         this.screen = screen
         this.images = images
@@ -14,16 +14,16 @@ export class GameEngine{
         this.id = init_data.id
         this.username = init_data.username
         this.map_data = init_data.map_data
-        this.tiles_images = map_struct.images
+        this.background_image = this.images[init_data.map_data.name]
         
         this.tile_offset = 50
 
-        this.main_cube = new Cube(this.ctx, this.screen, this.position)
+        this.main_cube = new Cube(this.ctx, this.screen, this.position, this.images)
         this.cubes = [
-            new Cube(this.ctx, this.screen, {x: 200, y: 300}),
-            new Cube(this.ctx, this.screen, {x: 500, y: 500}),
-            new Cube(this.ctx, this.screen, {x: 300, y: 100}),
-            new Cube(this.ctx, this.screen, {x: 900, y: 400}),
+            new Cube(this.ctx, this.screen, {x: 200, y: 300}, this.images),
+            new Cube(this.ctx, this.screen, {x: 500, y: 500}, this.images),
+            new Cube(this.ctx, this.screen, {x: 300, y: 100}, this.images),
+            new Cube(this.ctx, this.screen, {x: 900, y: 400}, this.images),
         ]
 
         this.last_delta_time = Date.now()
@@ -84,19 +84,17 @@ export class GameEngine{
 
     draw(){
         // MAP//
-        for(let y = 0 ; y < this.map_data.tiles.length ; y++){
-            for(let x = 0 ; x < this.map_data.tiles[y].length ; x++){
-                const tile = this.map_data.tiles[y][x]
-                if (tile > 0){
-                    const image = this.images[this.tiles_images[tile]]
-                    this.ctx.drawImage(
-                        image,
-                        x * this.tile_offset,
-                        y * this.tile_offset
-                    )
-                }
-            }
-        }
+        this.ctx.drawImage(
+            this.background_image,
+            0,
+            0,
+            this.background_image.width,
+            this.background_image.height,
+            0,
+            0,
+            this.screen.w,
+            this.screen.h
+        )
         // CUBES //
         for (const cube of this.cubes){
             cube.update(this.current_delta_time)

@@ -1,11 +1,12 @@
 import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
 
 export class Cube{
-    constructor(ctx, screen, position){
+    constructor(ctx, screen, position, images){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
         this.position = position
+        this.images = images
 
         this.offset = 30
         this.rib_length = 15
@@ -60,7 +61,6 @@ export class Cube{
             x: (this.position.x + (this.offset / 2)), 
             y: (this.position.y + (this.offset / 2))
         }, this.half_screen)
-
         // RIBS //
         const top_left_rib = {
             x: (this.box_struct.top_left.x + (distance_to_center.x < this.rib_length ? distance_to_center.x : this.rib_length) * Math.cos(angle_to_center)),
@@ -117,7 +117,6 @@ export class Cube{
                 })
             break
         }
-
         // FILL TOP BOX//
         this.ctx.save()
         this.ctx.fillStyle = this.box_colors.face
@@ -141,6 +140,12 @@ export class Cube{
         )
         this.ctx.stroke()
         this.ctx.restore()
+        // GLOW //
+        this.ctx.drawImage(
+            this.images.purple_glow,
+            this.position.x - this.offset,
+            this.position.y - this.offset
+        )
     }
 
     getCulling({type, top_left_rib, top_right_rib, bottom_right_rib, bottom_left_rib}){
