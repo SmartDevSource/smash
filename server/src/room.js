@@ -2,7 +2,7 @@ const { parentPort } = require('node:worker_threads')
 const Player = require('./player.js')
 const fs = require('fs')
 const ShortUniqueId = require('short-unique-id')
-const { get3dDistance } = require('./server_misc_functions.js')
+const { rndBetween } = require('./server_misc_functions.js')
 
 class Room{
     constructor(){
@@ -21,7 +21,11 @@ class Room{
 
     addPlayer({id, username}){
         if (!this.players[id]){
-            this.players[id] = new Player(username)
+            const position = {
+                x: rndBetween(20, 70),
+                y: rndBetween(20, 70)
+            }
+            this.players[id] = new Player(username, position)
         }
         this.showInfos()
     }
