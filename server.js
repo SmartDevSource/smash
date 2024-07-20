@@ -47,6 +47,12 @@ const setRoomListeners = room => {
                     id: data.id
                 })
             break
+            case "new_player":
+                sendToPlayers(data.ids, "new_player", data.player_data)
+            break
+            case "del_player":
+                sendToPlayers(data.ids, "del_player", data.id)
+            break
         }
     })
 }
@@ -102,6 +108,20 @@ io.on('connection', socket => {
     sockets[socket.id] = socket
     showInfos()
 
+    socket.on('disconnect', () => {
+        console.log(`Déconnexion de l'id ${socket.id}`)
+        if (players_ids[socket.id]){
+            const map_name = players_ids[socket.id]
+            maps[map_name].postMessage({header: "disconnection", id: socket.id})
+            delete players_ids[socket.id]
+            delete sockets[socket.id]
+            sendPlayersCount(sockets)
+        } else if (sockets[socket.id]){
+            delete sockets[socket.id]
+        }
+        showInfos()
+    })
+
     socket.on("get_players_count", () => sendPlayersCount({[socket.id]: socket}))
 
     socket.on("join_server", data => {
@@ -121,17 +141,13 @@ io.on('connection', socket => {
         showInfos()
     })
 
-    socket.on('disconnect', () => {
-        console.log(`Déconnexion de l'id ${socket.id}`)
-        if (players_ids[socket.id]){
-            const map_name = players_ids[socket.id]
-            maps[map_name].postMessage({header: "disconnection", id: socket.id})
-            delete players_ids[socket.id]
-            delete sockets[socket.id]
-            sendPlayersCount(sockets)
-        } else if (sockets[socket.id]){
-            delete sockets[socket.id]
-        }
+    socket.on("joy_coords", coords => {
+        const server_map = players_ids[socket.id]
+        maps[server_map].postMessage({
+            header: "joy_coords", 
+            id: socket.id,
+            coords: coords
+        })
         showInfos()
     })
 })

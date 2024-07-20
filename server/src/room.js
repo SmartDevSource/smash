@@ -43,12 +43,36 @@ class Room{
             color: color,
             id: id
         })
+
+        this.toMainThread({
+            ids: this.getIds({excepted: [id]}),
+            header: "new_player",
+            player_data: this.players[id].getPlayerData()
+        })
     }
 
     removePlayer({id}){
-        if (this.players[id])
+        if (this.players[id]){
             delete this.players[id]
+            this.toMainThread({
+                ids: this.getIds({excepted: [id]}),
+                header: "del_player",
+                id: id
+            })
+        }
         this.showInfos()
+    }
+
+    handleJoystickCoords({id, coords}){
+
+    }
+
+    getIds({excepted=[]}){
+        const ids = []
+        for (const id in this.players)
+            if (!excepted.includes(id))
+                ids.push(id)
+        return ids
     }
 }
 
@@ -69,6 +93,12 @@ parentPort.on('message', data => {
         case "disconnection":
             room.removePlayer({
                 id: data.id
+            })
+        break
+        case "joy_coords":
+            room.handleJoystickCoords({
+                id: data.id,
+                coords: data.coords
             })
         break
     }

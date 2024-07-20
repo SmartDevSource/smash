@@ -1,17 +1,18 @@
 import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
 
-export class Ship{
-    constructor({ctx, screen, position, angle, color, images}){
+export class Ship {
+    constructor({ctx, screen, username, position, angle, color, score, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
+        this.username = username
         this.position = position
         this.angle = angle
         this.color = color
+        this.score = score
         this.images = images
 
         this.offset = 25
-        this.rib_length = 10
 
         this.collide_distance = 1200
         this.bounce_offset = .15
@@ -25,21 +26,6 @@ export class Ship{
             vertical_max: 6,
             horizontal_max: 6,
             step: .006
-        }
-
-        this.box_struct = {
-            top_left: {x: this.position.x, y: this.position.y},
-            top_right: {x: this.position.x + this.offset, y: this.position.y},
-            bottom_right: {x: this.position.x + this.offset, y: this.position.y + this.offset},
-            bottom_left: {x: this.position.x, y: this.position.y + this.offset},
-        }
-
-        this.box_colors = {
-            bottom: "rgb(100,100,100)",
-            left: "rgb(80,80,80)",
-            top: "rgb(150,150,150)",
-            right: "rgb(200,200,200)",
-            face: "rgb(255,255,255)"
         }
 
         this.current_delta_time = 0

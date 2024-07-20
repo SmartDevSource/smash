@@ -10,14 +10,9 @@ const ctx = canvas.getContext("2d")
 canvas.width = 1280
 canvas.height = 720
 
-// canvas.width = canvas.clientWidth * window.devicePixelRatio;
-// canvas.height = canvas.clientHeight * window.devicePixelRatio;
-
 const screen = {w: canvas.width, h: canvas.height}
 
 let title_ost = null
-
-// const maps_structs = await loadJson("../data/structs/maps.json")
 
 const keys = {'left': {isPressed: false},
               'right': {isPressed: false},
@@ -62,6 +57,7 @@ const initSocketListeners = () => {
         struct.game_engine = new GameEngine(
             ctx,
             screen,
+            struct.socket,
             isMobile(),
             init_data,
             struct.images,

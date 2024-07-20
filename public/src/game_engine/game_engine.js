@@ -2,9 +2,10 @@ import { Ship } from "./ship.js"
 import { Joystick } from "./joystick.js"
 
 export class GameEngine{
-    constructor(ctx, screen, is_mobile, init_data, images, audios){
+    constructor(ctx, screen, socket, is_mobile, init_data, images, audios){
         this.ctx = ctx
         this.screen = screen
+        this.socket = socket
         this.images = images
         this.audios = audios
         this.force_divider = 20
@@ -12,13 +13,13 @@ export class GameEngine{
         this.joystick = new Joystick(this.ctx, this.screen, is_mobile)
 
         this.id = init_data.id
-        this.username = init_data.username
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
 
         this.main_ship = new Ship({
-            ctx: this.ctx, 
-            screen: this.screen, 
+            ctx: this.ctx,
+            screen: this.screen,
+            username: init_data.username,
             position: init_data.map_data.spawn,
             angle: init_data.angle,
             color: init_data.color,
@@ -27,16 +28,45 @@ export class GameEngine{
 
         this.ships = {}
         this.initPlayers(init_data.players_data)
+        this.initSocketListeners()
 
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
     }
 
+    initSocketListeners(){
+        this.socket.on("new_player", player_data => {
+            this.ships[player_data.id] = new Ship({
+                ctx: this.ctx,
+                screen: this.screen,
+                username: player_data.username,
+                position: player_data.position,
+                angle: player_data.angle,
+                color: player_data.color,
+                score: player_data.score,
+                images: this.images
+            })
+        })
+        this.socket.on("del_player", id => {
+            console.log(this.ships[id].username, "s'est déconnecté.")
+            delete this.ships[id]
+        })
+    }
+
     initPlayers(players_data){
         for (const id in players_data){
-            console.log("id :", id)
-            console.table(players_data[id])
+            this.ships[id] = new Ship({
+                ctx: this.ctx,
+                screen: this.screen,
+                username: players_data[id].username,
+                position: players_data[id].position,
+                angle: players_data[id].angle,
+                color: players_data[id].color,
+                score: players_data[id].score,
+                images: this.images
+            })
         }
+        console.log(this.ships)
     }
 
     update(keys){
@@ -55,6 +85,8 @@ export class GameEngine{
 
             const abs_horizontal = Math.abs(horizontal_force)
             const abs_vertical = Math.abs(vertical_force)
+
+            this.socket.emit("joy_coords", {x: abs_horizontal, y: abs_vertical})
 
             this.main_ship.velocity.horizontal_max = abs_horizontal
             this.main_ship.velocity.vertical_max = abs_vertical
@@ -75,18 +107,23 @@ export class GameEngine{
                     this.main_ship.directions.vertical = 'd'
                 break
             }
-        }
-        // HORIZONTAL //
-        if (keys.left.isPressed){
-            this.main_ship.directions.horizontal = 'l'
-        } else if (keys.right.isPressed){
-            this.main_ship.directions.horizontal = 'r'
-        }
-        // VERTICAL //
-        if (keys.up.isPressed){
-            this.main_ship.directions.vertical = 'u'
-        } else if (keys.down.isPressed){
-            this.main_ship.directions.vertical = 'd'
+        } else {
+            // HORIZONTAL //
+            if (keys.left.isPressed){
+                this.socket.emit("key", "l")
+                this.main_ship.directions.horizontal = 'l'
+            } else if (keys.right.isPressed){
+                this.socket.emit("key", "r")
+                this.main_ship.directions.horizontal = 'r'
+            }
+            // VERTICAL //
+            if (keys.up.isPressed){
+                this.socket.emit("key", "u")
+                this.main_ship.directions.vertical = 'u'
+            } else if (keys.down.isPressed){
+                this.socket.emit("key", "d")
+                this.main_ship.directions.vertical = 'd'
+            }
         }
     }
 
