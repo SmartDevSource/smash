@@ -22,8 +22,7 @@ class Room{
         this.last_delta_time = Date.now()
         for (const id in this.players){
             const player = this.players[id]
-            const opponents = this.getOpponents({excepted_id: id})
-            player.update(this.current_delta_time, opponents)
+            player.update(this.current_delta_time, this.players)
             if (!player.isStopped()){
                 this.toMainThread({
                     ids: this.getIds([]),
@@ -34,12 +33,6 @@ class Room{
                 })
             }
         }
-    }
-
-    getOpponents({excepted_id}){
-        return Object.values(this.players)
-                .filter(e=>e.id != excepted_id)
-                .map(e=> e.getPlayerData())
     }
 
     showInfos(){

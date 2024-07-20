@@ -1,3 +1,5 @@
+const { getDistance } = require('./server_misc_functions.js')
+
 class Player{
     constructor({id, username, color, position, angle}){
         this.id = id
@@ -7,7 +9,6 @@ class Player{
         this.angle = angle
         this.score = 0
 
-        this.collide_distance = 1200
         this.bounce_offset = .15
         this.mass = 1
 
@@ -21,6 +22,14 @@ class Player{
             horizontal_max: 6,
             step: .006
         }
+
+        this.collided_by = null
+        this.collide_time_multiplier = 400
+        this.collide_distance = 1300
+        this.collide_repulsion = 900
+        this.can_collide = true
+
+        this.rotation_offset = .1
 
         this.current_delta_time = Date.now()
     }
@@ -36,14 +45,49 @@ class Player{
         }
     }
 
-    update(current_delta_time, opponents){
+    update(current_delta_time, players){
         this.current_delta_time = current_delta_time
         this.move()
-        this.handleColliding(opponents)
+        this.handleColliding(players)
     }
 
-    handleColliding(opponents){
-        
+    handleColliding(players){
+        for (const id in players){
+            if (id == this.id) continue
+            const ship = players[id]
+            const distance = getDistance(ship.position, this.position)
+            if (distance > this.collide_repulsion && distance <= this.collide_distance && this.can_collide){
+                switch(true){
+                    case ship.velocity.horizontal > 0:
+                        ship.velocity.horizontal = -ship.velocity.horizontal - this.bounce_offset
+                        this.velocity.horizontal -= ship.velocity.horizontal / this.mass
+                    break
+                    case ship.velocity.horizontal < 0:
+                        ship.velocity.horizontal = Math.abs(ship.velocity.horizontal) + this.bounce_offset
+                        this.velocity.horizontal -= ship.velocity.horizontal / this.mass
+                    break
+                }
+                switch(true){
+                    case ship.velocity.vertical > 0:
+                        ship.velocity.vertical = -ship.velocity.vertical - this.bounce_offset
+                        this.velocity.vertical -= ship.velocity.vertical / this.mass
+                    break
+                    case ship.velocity.vertical < 0:
+                        ship.velocity.vertical = Math.abs(ship.velocity.vertical) + this.bounce_offset
+                        this.velocity.vertical -= ship.velocity.vertical / this.mass
+                    break
+                }
+                this.collided_by = ship.id
+                const force_impact = Math.abs((ship.velocity.horizontal + ship.velocity.vertical) / 2)
+                setTimeout(() => {
+                    this.collided_by = null
+                }, Math.floor(this.collide_time_multiplier * force_impact))
+
+            } else if (distance <= this.collide_repulsion){
+                this.can_collide = false
+                setTimeout(() => this.can_collide = true, 300)
+            }
+        }
     }
 
     handleJoystickDirection(coords){
@@ -70,8 +114,26 @@ class Player{
 
     handleKeyDirection(key){
         switch(key){
-            case 'l': case 'r': this.directions.horizontal = key; break
-            case 'u': case 'd': this.directions.vertical = key; break
+            case 'l':
+                this.directions.horizontal = key
+                if (this.velocity.vertical == 0)
+                    this.velocity.vertical = -this.rotation_offset
+            break
+            case 'r':
+                this.directions.horizontal = key
+                if (this.velocity.vertical == 0)
+                    this.velocity.vertical = this.rotation_offset
+            break
+            case 'u':
+                this.directions.vertical = key
+                if (this.velocity.horizontal == 0)
+                    this.velocity.horizontal = -this.rotation_offset
+            break
+            case 'd':
+                this.directions.vertical = key
+                if (this.velocity.horizontal == 0)
+                    this.velocity.horizontal = this.rotation_offset
+            break
         }
     }
 
@@ -141,8 +203,9 @@ class Player{
         this.position.x += this.velocity.horizontal
         this.position.y += this.velocity.vertical
 
-        if (this.velocity.horizontal != 0 && this.velocity.vertical != 0)
-            this.angle = Math.atan2(-this.velocity.vertical, -this.velocity.horizontal)
+        if (this.velocity.horizontal !== 0 && this.velocity.vertical !== 0)
+            if (!this.collided_by)
+                this.angle = Math.atan2(-this.velocity.vertical, -this.velocity.horizontal)
 
         this.directions.horizontal = ''
         this.directions.vertical = ''
