@@ -36,9 +36,14 @@ class Player{
         }
     }
 
-    update(current_delta_time){
+    update(current_delta_time, opponents){
         this.current_delta_time = current_delta_time
         this.move()
+        this.handleColliding(opponents)
+    }
+
+    handleColliding(opponents){
+        
     }
 
     handleJoystickDirection(coords){
