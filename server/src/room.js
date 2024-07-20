@@ -8,10 +8,21 @@ class Room{
     constructor(map_data){
         this.map_data = map_data
         this.players = {}
+        this.interval = setInterval(this.update.bind(this), 1000 / 60)
     }
 
     toMainThread(data){
         parentPort.postMessage(data)
+    }
+
+    update(){
+        for (const id in this.players){
+            const player = this.players[id]
+            player.update()
+            if (!player.isStopped()){
+                
+            }
+        }
     }
 
     showInfos(){
@@ -64,7 +75,11 @@ class Room{
     }
 
     handleJoystickCoords({id, coords}){
+        this.players[id].handleJoystickDirection(coords)
+    }
 
+    handleKeyPress({id, key}){
+        this.players[id].handleKeyDirection(key)
     }
 
     getIds({excepted=[]}){
@@ -99,6 +114,12 @@ parentPort.on('message', data => {
             room.handleJoystickCoords({
                 id: data.id,
                 coords: data.coords
+            })
+        break
+        case "key":
+            room.handleKeyPress({
+                id: data.id,
+                key: data.key
             })
         break
     }

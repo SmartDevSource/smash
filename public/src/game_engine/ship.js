@@ -159,13 +159,6 @@ export class Ship {
         if (this.velocity.horizontal != 0 && this.velocity.vertical != 0)
             this.angle = Math.atan2(-this.velocity.vertical, -this.velocity.horizontal)
 
-        this.box_struct = {
-            top_left: {x: this.position.x, y: this.position.y},
-            top_right: {x: this.position.x + this.offset, y: this.position.y},
-            bottom_right: {x: this.position.x + this.offset , y: this.position.y + this.offset},
-            bottom_left: {x: this.position.x, y: this.position.y + this.offset},
-        }
-
         this.directions.horizontal = ''
         this.directions.vertical = ''
         this.velocity.horizontal_max = this.velocity.horizontal_max_default

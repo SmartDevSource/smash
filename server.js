@@ -140,15 +140,21 @@ io.on('connection', socket => {
         }
         showInfos()
     })
-
     socket.on("joy_coords", coords => {
         const server_map = players_ids[socket.id]
         maps[server_map].postMessage({
-            header: "joy_coords", 
+            header: "joy_coords",
             id: socket.id,
             coords: coords
         })
-        showInfos()
+    })
+    socket.on("key", key => {
+        const server_map = players_ids[socket.id]
+        maps[server_map].postMessage({
+            header: "key",
+            id: socket.id,
+            key: key
+        })
     })
 })
 
