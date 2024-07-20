@@ -53,6 +53,13 @@ const setRoomListeners = room => {
             case "del_player":
                 sendToPlayers(data.ids, "del_player", data.id)
             break
+            case "coords":
+                sendToPlayers(data.ids, "coords", {
+                    id: data.id,
+                    position: data.position,
+                    angle: data.angle
+                })
+            break
         }
     })
 }

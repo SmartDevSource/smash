@@ -12,13 +12,13 @@ export class GameEngine{
 
         this.joystick = new Joystick(this.ctx, this.screen, is_mobile)
 
-        this.id = init_data.id
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
 
         this.main_ship = new Ship({
             ctx: this.ctx,
             screen: this.screen,
+            id: init_data.id,
             username: init_data.username,
             position: init_data.map_data.spawn,
             angle: init_data.angle,
@@ -51,6 +51,21 @@ export class GameEngine{
             console.log(this.ships[id].username, "s'est déconnecté.")
             delete this.ships[id]
         })
+        this.socket.on("coords", data => {
+            if (data.id == this.main_ship.id){
+                this.main_ship.setCoords({
+                    position: data.position,
+                    angle: data.angle
+                })
+            } else {
+                if (this.ships[data.id]){
+                    this.ships[data.id].setCoords({
+                        position: data.position,
+                        angle: data.angle
+                    })
+                }
+            }
+        })
     }
 
     initPlayers(players_data){
@@ -66,7 +81,6 @@ export class GameEngine{
                 images: this.images
             })
         }
-        console.log(this.ships)
     }
 
     update(keys){
@@ -82,47 +96,19 @@ export class GameEngine{
         if (this.joystick.params.is_picked){
             const horizontal_force = (this.joystick.position.x - this.joystick.initial_position.x) / this.force_divider
             const vertical_force = (this.joystick.position.y - this.joystick.initial_position.y) / this.force_divider
-
-            const abs_horizontal = Math.abs(horizontal_force)
-            const abs_vertical = Math.abs(vertical_force)
-
-            this.socket.emit("joy_coords", {x: abs_horizontal, y: abs_vertical})
-
-            this.main_ship.velocity.horizontal_max = abs_horizontal
-            this.main_ship.velocity.vertical_max = abs_vertical
-            
-            switch(true){
-                case horizontal_force < 0:
-                    this.main_ship.directions.horizontal = 'l'
-                break
-                case horizontal_force > 0:
-                    this.main_ship.directions.horizontal = 'r'
-                break
-            }
-            switch(true){
-                case vertical_force < 0:
-                    this.main_ship.directions.vertical = 'u'
-                break
-                case vertical_force > 0:
-                    this.main_ship.directions.vertical = 'd'
-                break
-            }
+            this.socket.emit("joy_coords", {x: horizontal_force, y: vertical_force})
         } else {
             // HORIZONTAL //
             if (keys.left.isPressed){
                 this.socket.emit("key", "l")
-                this.main_ship.directions.horizontal = 'l'
             } else if (keys.right.isPressed){
                 this.socket.emit("key", "r")
-                this.main_ship.directions.horizontal = 'r'
             }
             // VERTICAL //
             if (keys.up.isPressed){
                 this.socket.emit("key", "u")
-                this.main_ship.directions.vertical = 'u'
             } else if (keys.down.isPressed){
                 this.socket.emit("key", "d")
-                this.main_ship.directions.vertical = 'd'
             }
         }
     }

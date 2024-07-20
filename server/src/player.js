@@ -22,7 +22,7 @@ class Player{
             step: .006
         }
 
-        this.current_delta_time = 1
+        this.current_delta_time = Date.now()
     }
 
     getPlayerData(){
@@ -36,11 +36,15 @@ class Player{
         }
     }
 
-    update(){
+    update(current_delta_time){
+        this.current_delta_time = current_delta_time
         this.move()
     }
 
     handleJoystickDirection(coords){
+        this.velocity.horizontal_max = Math.abs(coords.x)
+        this.velocity.vertical_max = Math.abs(coords.y)
+
         switch(true){
             case coords.x < 0:
                 this.directions.horizontal = 'l'
@@ -50,7 +54,7 @@ class Player{
             break
         }
         switch(true){
-            case  coords.y < 0:
+            case coords.y < 0:
                 this.directions.vertical = 'u'
             break
             case coords.y > 0:

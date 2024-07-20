@@ -1,10 +1,11 @@
 import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
 
 export class Ship {
-    constructor({ctx, screen, username, position, angle, color, score, images}){
+    constructor({ctx, screen, id, username, position, angle, color, score, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
+        this.id = id
         this.username = username
         this.position = position
         this.angle = angle
@@ -34,8 +35,12 @@ export class Ship {
 
     update(current_delta_time){
         this.current_delta_time = current_delta_time
-        this.move()
         this.draw()
+    }
+
+    setCoords({position, angle}){
+        this.position = position
+        this.angle = angle
     }
 
     draw(){

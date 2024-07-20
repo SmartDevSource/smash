@@ -8,6 +8,8 @@ class Room{
     constructor(map_data){
         this.map_data = map_data
         this.players = {}
+        this.last_delta_time = Date.now()
+        this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
     }
 
@@ -16,11 +18,19 @@ class Room{
     }
 
     update(){
+        this.current_delta_time = (Date.now() - this.last_delta_time)
+        this.last_delta_time = Date.now()
         for (const id in this.players){
             const player = this.players[id]
-            player.update()
+            player.update(this.current_delta_time)
             if (!player.isStopped()){
-                
+                this.toMainThread({
+                    ids: this.getIds([]),
+                    header: "coords",
+                    id: id,
+                    position: player.position,
+                    angle: player.angle
+                })
             }
         }
     }
