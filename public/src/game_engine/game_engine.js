@@ -7,8 +7,6 @@ export class GameEngine{
         this.screen = screen
         this.images = images
         this.audios = audios
-        this.position = {x: 100, y: 100}
-        this.angle = 0
         this.force_divider = 20
 
         this.joystick = new Joystick(this.ctx, this.screen, is_mobile)
@@ -18,16 +16,27 @@ export class GameEngine{
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
 
-        this.main_ship = new Ship(this.ctx, this.screen, this.position, this.images)
-        this.ships = [
-            new Ship(this.ctx, this.screen, {x: 200, y: 300}, this.images),
-            new Ship(this.ctx, this.screen, {x: 500, y: 500}, this.images),
-            new Ship(this.ctx, this.screen, {x: 300, y: 100}, this.images),
-            new Ship(this.ctx, this.screen, {x: 900, y: 400}, this.images),
-        ]
+        this.main_ship = new Ship({
+            ctx: this.ctx, 
+            screen: this.screen, 
+            position: init_data.map_data.spawn,
+            angle: init_data.angle,
+            color: init_data.color,
+            images: this.images
+        })
+
+        this.ships = {}
+        this.initPlayers(init_data.players_data)
 
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
+    }
+
+    initPlayers(players_data){
+        for (const id in players_data){
+            console.log("id :", id)
+            console.table(players_data[id])
+        }
     }
 
     update(keys){
@@ -95,9 +104,9 @@ export class GameEngine{
             this.screen.h
         )
         // OTHERS SHIPS //
-        for (const ship of this.ships){
-            ship.update(this.current_delta_time)
-            ship.handleColliding(this.main_ship)
+        for (const id in this.ships){
+            this.ships[id].update(this.current_delta_time)
+            this.ships[id].handleColliding(this.main_ship)
         }
     }
 }

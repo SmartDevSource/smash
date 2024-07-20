@@ -18,12 +18,11 @@ const ShortUniqueId = require('short-unique-id')
 const io = socket_io(server, {cors: { origin: '*', methods: ['GET']}})
 
 const port = process.env.PORT
-const sockets = {}
 
 ////////////////////////// SETTING UP FUNCTIONS /////////////////////////////////
 const initRooms = () => {
     const maps_data = JSON.parse(fs.readFileSync("./server/data/maps_data.json", {encoding: "utf-8"}))
-    
+
     for (const key in maps){
         maps[key].postMessage({
             header: "instantiate",
@@ -42,6 +41,9 @@ const setRoomListeners = room => {
             case "init_game":
                 sendToPlayers(data.ids, "init_game", {
                     map_data: data.map_data,
+                    players_data: data.players_data,
+                    color: data.color,
+                    angle: data.angle,
                     id: data.id
                 })
             break
@@ -49,8 +51,9 @@ const setRoomListeners = room => {
     })
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////// SETTING UP VARIABLES & OBJECTS /////////////////////////////////
+const sockets = {}
+const players_ids = {}
 const max_room_players = 8
 
 const maps = {
@@ -58,21 +61,14 @@ const maps = {
     second: new Worker("./server/src/room.js")
 }
 
-const players_ids = {}
-
 initRooms()
 
 app.use(express.static(path.join(__dirname, 'public')))
+server.listen(port, () => console.log(`Serveur lancé sur le port ${port}`))
 io.setMaxListeners(0)
 
-server.listen(port, () => {
-    console.log(`Serveur lancé sur le port ${port}`)
-})
-
 /////////////////////////////////// HTTP REQUESTS ///////////////////////////////////
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'))
-})
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
 
 /////////////////////////////////// FUNCTIONS ///////////////////////////////////
 const showInfos = () => {
@@ -101,14 +97,12 @@ const sendPlayersCount = sockets => {
 }
 
 /////////////////////////////////// NETWORKING ///////////////////////////////////
-/////////////////////////////////// SOCKETS ///////////////////////////////////
 io.on('connection', socket => {
     console.log(`Connexion entrante ${socket.id}`)
     sockets[socket.id] = socket
+    showInfos()
 
-    socket.on("get_players_count", () => {
-        sendPlayersCount({[socket.id]: socket})
-    })
+    socket.on("get_players_count", () => sendPlayersCount({[socket.id]: socket}))
 
     socket.on("join_server", data => {
         const players_in_room = Object.values(players_ids).filter(e=>e==data.server).length
@@ -136,13 +130,12 @@ io.on('connection', socket => {
             delete sockets[socket.id]
             sendPlayersCount(sockets)
         } else if (sockets[socket.id]){
-            delete socket[sockets.id]
+            delete sockets[socket.id]
         }
         showInfos()
     })
 })
 
-/////////////////////////////////// HANDLE SERVER DISCONNECTION / CRASH ///////////////////////////////////
 process.on("SIGINT", () => {
     server.close(()=>{
         console.log("Serveur déconnecté.")

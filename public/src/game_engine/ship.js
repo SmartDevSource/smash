@@ -1,12 +1,13 @@
 import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
 
 export class Ship{
-    constructor(ctx, screen, position, images){
+    constructor({ctx, screen, position, angle, color, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
         this.position = position
-        this.angle = 0
+        this.angle = angle
+        this.color = color
         this.images = images
 
         this.offset = 25
@@ -54,11 +55,11 @@ export class Ship{
     draw(){
         // GLOW //
         this.ctx.drawImage(
-            this.images.yellow_glow,
+            this.images[this.color],
             0,
             0,
-            this.images.yellow_glow.width,
-            this.images.yellow_glow.height,
+            this.images[this.color].width,
+            this.images[this.color].height,
             this.position.x - this.offset / 2,
             this.position.y - this.offset / 2,
             this.offset * 3,

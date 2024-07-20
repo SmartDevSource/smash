@@ -1,12 +1,14 @@
 {
     "first":{
         "name": "first",
+        "spawn": {"x": 600, "y": 330},
         "death_zones": [
             {"x": 300, "y": 300}
         ]
     },
     "second":{
         "name": "second",
+        "spawn": {"x": 600, "y": 330},
         "death_zones": [
             {"x": 500, "y": 500}
         ]

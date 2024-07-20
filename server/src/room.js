@@ -21,26 +21,33 @@ class Room{
     }
 
     addPlayer({id, username, color}){
-        if (!this.players[id]){
-            const position = {
-                x: rndBetween(20, 70),
-                y: rndBetween(20, 70)
-            }
-            this.players[id] = new Player(id, username, color, position)
-        }
+        const players_data = {}
+        for (const id in this.players)
+            players_data[id] = this.players[id].getPlayerData()
+
+        if (!this.players[id])
+            this.players[id] = new Player({
+                id: id, 
+                username: username, 
+                color: color, 
+                position: {...this.map_data.spawn}, 
+                angle: 0
+            })
+
         this.toMainThread({
             ids: [id],
             header: "init_game",
             map_data: this.map_data,
-            my: id
+            players_data: players_data,
+            angle: 0,
+            color: color,
+            id: id
         })
-        // this.showInfos()
     }
 
     removePlayer({id}){
-        if (this.players[id]){
+        if (this.players[id])
             delete this.players[id]
-        }
         this.showInfos()
     }
 }
