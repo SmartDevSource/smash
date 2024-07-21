@@ -1,5 +1,6 @@
 import { Ship } from "./ship.js"
 import { Joystick } from "./joystick.js"
+import { getDistance, getPythagoreanDistance } from "../misc_functions.js"
 
 export class GameEngine{
     constructor(ctx, screen, socket, is_mobile, init_data, images, audios){
@@ -33,6 +34,14 @@ export class GameEngine{
         this.ships = {}
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
+
+        this.colliders = [
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        ]
     }
 
     initSocketListeners(){
@@ -71,8 +80,6 @@ export class GameEngine{
     }
 
     initPlayers(players_data){
-        console.log(players_data)
-
         for (const id in players_data){
             this.ships[id] = new Ship({
                 ctx: this.ctx,
@@ -136,5 +143,48 @@ export class GameEngine{
         // MAIN SHIP //
         this.main_ship.drawShip()
         this.main_ship.drawInfos()
+        // COLLIDERS //
+        this.drawColliders()
+    }
+
+    drawColliders(){
+        for(let y = 0 ; y < this.colliders.length ; y++){
+            for(let x = 0 ; x < this.colliders[y].length ; x++){
+                if (this.colliders[y][x] == 1){
+                    this.ctx.save()
+                    this.ctx.globalAlpha = .5
+                    this.ctx.fillStyle = "red"
+                    this.ctx.fillRect(x*50, y*50, 50, 50)
+                    this.ctx.restore()
+                }
+            }
+        }
+
+        const x1 = 400, y1 = 400
+        const x2 = 600, y2 =  200
+
+        this.ctx.save()
+        this.ctx.beginPath()
+        this.ctx.strokeStyle = "red"
+        this.ctx.lineWidth = 4
+        this.ctx.moveTo(x1, y1)
+        this.ctx.lineTo(x2, y2)
+        this.ctx.stroke()
+        this.ctx.closePath()
+        this.ctx.restore()
+
+        // this.ctx.save()
+        // this.ctx.beginPath()
+        // this.ctx.strokeStyle = "red"
+        // this.ctx.lineWidth = 4
+        // this.ctx.moveTo(900, 300)
+        // this.ctx.lineTo(700, 600)
+        // this.ctx.stroke()
+        // this.ctx.closePath()
+        // this.ctx.restore()
+
+        const distance_a_b = getPythagoreanDistance({x: x1, y: y1}, {x: x2, y: y2})
+        const distance_a = getPythagoreanDistance(this.main_ship.position, {x: x1, y: y1})
+        const distance_b = getPythagoreanDistance(this.main_ship.position, {x: x2, y: y2})
     }
 }

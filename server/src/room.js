@@ -63,7 +63,7 @@ class Room{
             map_data: this.map_data,
             players_data: players_data,
             username: username,
-            score: 8,
+            score: 0,
             angle: 0,
             color: color,
             id: id
