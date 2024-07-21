@@ -25,8 +25,8 @@ class Player{
 
         this.collided_by = null
         this.collide_time_multiplier = 400
-        this.collide_distance = 1300
-        this.collide_repulsion = 900
+        this.collide_distance = 1400
+        this.collide_repulsion = 1000
         this.can_collide = true
 
         this.rotation_offset = .1
@@ -91,8 +91,8 @@ class Player{
     }
 
     handleJoystickDirection(coords){
-        this.velocity.horizontal_max = Math.abs(coords.x)
-        this.velocity.vertical_max = Math.abs(coords.y)
+        this.velocity.horizontal_max = Math.abs(coords.x) + 1
+        this.velocity.vertical_max = Math.abs(coords.y) + 1
 
         switch(true){
             case coords.x < 0:

@@ -11,6 +11,7 @@ class Room{
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
+        this.max_server_score = 10
     }
 
     toMainThread(data){
@@ -58,8 +59,11 @@ class Room{
         this.toMainThread({
             ids: [id],
             header: "init_game",
+            max_server_score: this.max_server_score,
             map_data: this.map_data,
             players_data: players_data,
+            username: username,
+            score: 8,
             angle: 0,
             color: color,
             id: id

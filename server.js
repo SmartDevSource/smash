@@ -40,9 +40,12 @@ const setRoomListeners = room => {
             break
             case "init_game":
                 sendToPlayers(data.ids, "init_game", {
+                    max_server_score: data.max_server_score,
                     map_data: data.map_data,
                     players_data: data.players_data,
+                    username: data.username,
                     color: data.color,
+                    score: data.score,
                     angle: data.angle,
                     id: data.id
                 })

@@ -1,7 +1,7 @@
 import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
 
 export class Ship {
-    constructor({ctx, screen, id, username, position, angle, color, score, images}){
+    constructor({ctx, screen, id, username, position, angle, color, score, max_server_score, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
@@ -13,29 +13,8 @@ export class Ship {
         this.score = score
         this.images = images
 
+        this.max_server_score = max_server_score
         this.offset = 25
-
-        this.collide_distance = 1200
-        this.bounce_offset = .15
-        this.mass = 1
-
-        this.velocity = {
-            vertical: 0,
-            horizontal: 0,
-            vertical_max_default: 6,
-            horizontal_max_default: 6,
-            vertical_max: 6,
-            horizontal_max: 6,
-            step: .006
-        }
-
-        this.current_delta_time = 0
-        this.directions = {horizontal: '', vertical: ''}
-    }
-
-    update(current_delta_time){
-        this.current_delta_time = current_delta_time
-        this.draw()
     }
 
     setCoords({position, angle}){
@@ -43,7 +22,54 @@ export class Ship {
         this.angle = angle
     }
 
-    draw(){
+    getScoreColor(){
+        switch(true){
+            case this.score >= 0 && this.score < 3: return "#FF474D"
+            case this.score >= 3 && this.score < 6: return "orange"
+            case this.score >= 6 && this.score < 8: return "yellow"
+            case this.score >= 8: return "lime"
+        }
+    }
+
+    drawInfos(){
+        // USERNAME //
+        this.ctx.save()
+        this.ctx.font = "30px quicksand"
+        this.ctx.strokeStyle = "black"
+        this.ctx.lineWidth = 4
+        this.ctx.strokeText(
+            this.username,
+            this.position.x - ((this.username.length - 3) * 6),
+            this.position.y - 10
+        )
+        this.ctx.fillStyle = "white"
+        this.ctx.fillText(
+            this.username,
+            this.position.x - ((this.username.length - 3) * 6),
+            this.position.y - 10
+        )
+        this.ctx.restore()
+
+        // SCORE //
+        this.ctx.save()
+        this.ctx.font = "20px quicksand"
+        this.ctx.strokeStyle = "black"
+        this.ctx.lineWidth = 3
+        this.ctx.strokeText(
+            `[${this.score}/${this.max_server_score}]`,
+            this.position.x - 5,
+            this.position.y + 80
+        )
+        this.ctx.fillStyle = this.getScoreColor()
+        this.ctx.fillText(
+            `[${this.score}/${this.max_server_score}]`,
+            this.position.x - 5,
+            this.position.y + 80
+        )
+        this.ctx.restore()
+    }
+
+    drawShip(){
         // GLOW //
         this.ctx.drawImage(
             this.images[this.color],
@@ -72,101 +98,5 @@ export class Ship {
             50
         )
         this.ctx.restore()
-    }
-
-    handleColliding(ship){
-        if (getDistance(ship.position, this.position) <= this.collide_distance){
-            switch(true){
-                case ship.velocity.horizontal > 0:
-                    ship.velocity.horizontal = -ship.velocity.horizontal - this.bounce_offset
-                    this.velocity.horizontal -= ship.velocity.horizontal / this.mass
-                break
-                case ship.velocity.horizontal < 0:
-                    ship.velocity.horizontal = Math.abs(ship.velocity.horizontal) + this.bounce_offset
-                    this.velocity.horizontal -= ship.velocity.horizontal / this.mass
-                break
-            }
-            switch(true){
-                case ship.velocity.vertical > 0:
-                    ship.velocity.vertical = -ship.velocity.vertical - this.bounce_offset
-                    this.velocity.vertical -= ship.velocity.vertical / this.mass
-                break
-                case ship.velocity.vertical < 0:
-                    ship.velocity.vertical = Math.abs(ship.velocity.vertical) + this.bounce_offset
-                    this.velocity.vertical -= ship.velocity.vertical / this.mass
-                break
-            }
-        }
-    }
-
-    move(){
-        switch(this.directions.horizontal){
-            case 'l':
-                if (this.velocity.horizontal > -this.velocity.horizontal_max)
-                    this.velocity.horizontal -= this.velocity.step * this.current_delta_time
-                if (this.velocity.horizontal < -this.velocity.horizontal_max)
-                    this.velocity.horizontal = -this.velocity.horizontal_max
-            break
-            case 'r':
-                if (this.velocity.horizontal < this.velocity.horizontal_max)
-                    this.velocity.horizontal += this.velocity.step * this.current_delta_time
-                if (this.velocity.horizontal > this.velocity.horizontal_max)
-                    this.velocity.horizontal = this.velocity.horizontal_max
-            break
-            default:
-                if (this.velocity.horizontal < 0){
-                    this.velocity.horizontal += this.velocity.step * this.current_delta_time
-                    if (this.velocity.horizontal > 0){
-                        this.velocity.horizontal = 0
-                    }
-                }
-                if (this.velocity.horizontal > 0){
-                    this.velocity.horizontal -= this.velocity.step * this.current_delta_time
-                    if (this.velocity.horizontal < 0){
-                        this.velocity.horizontal = 0
-                    }
-                }
-            break
-        }
-
-        switch(this.directions.vertical){
-            case 'u':
-                if (this.velocity.vertical > -this.velocity.vertical_max)
-                    this.velocity.vertical -= this.velocity.step * this.current_delta_time
-                if (this.velocity.vertical < -this.velocity.vertical_max)
-                    this.velocity.vertical = -this.velocity.vertical_max
-            break
-            case 'd':
-                if (this.velocity.vertical < this.velocity.vertical_max)
-                    this.velocity.vertical += this.velocity.step * this.current_delta_time
-                if (this.velocity.vertical > this.velocity.vertical_max)
-                    this.velocity.vertical = this.velocity.vertical_max
-            break
-            default:
-                if (this.velocity.vertical < 0){
-                    this.velocity.vertical += this.velocity.step * this.current_delta_time
-                    if (this.velocity.vertical > 0){
-                        this.velocity.vertical = 0
-                    }
-                }
-                if (this.velocity.vertical > 0){
-                    this.velocity.vertical -= this.velocity.step * this.current_delta_time
-                    if (this.velocity.vertical < 0){
-                        this.velocity.vertical = 0
-                    }
-                }
-            break
-        }
-
-        this.position.x += this.velocity.horizontal
-        this.position.y += this.velocity.vertical
-
-        if (this.velocity.horizontal != 0 && this.velocity.vertical != 0)
-            this.angle = Math.atan2(-this.velocity.vertical, -this.velocity.horizontal)
-
-        this.directions.horizontal = ''
-        this.directions.vertical = ''
-        this.velocity.horizontal_max = this.velocity.horizontal_max_default
-        this.velocity.vertical_max = this.velocity.vertical_max_default
     }
 }

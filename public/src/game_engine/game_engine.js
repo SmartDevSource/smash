@@ -15,23 +15,24 @@ export class GameEngine{
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
 
+        this.max_server_score = init_data.max_server_score
+
         this.main_ship = new Ship({
             ctx: this.ctx,
             screen: this.screen,
             id: init_data.id,
             username: init_data.username,
             position: init_data.map_data.spawn,
+            score: init_data.score,
             angle: init_data.angle,
             color: init_data.color,
+            max_server_score: this.max_server_score,
             images: this.images
         })
 
         this.ships = {}
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
-
-        this.last_delta_time = Date.now()
-        this.current_delta_time = 0
     }
 
     initSocketListeners(){
@@ -44,6 +45,7 @@ export class GameEngine{
                 angle: player_data.angle,
                 color: player_data.color,
                 score: player_data.score,
+                max_server_score: this.max_server_score,
                 images: this.images
             })
         })
@@ -69,6 +71,8 @@ export class GameEngine{
     }
 
     initPlayers(players_data){
+        console.log(players_data)
+
         for (const id in players_data){
             this.ships[id] = new Ship({
                 ctx: this.ctx,
@@ -78,17 +82,15 @@ export class GameEngine{
                 angle: players_data[id].angle,
                 color: players_data[id].color,
                 score: players_data[id].score,
+                max_server_score: this.max_server_score,
                 images: this.images
             })
         }
     }
 
     update(keys){
-        this.current_delta_time = (Date.now() - this.last_delta_time)
-        this.last_delta_time = Date.now()
         this.events(keys)
         this.draw()
-        this.main_ship.update(this.current_delta_time)
         this.joystick.update()
     }
     
@@ -114,7 +116,7 @@ export class GameEngine{
     }
 
     draw(){
-        // MAP//
+        // MAP BACKGROUND//
         this.ctx.drawImage(
             this.background_image,
             0,
@@ -127,9 +129,12 @@ export class GameEngine{
             this.screen.h
         )
         // OTHERS SHIPS //
-        for (const id in this.ships){
-            this.ships[id].update(this.current_delta_time)
-            this.ships[id].handleColliding(this.main_ship)
-        }
+        for (const id in this.ships)
+            this.ships[id].drawShip()
+        for (const id in this.ships)
+            this.ships[id].drawInfos()
+        // MAIN SHIP //
+        this.main_ship.drawShip()
+        this.main_ship.drawInfos()
     }
 }
