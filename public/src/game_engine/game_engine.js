@@ -160,8 +160,8 @@ export class GameEngine{
             }
         }
 
-        const x1 = 400, y1 = 400
-        const x2 = 600, y2 =  200
+        const x1 = 600, y1 = 200
+        const x2 = 800, y2 = 400
 
         this.ctx.save()
         this.ctx.beginPath()
@@ -183,8 +183,21 @@ export class GameEngine{
         // this.ctx.closePath()
         // this.ctx.restore()
 
-        const distance_a_b = getPythagoreanDistance({x: x1, y: y1}, {x: x2, y: y2})
-        const distance_a = getPythagoreanDistance(this.main_ship.position, {x: x1, y: y1})
-        const distance_b = getPythagoreanDistance(this.main_ship.position, {x: x2, y: y2})
+        if (this.main_ship.position.x >= x1 && this.main_ship.position.x <= x2){
+            const diff_x = x2 - this.main_ship.position.x
+            const point = y1 + ((diff_x - y2) / (x1 - y2)) * (y2 - y1)
+
+            this.ctx.save()
+            this.ctx.beginPath()
+            this.ctx.fillStyle = "lime"
+            this.ctx.fillRect(this.main_ship.position.x, y1 + Math.abs(point), 5, 5)
+
+            const point_vector = {x: this.main_ship.position.x, y: y1 + Math.abs(point)}
+
+            const distance = getPythagoreanDistance(point_vector, this.main_ship.position)
+            if (distance < 10) console.log("hit !")
+            this.ctx.restore()
+
+        }
     }
 }
