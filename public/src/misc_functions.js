@@ -79,15 +79,15 @@ export const getDistanceToLine = ({first_point, second_point, vector, offset}) =
     const y_max = Math.max(first_point.y, second_point.y)
 
     let distance = null,
-        point = {}
+        points = {}
 
     if (vector.x >= x_min && vector.x <= x_max){
-        const diff_x = x_max - vector.x
-        const scale = ((diff_x - x_min) / (x_max - x_min))
-        const y_prop = y_min + scale * (y_max - y_min)
-        point = {x: vector.x , y: y_prop + (y_max - y_min) }
-        distance = getPythagoreanDistance(vector, point)
+        const scale = ((vector.x - x_min) / (x_max - x_min))
+        const diff_y = second_point.y > first_point.y ? 0 : (y_max - y_min)
+        const y_prop = y_min + scale * (second_point.y - first_point.y) + diff_y
+        points = {x: vector.x , y: y_prop }
+        distance = getPythagoreanDistance(vector, points)
     }
 
-    return {distance: distance, point: point}
+    return {distance: distance, points: points}
 }

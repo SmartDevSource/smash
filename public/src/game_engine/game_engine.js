@@ -98,7 +98,6 @@ export class GameEngine{
     update(keys){
         this.events(keys)
         this.draw()
-        console.table(this.joystick.mouse.coords)
         this.joystick.update()
     }
     
@@ -212,6 +211,9 @@ export class GameEngine{
                 offset: this.main_ship.offset
             })
 
+            // console.table(this.joystick.mouse.coords)
+
+            console.log(line_coords.points)
             if (line_coords.distance){
                 if (line_coords.distance < 10){
                     console.log("Intersection !")
@@ -220,8 +222,8 @@ export class GameEngine{
                 this.ctx.beginPath()
                 this.ctx.fillStyle = "lime"
                 this.ctx.fillRect(
-                    line_coords.point.x,
-                    line_coords.point.y,
+                    line_coords.points.x,
+                    line_coords.points.y,
                     5,
                     5
                 )
