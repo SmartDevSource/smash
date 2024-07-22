@@ -77,9 +77,9 @@ const preload = async () => {
     await preloadRessources().then(res=>{
         struct.audios = res.audios
         struct.images = res.images
-        title_ost = struct.audios.title_ost
-        title_ost.loop = true
-        title_ost.volume = .8
+        // title_ost = struct.audios.title_ost
+        // title_ost.loop = true
+        // title_ost.volume = .8
         struct.ressources_preloaded = true
         connectToServer()
     })

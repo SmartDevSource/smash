@@ -1,16 +1,22 @@
-const { getDistance } = require('./server_misc_functions.js')
+const { getDistance, getDistanceToLine } = require('./server_misc_functions.js')
 
 class Player{
-    constructor({id, username, color, position, angle}){
+    constructor({id, username, color, map_data}){
         this.id = id
         this.username = username
         this.color = color
-        this.position = position
-        this.angle = angle
+        this.position = {...map_data.spawn}
+        this.spawn_position = {...map_data.spawn}
+        this.lines_colliders = [...map_data.colliders]
+        this.angle = 0
         this.score = 0
+
+        this.is_waiting_for_respawn = false
+        this.is_alive = true
 
         this.bounce_offset = .15
         this.mass = 1
+        this.offset = 25
 
         this.directions = {horizontal: '', vertical: ''}
         this.velocity = {
@@ -27,10 +33,10 @@ class Player{
         this.collide_time_multiplier = 400
         this.collide_distance = 1400
         this.collide_repulsion = 1000
+        this.line_distance_collider = 30
         this.can_collide = true
 
         this.rotation_offset = .1
-
         this.current_delta_time = Date.now()
     }
 
@@ -48,13 +54,39 @@ class Player{
     update(current_delta_time, players){
         this.current_delta_time = current_delta_time
         this.move()
-        this.handleColliding(players)
+        this.handlePlayersCollisions(players)
+        this.handleLinesCollisions()
     }
 
-    handleColliding(players){
+    respawn(){
+        this.position = {...this.spawn_position}
+        this.angle = 0
+        this.is_waiting_for_respawn = false
+        this.is_alive = true
+    }
+
+    handleLinesCollisions(){
+        if (this.is_alive){
+            for (const line of this.lines_colliders){
+                const line_coords = getDistanceToLine({
+                    first_point: line.points.a,
+                    second_point: line.points.b,
+                    vector: {
+                        x: this.position.x + (this.offset / 2),
+                        y: this.position.y + (this.offset / 2),
+                    }
+                })
+                if (line_coords.distance && line_coords.distance < this.line_distance_collider){
+                    this.is_alive = false
+                }
+            }
+        }
+    }
+
+    handlePlayersCollisions(players){
         for (const id in players){
-            if (id == this.id) continue
             const ship = players[id]
+            if (id == this.id || !ship.is_alive) continue
             const distance = getDistance(ship.position, this.position)
             if (distance > this.collide_repulsion && distance <= this.collide_distance && this.can_collide){
                 switch(true){
@@ -91,49 +123,53 @@ class Player{
     }
 
     handleJoystickDirection(coords){
-        this.velocity.horizontal_max = Math.abs(coords.x) + 1
-        this.velocity.vertical_max = Math.abs(coords.y) + 1
+        if (this.is_alive){
+            this.velocity.horizontal_max = Math.abs(coords.x) + 1
+            this.velocity.vertical_max = Math.abs(coords.y) + 1
 
-        switch(true){
-            case coords.x < 0:
-                this.directions.horizontal = 'l'
-            break
-            case coords.x > 0:
-                this.directions.horizontal = 'r'
-            break
-        }
-        switch(true){
-            case coords.y < 0:
-                this.directions.vertical = 'u'
-            break
-            case coords.y > 0:
-                this.directions.vertical = 'd'
-            break
+            switch(true){
+                case coords.x < 0:
+                    this.directions.horizontal = 'l'
+                break
+                case coords.x > 0:
+                    this.directions.horizontal = 'r'
+                break
+            }
+            switch(true){
+                case coords.y < 0:
+                    this.directions.vertical = 'u'
+                break
+                case coords.y > 0:
+                    this.directions.vertical = 'd'
+                break
+            }
         }
     }
 
     handleKeyDirection(key){
-        switch(key){
-            case 'l':
-                this.directions.horizontal = key
-                if (this.velocity.vertical == 0)
-                    this.velocity.vertical = -this.rotation_offset
-            break
-            case 'r':
-                this.directions.horizontal = key
-                if (this.velocity.vertical == 0)
-                    this.velocity.vertical = this.rotation_offset
-            break
-            case 'u':
-                this.directions.vertical = key
-                if (this.velocity.horizontal == 0)
-                    this.velocity.horizontal = -this.rotation_offset
-            break
-            case 'd':
-                this.directions.vertical = key
-                if (this.velocity.horizontal == 0)
-                    this.velocity.horizontal = this.rotation_offset
-            break
+        if (this.is_alive){
+            switch(key){
+                case 'l':
+                    this.directions.horizontal = key
+                    if (this.velocity.vertical == 0)
+                        this.velocity.vertical = -this.rotation_offset
+                break
+                case 'r':
+                    this.directions.horizontal = key
+                    if (this.velocity.vertical == 0)
+                        this.velocity.vertical = this.rotation_offset
+                break
+                case 'u':
+                    this.directions.vertical = key
+                    if (this.velocity.horizontal == 0)
+                        this.velocity.horizontal = -this.rotation_offset
+                break
+                case 'd':
+                    this.directions.vertical = key
+                    if (this.velocity.horizontal == 0)
+                        this.velocity.horizontal = this.rotation_offset
+                break
+            }
         }
     }
 

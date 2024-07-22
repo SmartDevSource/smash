@@ -35,13 +35,16 @@ export class GameEngine{
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
 
-        this.colliders = [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        ]
+        this.last_delta_time = Date.now()
+        this.current_delta_time = 0
+    }
+    
+    update(keys){
+        this.current_delta_time = (Date.now() - this.last_delta_time)
+        this.last_delta_time = Date.now()
+        this.events(keys)
+        this.draw()
+        this.joystick.update()
     }
 
     initSocketListeners(){
@@ -77,6 +80,31 @@ export class GameEngine{
                 }
             }
         })
+        this.socket.on("player_dead", data => {
+            if (data.id == this.socket.id){
+                this.main_ship.kill()
+            } else {
+                if (this.ships[data.id]){
+                    this.ships[data.id].kill()
+                }
+            }
+        })
+        this.socket.on("player_respawn", data => {
+            console.log(data)
+            if (data.id == this.socket.id){
+                this.main_ship.respawn({
+                    position: data.position,
+                    angle: data.angle
+                })
+            } else {
+                if (this.ships[data.id]){
+                    this.ships[data.id].respawn({
+                        position: data.position,
+                        angle: data.angle
+                    })
+                }
+            }
+        })
     }
 
     initPlayers(players_data){
@@ -93,12 +121,6 @@ export class GameEngine{
                 images: this.images
             })
         }
-    }
-
-    update(keys){
-        this.events(keys)
-        this.draw()
-        this.joystick.update()
     }
     
     events(keys){
@@ -137,11 +159,11 @@ export class GameEngine{
         )
         // OTHERS SHIPS //
         for (const id in this.ships)
-            this.ships[id].drawShip()
+            this.ships[id].drawShip(this.current_delta_time)
         for (const id in this.ships)
             this.ships[id].drawInfos()
         // MAIN SHIP //
-        this.main_ship.drawShip()
+        this.main_ship.drawShip(this.current_delta_time)
         this.main_ship.drawInfos()
         // COLLIDERS //
         this.drawColliders()

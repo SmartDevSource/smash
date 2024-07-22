@@ -6,4 +6,37 @@ const getDistance = (v1, v2) =>{
     return vx * vx + vy * vy
 }
 
-module.exports = { rndBetween, getDistance }
+const getPythagoreanDistance = (v1, v2) => {
+    return Math.sqrt(Math.pow(v2.x - v1.x,2) + Math.pow(v2.y - v1.y, 2))
+}
+
+const getDistanceToLine = ({first_point, second_point, vector}) => {
+    const x_min = Math.min(first_point.x, second_point.x)
+    const x_max = Math.max(first_point.x, second_point.x)
+    const y_min = Math.min(first_point.y, second_point.y)
+    const y_max = Math.max(first_point.y, second_point.y)
+
+    let distance = null,
+        points = {}
+
+    if (vector.x >= x_min && vector.x <= x_max){
+        const scale = ((vector.x - x_min) / (x_max - x_min))
+        const diff_y = second_point.y > first_point.y ? 0 : (y_max - y_min)
+        const y_prop = y_min + scale * (second_point.y - first_point.y) + diff_y
+        points = {x: vector.x, y: y_prop}
+        distance = getPythagoreanDistance(
+            {x: vector.x, y: (vector.y)}, 
+            points
+        )
+    } else if (x_min == x_max){
+        points = {x: x_min, y: vector.y}
+        distance = getPythagoreanDistance(
+            {x: vector.x, y: (vector.y)},
+            points
+        )
+    }
+
+    return {distance: distance, points: points}
+}
+
+module.exports = { rndBetween, getDistance, getPythagoreanDistance, getDistanceToLine }

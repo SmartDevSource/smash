@@ -63,6 +63,18 @@ const setRoomListeners = room => {
                     angle: data.angle
                 })
             break
+            case "player_dead":
+                sendToPlayers(data.ids, "player_dead", {
+                    id: data.id
+                })
+            break
+            case "player_respawn":
+                sendToPlayers(data.ids, "player_respawn", {
+                    id: data.id,
+                    position: data.position,
+                    angle: data.angle
+                })
+            break
         }
     })
 }

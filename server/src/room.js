@@ -12,6 +12,7 @@ class Room{
         this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
         this.max_server_score = 10
+        this.spawn_timeout = 2000
     }
 
     toMainThread(data){
@@ -24,7 +25,7 @@ class Room{
         for (const id in this.players){
             const player = this.players[id]
             player.update(this.current_delta_time, this.players)
-            if (!player.isStopped()){
+            if (!player.isStopped() && player.is_alive){
                 this.toMainThread({
                     ids: this.getIds([]),
                     header: "coords",
@@ -32,6 +33,24 @@ class Room{
                     position: player.position,
                     angle: player.angle
                 })
+            }
+            if (!player.is_alive && !player.is_waiting_for_respawn){
+                player.is_waiting_for_respawn = true
+                this.toMainThread({
+                    ids: this.getIds([]),
+                    header: "player_dead",
+                    id: id
+                })
+                setTimeout(() => {
+                    player.respawn()
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "player_respawn",
+                        id: id,
+                        position: player.position,
+                        angle: player.angle
+                    })
+                }, this.spawn_timeout)
             }
         }
     }
@@ -52,8 +71,7 @@ class Room{
                 id: id, 
                 username: username, 
                 color: color, 
-                position: {...this.map_data.spawn}, 
-                angle: 0
+                map_data: {...this.map_data}
             })
 
         this.toMainThread({

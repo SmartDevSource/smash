@@ -35,25 +35,7 @@ const preloadImages = async urls => {
 }
 
 const audios = [
-    './assets/audio/musics/asteroid.mp3',
-    './assets/audio/musics/corneria.mp3',
-    './assets/audio/musics/title_ost.mp3',
-    './assets/audio/sounds/1.mp3',
-    './assets/audio/sounds/2.mp3',
-    './assets/audio/sounds/3.mp3',
-    './assets/audio/sounds/burn.mp3',
-    './assets/audio/sounds/collision.mp3',
-    './assets/audio/sounds/defeat.mp3',
-    './assets/audio/sounds/electrify.mp3',
     './assets/audio/sounds/explosion.mp3',
-    './assets/audio/sounds/go.mp3',
-    './assets/audio/sounds/hit.mp3',
-    './assets/audio/sounds/me_captured.mp3',
-    './assets/audio/sounds/me_point.mp3',
-    './assets/audio/sounds/opponent_captured.mp3',
-    './assets/audio/sounds/opponent_point.mp3',
-    './assets/audio/sounds/select.mp3',
-    './assets/audio/sounds/victory.mp3'
 ]
 
 const images = [
@@ -65,8 +47,9 @@ const images = [
     './assets/gfx/sprites/yellow_glow.png',
     './assets/gfx/sprites/blue_glow.png',
     './assets/gfx/sprites/ship.png',
+    './assets/gfx/sprites/explosion.png',
     './assets/gfx/maps/first.png',
-    './assets/gfx/maps/second.png'
+    './assets/gfx/maps/second.png',
 ]
 
 export const preloadRessources = async () => {
