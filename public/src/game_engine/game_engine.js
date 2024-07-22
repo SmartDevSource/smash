@@ -98,6 +98,7 @@ export class GameEngine{
     update(keys){
         this.events(keys)
         this.draw()
+        console.table(this.joystick.mouse.coords)
         this.joystick.update()
     }
     
@@ -148,49 +149,54 @@ export class GameEngine{
     }
 
     drawColliders(){
-        // for(let y = 0 ; y < this.colliders.length ; y++){
-        //     for(let x = 0 ; x < this.colliders[y].length ; x++){
-        //         if (this.colliders[y][x] == 1){
-        //             this.ctx.save()
-        //             this.ctx.globalAlpha = .5
-        //             this.ctx.fillStyle = "red"
-        //             this.ctx.fillRect(x*50, y*50, 50, 50)
-        //             this.ctx.restore()
-        //         }
-        //     }
-        // }
+        const lines = [
+            {
+                points: {
+                    a: {x: 190, y: 233},
+                    b: {x: 360, y: 138}
+                }
+            },
+            {
+                points: {
+                    a: {x: 360, y: 138},
+                    b: {x: 554, y: 138}
+                }
+            }
+        ]
+        
+        for (const line of lines){
+            this.ctx.save()
+            this.ctx.beginPath()
+            this.ctx.strokeStyle = "red"
+            this.ctx.lineWidth = 4
+            this.ctx.moveTo(line.points.a.x, line.points.a.y)
+            this.ctx.lineTo(line.points.b.x, line.points.b.y)
+            this.ctx.stroke()
+            this.ctx.closePath()
+            this.ctx.restore()
 
-        const first_point = {x: 600, y: 200}
-        const second_point = {x: 800, y: 400}
+            const line_coords = getDistanceToLine({
+                first_point: line.points.a,
+                second_point: line.points.b,
+                vector: this.main_ship.position,
+                offset: this.main_ship.offset
+            })
 
-        // const line_coords = getDistanceToLine({
-        //     first_point: first_point,
-        //     second_point: second_point,
-        //     vector: this.main_ship.position,
-        //     offset: this.main_ship.offset
-        // })
-
-        // this.ctx.save()
-        // this.ctx.beginPath()
-        // this.ctx.strokeStyle = "red"
-        // this.ctx.lineWidth = 4
-        // this.ctx.moveTo(first_point.x, first_point.y)
-        // this.ctx.lineTo(second_point.x, second_point.y)
-        // this.ctx.stroke()
-        // this.ctx.closePath()
-        // this.ctx.restore()
-
-        // if (line_coords.distance){
-        //     this.ctx.save()
-        //     this.ctx.beginPath()
-        //     this.ctx.fillStyle = "lime"
-        //     this.ctx.fillRect(
-        //         line_coords.point.x,
-        //         line_coords.point.y,
-        //         5,
-        //         5
-        //     )
-        //     this.ctx.restore()
-        // }
+            if (line_coords.distance){
+                if (line_coords.distance < 10){
+                    console.log("Intersection !")
+                }
+                this.ctx.save()
+                this.ctx.beginPath()
+                this.ctx.fillStyle = "lime"
+                this.ctx.fillRect(
+                    line_coords.point.x,
+                    line_coords.point.y,
+                    5,
+                    5
+                )
+                this.ctx.restore()
+            }
+        }
     }
 }

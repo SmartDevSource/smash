@@ -41,7 +41,7 @@ export class Joystick{
             break
             case false:
                 onmousedown = e => this.getMouseCoords("mouse_down", e)
-                onmousemove= e => this.getMouseCoords("mouse_move", e)
+                onmousemove = e => this.getMouseCoords("mouse_move", e)
                 onmouseup = e => this.getMouseCoords("mouse_up", e)
             break
         }
