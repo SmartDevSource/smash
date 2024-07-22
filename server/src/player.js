@@ -1,4 +1,4 @@
-const { getDistance, getDistanceToLine } = require('./server_misc_functions.js')
+const { getDistance, getDistanceToLine, getAngleTo } = require('./server_misc_functions.js')
 
 class Player{
     constructor({id, username, color, map_data}){
@@ -30,6 +30,9 @@ class Player{
         }
 
         this.collided_by = null
+        this.force_impact = null
+        this.angle_impact = null
+        this.has_collided_by_opponent = false
         this.collide_time_multiplier = 400
         this.collide_distance = 1400
         this.collide_repulsion = 1000
@@ -88,6 +91,7 @@ class Player{
             const ship = players[id]
             if (id == this.id || !ship.is_alive) continue
             const distance = getDistance(ship.position, this.position)
+            this.angle_impact = getAngleTo(ship.position, this.position)
             if (distance > this.collide_repulsion && distance <= this.collide_distance && this.can_collide){
                 switch(true){
                     case ship.velocity.horizontal > 0:
@@ -110,11 +114,11 @@ class Player{
                     break
                 }
                 this.collided_by = ship.id
-                const force_impact = Math.abs((ship.velocity.horizontal + ship.velocity.vertical) / 2)
+                this.has_collided_by_opponent = true
+                this.force_impact = Math.abs((ship.velocity.horizontal + ship.velocity.vertical) / 2)
                 setTimeout(() => {
                     this.collided_by = null
-                }, Math.floor(this.collide_time_multiplier * force_impact))
-
+                }, Math.floor(this.collide_time_multiplier * this.force_impact))
             } else if (distance <= this.collide_repulsion){
                 this.can_collide = false
                 setTimeout(() => this.can_collide = true, 300)

@@ -10,6 +10,7 @@ export class GameEngine{
         this.images = images
         this.audios = audios
         this.force_divider = 20
+        this.id = this.socket.id
 
         this.joystick = new Joystick(this.ctx, this.screen, is_mobile)
 
@@ -18,20 +19,21 @@ export class GameEngine{
 
         this.max_server_score = init_data.max_server_score
 
-        this.main_ship = new Ship({
-            ctx: this.ctx,
-            screen: this.screen,
-            id: init_data.id,
-            username: init_data.username,
-            position: init_data.map_data.spawn,
-            score: init_data.score,
-            angle: init_data.angle,
-            color: init_data.color,
-            max_server_score: this.max_server_score,
-            images: this.images
-        })
-
-        this.ships = {}
+        this.ships = {
+            [init_data.id]: new Ship({
+                ctx: this.ctx,
+                screen: this.screen,
+                id: init_data.id,
+                username: init_data.username,
+                position: init_data.map_data.spawn,
+                score: init_data.score,
+                angle: init_data.angle,
+                color: init_data.color,
+                max_server_score: this.max_server_score,
+                audios: this.audios,
+                images: this.images
+            })
+        }
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
 
@@ -58,6 +60,7 @@ export class GameEngine{
                 color: player_data.color,
                 score: player_data.score,
                 max_server_score: this.max_server_score,
+                audios: this.audios,
                 images: this.images
             })
         })
@@ -66,43 +69,37 @@ export class GameEngine{
             delete this.ships[id]
         })
         this.socket.on("coords", data => {
-            if (data.id == this.main_ship.id){
-                this.main_ship.setCoords({
+            if (this.ships[data.id]){
+                this.ships[data.id].setCoords({
                     position: data.position,
                     angle: data.angle
                 })
-            } else {
-                if (this.ships[data.id]){
-                    this.ships[data.id].setCoords({
-                        position: data.position,
-                        angle: data.angle
-                    })
-                }
+            }
+        })
+        this.socket.on("collision", data => {
+            if (this.ships[data.id]){
+                this.ships[data.id].takeImpact({
+                    force_impact: data.force_impact,
+                    angle_impact: data.angle_impact
+                })
+            }
+        })
+        this.socket.on("score", data => {
+            if (this.ships[data.id]){
+                this.ships[data.id].score = data.score
             }
         })
         this.socket.on("player_dead", data => {
-            if (data.id == this.socket.id){
-                this.main_ship.kill()
-            } else {
-                if (this.ships[data.id]){
-                    this.ships[data.id].kill()
-                }
+            if (this.ships[data.id]){
+                this.ships[data.id].kill()
             }
         })
         this.socket.on("player_respawn", data => {
-            console.log(data)
-            if (data.id == this.socket.id){
-                this.main_ship.respawn({
+            if (this.ships[data.id]){
+                this.ships[data.id].respawn({
                     position: data.position,
                     angle: data.angle
                 })
-            } else {
-                if (this.ships[data.id]){
-                    this.ships[data.id].respawn({
-                        position: data.position,
-                        angle: data.angle
-                    })
-                }
             }
         })
     }
@@ -118,6 +115,7 @@ export class GameEngine{
                 color: players_data[id].color,
                 score: players_data[id].score,
                 max_server_score: this.max_server_score,
+                audios: this.audios,
                 images: this.images
             })
         }
@@ -162,9 +160,6 @@ export class GameEngine{
             this.ships[id].drawShip(this.current_delta_time)
         for (const id in this.ships)
             this.ships[id].drawInfos()
-        // MAIN SHIP //
-        this.main_ship.drawShip(this.current_delta_time)
-        this.main_ship.drawInfos()
         // COLLIDERS //
         this.drawColliders()
     }
@@ -284,8 +279,8 @@ export class GameEngine{
                 first_point: line.points.a,
                 second_point: line.points.b,
                 vector: {
-                    x: this.main_ship.position.x + (this.main_ship.offset / 2),
-                    y: this.main_ship.position.y + (this.main_ship.offset / 2),
+                    x: this.ships[this.id].position.x + (this.ships[this.id].offset / 2),
+                    y: this.ships[this.id].position.y + (this.ships[this.id].offset / 2),
                 }
             })
 

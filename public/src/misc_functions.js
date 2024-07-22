@@ -1,29 +1,3 @@
-export const loadImageData = async path => {
-    return new Promise((resolve, reject)=>{
-        const image = new Image()
-        image.src = path
-        image.onload = () => {
-            const fakeCanvas = document.createElement("canvas")
-            const fakeCtx = fakeCanvas.getContext("2d")
-            fakeCanvas.width = image.width
-            fakeCanvas.height = image.height
-            fakeCtx.drawImage(image, 0, 0)
-            const imageData = fakeCtx.getImageData(0, 0, image.width, image.height)
-            resolve(imageData)
-        }
-        image.onerror = (err) => reject(err)
-    })
-}
-
-export const loadImage = async path => {
-    return new Promise((resolve, reject)=>{
-        const image = new Image()
-        image.src = path
-        image.onload = () => resolve(image)
-        image.onerror = err => reject(err)
-    })
-}
-
 export const loadJson = async path => {
     return fetch(path)
         .then(res=> res.json())

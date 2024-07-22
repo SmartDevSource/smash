@@ -34,8 +34,31 @@ class Room{
                     angle: player.angle
                 })
             }
+            if (player.has_collided_by_opponent){
+                this.toMainThread({
+                    ids: this.getIds([]),
+                    header: "collision",
+                    by: player.collided_by,
+                    force_impact: player.force_impact,
+                    angle_impact: player.angle_impact,
+                    id: id
+                })
+                if (player.collided_by)
+                    this.players[player.collided_by].has_collided_by_opponent = false
+                player.has_collided_by_opponent = false
+            }
             if (!player.is_alive && !player.is_waiting_for_respawn){
                 player.is_waiting_for_respawn = true
+                const opponent_id = player.collided_by
+                if (opponent_id && this.players[opponent_id]){
+                    this.players[opponent_id].score++
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "score",
+                        score: this.players[opponent_id].score,
+                        id: opponent_id
+                    })
+                }
                 this.toMainThread({
                     ids: this.getIds([]),
                     header: "player_dead",

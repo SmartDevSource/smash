@@ -6,6 +6,10 @@ const getDistance = (v1, v2) =>{
     return vx * vx + vy * vy
 }
 
+const getAngleTo = (v1, v2) => {
+    return Math.atan2(v1.y - v2.y, v1.x - v2.x) + Math.PI
+}
+
 const getPythagoreanDistance = (v1, v2) => {
     return Math.sqrt(Math.pow(v2.x - v1.x,2) + Math.pow(v2.y - v1.y, 2))
 }
@@ -39,4 +43,5 @@ const getDistanceToLine = ({first_point, second_point, vector}) => {
     return {distance: distance, points: points}
 }
 
-module.exports = { rndBetween, getDistance, getPythagoreanDistance, getDistanceToLine }
+module.exports = { rndBetween, getDistance, getPythagoreanDistance, 
+                   getDistanceToLine, getAngleTo }

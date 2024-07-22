@@ -1,7 +1,5 @@
-import { getAngleTo, getDistance, getDistanceTo } from "../misc_functions.js"
-
 export class Ship {
-    constructor({ctx, screen, id, username, position, angle, color, score, max_server_score, images}){
+    constructor({ctx, screen, id, username, position, angle, color, score, max_server_score, audios, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
@@ -11,20 +9,38 @@ export class Ship {
         this.angle = angle
         this.color = color
         this.score = score
+        this.audios = audios
         this.images = images
 
-        this.is_exploding = false
         this.explosion = {
+            state: false,
+            audio: this.audios.explosion,
             sprite: this.images.explosion,
             frames_count: 15,
             frame_width: 0,
             current_frame: 0,
             timer: 0,
-            speed_frame: 60,
+            speed_frame: 40,
             offset: 40,
             scale: 120
         }
         this.explosion.frame_width = this.explosion.sprite.width / this.explosion.frames_count
+
+        this.impact = {
+            state: false,
+            audio: this.audios.hit,
+            sprite: this.images.impact,
+            frames_count: 7,
+            frame_width: 0,
+            force_impact: 0,
+            angle_impact: 0,
+            current_frame: 0,
+            timer: 0,
+            speed_frame: 40,
+            offset: 40,
+            scale: 130
+        }
+        this.impact.frame_width = this.impact.sprite.width / this.impact.frames_count
 
         this.is_dead = false
 
@@ -47,12 +63,14 @@ export class Ship {
     }
 
     kill(){
-        this.is_exploding = true
+        this.explosion.audio.currentTime = 0
+        this.explosion.audio.play()
+        this.explosion.state = true
         this.is_dead = true
     }
 
     respawn({position, angle}){
-        this.is_exploding = false
+        this.explosion.state = false
         this.explosion.current_frame = 0
         this.explosion.timer = 0
         this.is_dead = false
@@ -100,6 +118,16 @@ export class Ship {
         }
     }
 
+    takeImpact({force_impact, angle_impact}){
+        this.impact.audio.currentTime = 0
+        this.impact.audio.play()
+        this.impact.state = true
+        this.impact.force_impact = force_impact
+        this.impact.angle_impact = angle_impact
+        this.impact.current_frame = 0
+        this.impact.timer = 0
+    }
+
     drawShip(current_delta_time){
         if (!this.is_dead){
             // GLOW //
@@ -130,8 +158,7 @@ export class Ship {
                 50
             )
             this.ctx.restore()
-        } else if (this.is_exploding){
-            console.log(this.is_exploding)
+        } else if (this.explosion.state){
             this.ctx.save()
             this.ctx.drawImage(
                 this.explosion.sprite,
@@ -149,10 +176,34 @@ export class Ship {
                 this.explosion.timer = 0
                 this.explosion.current_frame++
                 if (this.explosion.current_frame > this.explosion.max_frames){
-                    this.is_exploding = false
+                    this.explosion.state = false
                 }
             }
             this.explosion.timer += 1 * current_delta_time
+        }
+
+        if (this.impact.state){
+            this.ctx.save()
+            this.ctx.drawImage(
+                this.impact.sprite,
+                this.impact.current_frame * this.impact.sprite.width / this.impact.frames_count,
+                0,
+                this.impact.sprite.width / this.impact.frames_count,
+                this.impact.sprite.height,
+                this.position.x - this.impact.offset,
+                this.position.y - this.impact.offset,
+                this.impact.scale,
+                this.impact.scale
+            )
+            this.ctx.restore()
+            if (this.impact.timer > this.impact.speed_frame){
+                this.impact.timer = 0
+                this.impact.current_frame++
+                if (this.impact.current_frame > this.impact.max_frames){
+                    this.impact.state = false
+                }
+            }
+            this.impact.timer += 1 * current_delta_time
         }
     }   
 }
