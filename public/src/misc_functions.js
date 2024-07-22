@@ -84,8 +84,8 @@ export const getDistanceToLine = ({first_point, second_point, vector, offset}) =
     if (vector.x >= x_min && vector.x <= x_max){
         const diff_x = x_max - vector.x
         const scale = ((diff_x - x_min) / (x_max - x_min))
-        const y_prop = Math.abs(y_min + scale * (y_max - y_min))
-        point = {x: vector.x , y: y_prop }
+        const y_prop = y_min + scale * (y_max - y_min)
+        point = {x: vector.x , y: y_prop + (y_max - y_min) }
         distance = getPythagoreanDistance(vector, point)
     }
 

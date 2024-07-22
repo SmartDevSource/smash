@@ -161,7 +161,37 @@ export class GameEngine{
                     a: {x: 360, y: 138},
                     b: {x: 554, y: 138}
                 }
-            }
+            },
+            {
+                points: {
+                    a: {x: 554, y: 138},
+                    b: {x: 573, y: 154}
+                }
+            },
+            {
+                points: {
+                    a: {x: 573, y: 154},
+                    b: {x: 710, y: 154}
+                }
+            },
+            {
+                points: {
+                    a: {x: 710, y: 154},
+                    b: {x: 729, y: 138}
+                }
+            },
+            {
+                points: {
+                    a: {x: 729, y: 138},
+                    b: {x: 915, y: 138}
+                }
+            },
+            {
+                points: {
+                    a: {x: 915, y: 138},
+                    b: {x: 1072, y: 233}
+                }
+            },
         ]
         
         for (const line of lines){
