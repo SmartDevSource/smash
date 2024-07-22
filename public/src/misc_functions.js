@@ -72,7 +72,7 @@ export const isIOS = () => {
     return /iPhone|iPad|iPod/i.test(navigator.userAgent)
 }
 
-export const getDistanceToLine = ({first_point, second_point, vector, offset}) => {
+export const getDistanceToLine = ({first_point, second_point, vector}) => {
     const x_min = Math.min(first_point.x, second_point.x)
     const x_max = Math.max(first_point.x, second_point.x)
     const y_min = Math.min(first_point.y, second_point.y)
@@ -85,8 +85,17 @@ export const getDistanceToLine = ({first_point, second_point, vector, offset}) =
         const scale = ((vector.x - x_min) / (x_max - x_min))
         const diff_y = second_point.y > first_point.y ? 0 : (y_max - y_min)
         const y_prop = y_min + scale * (second_point.y - first_point.y) + diff_y
-        points = {x: vector.x , y: y_prop }
-        distance = getPythagoreanDistance(vector, points)
+        points = {x: vector.x, y: y_prop}
+        distance = getPythagoreanDistance(
+            {x: vector.x, y: (vector.y)}, 
+            points
+        )
+    } else if (x_min == x_max){
+        points = {x: x_min, y: vector.y}
+        distance = getPythagoreanDistance(
+            {x: vector.x, y: (vector.y)},
+            points
+        )
     }
 
     return {distance: distance, points: points}

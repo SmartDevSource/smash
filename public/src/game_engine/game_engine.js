@@ -152,6 +152,12 @@ export class GameEngine{
             {
                 points: {
                     a: {x: 190, y: 233},
+                    b: {x: 190, y: 500}
+                }
+            },
+            {
+                points: {
+                    a: {x: 190, y: 233},
                     b: {x: 360, y: 138}
                 }
             },
@@ -191,6 +197,54 @@ export class GameEngine{
                     b: {x: 1072, y: 233}
                 }
             },
+            {
+                points: {
+                    a: {x: 1072, y: 233},
+                    b: {x: 1072, y: 500}
+                }
+            },
+            {
+                points: {
+                    a: {x: 915, y: 591},
+                    b: {x: 1072, y: 500}
+                }
+            },
+            {
+                points: {
+                    a: {x: 915, y: 591},
+                    b: {x: 710, y: 591}
+                }
+            },
+            {
+                points: {
+                    a: {x: 687, y: 563},
+                    b: {x: 710, y: 591}
+                }
+            },
+            {
+                points: {
+                    a: {x: 687, y: 563},
+                    b: {x: 585, y: 563}
+                }
+            },
+            {
+                points: {
+                    a: {x: 559, y: 591},
+                    b: {x: 585, y: 563}
+                }
+            },
+            {
+                points: {
+                    a: {x: 559, y: 591},
+                    b: {x: 365, y: 591}
+                }
+            },
+            {
+                points: {
+                    a: {x: 190, y: 500},
+                    b: {x: 365, y: 591}
+                }
+            },
         ]
         
         for (const line of lines){
@@ -207,25 +261,23 @@ export class GameEngine{
             const line_coords = getDistanceToLine({
                 first_point: line.points.a,
                 second_point: line.points.b,
-                vector: this.main_ship.position,
-                offset: this.main_ship.offset
+                vector: {
+                    x: this.main_ship.position.x + (this.main_ship.offset / 2),
+                    y: this.main_ship.position.y + (this.main_ship.offset / 2),
+                }
             })
 
-            // console.table(this.joystick.mouse.coords)
-
-            console.log(line_coords.points)
+            // console.log(line_coords.points)
             if (line_coords.distance){
-                if (line_coords.distance < 10){
-                    console.log("Intersection !")
-                }
+                const color = line_coords.distance < 30 ? "orange" : "lime"
                 this.ctx.save()
                 this.ctx.beginPath()
-                this.ctx.fillStyle = "lime"
+                this.ctx.fillStyle = color
                 this.ctx.fillRect(
                     line_coords.points.x,
                     line_coords.points.y,
-                    5,
-                    5
+                    20,
+                    20
                 )
                 this.ctx.restore()
             }
