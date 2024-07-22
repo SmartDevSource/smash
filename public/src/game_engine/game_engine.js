@@ -1,6 +1,6 @@
 import { Ship } from "./ship.js"
 import { Joystick } from "./joystick.js"
-import { getDistance, getPythagoreanDistance } from "../misc_functions.js"
+import { getDistance, getDistanceToLine, getPythagoreanDistance } from "../misc_functions.js"
 
 export class GameEngine{
     constructor(ctx, screen, socket, is_mobile, init_data, images, audios){
@@ -148,56 +148,49 @@ export class GameEngine{
     }
 
     drawColliders(){
-        for(let y = 0 ; y < this.colliders.length ; y++){
-            for(let x = 0 ; x < this.colliders[y].length ; x++){
-                if (this.colliders[y][x] == 1){
-                    this.ctx.save()
-                    this.ctx.globalAlpha = .5
-                    this.ctx.fillStyle = "red"
-                    this.ctx.fillRect(x*50, y*50, 50, 50)
-                    this.ctx.restore()
-                }
-            }
-        }
+        // for(let y = 0 ; y < this.colliders.length ; y++){
+        //     for(let x = 0 ; x < this.colliders[y].length ; x++){
+        //         if (this.colliders[y][x] == 1){
+        //             this.ctx.save()
+        //             this.ctx.globalAlpha = .5
+        //             this.ctx.fillStyle = "red"
+        //             this.ctx.fillRect(x*50, y*50, 50, 50)
+        //             this.ctx.restore()
+        //         }
+        //     }
+        // }
 
-        const x1 = 600, y1 = 200
-        const x2 = 800, y2 = 400
+        const first_point = {x: 600, y: 200}
+        const second_point = {x: 800, y: 400}
 
-        this.ctx.save()
-        this.ctx.beginPath()
-        this.ctx.strokeStyle = "red"
-        this.ctx.lineWidth = 4
-        this.ctx.moveTo(x1, y1)
-        this.ctx.lineTo(x2, y2)
-        this.ctx.stroke()
-        this.ctx.closePath()
-        this.ctx.restore()
+        // const line_coords = getDistanceToLine({
+        //     first_point: first_point,
+        //     second_point: second_point,
+        //     vector: this.main_ship.position,
+        //     offset: this.main_ship.offset
+        // })
 
         // this.ctx.save()
         // this.ctx.beginPath()
         // this.ctx.strokeStyle = "red"
         // this.ctx.lineWidth = 4
-        // this.ctx.moveTo(900, 300)
-        // this.ctx.lineTo(700, 600)
+        // this.ctx.moveTo(first_point.x, first_point.y)
+        // this.ctx.lineTo(second_point.x, second_point.y)
         // this.ctx.stroke()
         // this.ctx.closePath()
         // this.ctx.restore()
 
-        if (this.main_ship.position.x >= x1 && this.main_ship.position.x <= x2){
-            const diff_x = x2 - this.main_ship.position.x
-            const point = y1 + ((diff_x - y2) / (x1 - y2)) * (y2 - y1)
-
-            this.ctx.save()
-            this.ctx.beginPath()
-            this.ctx.fillStyle = "lime"
-            this.ctx.fillRect(this.main_ship.position.x, y1 + Math.abs(point), 5, 5)
-
-            const point_vector = {x: this.main_ship.position.x, y: y1 + Math.abs(point)}
-
-            const distance = getPythagoreanDistance(point_vector, this.main_ship.position)
-            if (distance < 10) console.log("hit !")
-            this.ctx.restore()
-
-        }
+        // if (line_coords.distance){
+        //     this.ctx.save()
+        //     this.ctx.beginPath()
+        //     this.ctx.fillStyle = "lime"
+        //     this.ctx.fillRect(
+        //         line_coords.point.x,
+        //         line_coords.point.y,
+        //         5,
+        //         5
+        //     )
+        //     this.ctx.restore()
+        // }
     }
 }
