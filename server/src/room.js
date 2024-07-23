@@ -58,6 +58,14 @@ class Room{
                         score: this.players[opponent_id].score,
                         id: opponent_id
                     })
+                } else {
+                    if (player.score > 0) player.score--
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "score",
+                        score: player.score,
+                        id: id
+                    })
                 }
                 this.toMainThread({
                     ids: this.getIds([]),

@@ -165,106 +165,7 @@ export class GameEngine{
     }
 
     drawColliders(){
-        const lines = [
-            {
-                points: {
-                    a: {x: 190, y: 233},
-                    b: {x: 190, y: 500}
-                }
-            },
-            {
-                points: {
-                    a: {x: 190, y: 233},
-                    b: {x: 360, y: 138}
-                }
-            },
-            {
-                points: {
-                    a: {x: 360, y: 138},
-                    b: {x: 554, y: 138}
-                }
-            },
-            {
-                points: {
-                    a: {x: 554, y: 138},
-                    b: {x: 573, y: 154}
-                }
-            },
-            {
-                points: {
-                    a: {x: 573, y: 154},
-                    b: {x: 710, y: 154}
-                }
-            },
-            {
-                points: {
-                    a: {x: 710, y: 154},
-                    b: {x: 729, y: 138}
-                }
-            },
-            {
-                points: {
-                    a: {x: 729, y: 138},
-                    b: {x: 915, y: 138}
-                }
-            },
-            {
-                points: {
-                    a: {x: 915, y: 138},
-                    b: {x: 1072, y: 233}
-                }
-            },
-            {
-                points: {
-                    a: {x: 1072, y: 233},
-                    b: {x: 1072, y: 500}
-                }
-            },
-            {
-                points: {
-                    a: {x: 915, y: 591},
-                    b: {x: 1072, y: 500}
-                }
-            },
-            {
-                points: {
-                    a: {x: 915, y: 591},
-                    b: {x: 710, y: 591}
-                }
-            },
-            {
-                points: {
-                    a: {x: 687, y: 563},
-                    b: {x: 710, y: 591}
-                }
-            },
-            {
-                points: {
-                    a: {x: 687, y: 563},
-                    b: {x: 585, y: 563}
-                }
-            },
-            {
-                points: {
-                    a: {x: 559, y: 591},
-                    b: {x: 585, y: 563}
-                }
-            },
-            {
-                points: {
-                    a: {x: 559, y: 591},
-                    b: {x: 365, y: 591}
-                }
-            },
-            {
-                points: {
-                    a: {x: 190, y: 500},
-                    b: {x: 365, y: 591}
-                }
-            },
-        ]
-        
-        for (const line of lines){
+        for (const line of this.map_data.colliders){
             this.ctx.save()
             this.ctx.beginPath()
             this.ctx.strokeStyle = "red"
@@ -284,7 +185,6 @@ export class GameEngine{
                 }
             })
 
-            // console.log(line_coords.points)
             if (line_coords.distance){
                 const color = line_coords.distance < 30 ? "orange" : "lime"
                 this.ctx.save()

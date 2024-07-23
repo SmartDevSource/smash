@@ -119,8 +119,8 @@ export class Ship {
     }
 
     takeImpact({force_impact, angle_impact}){
-        this.impact.audio.currentTime = 0
-        this.impact.audio.play()
+        if (this.impact.audio.paused || this.impact.audio.currentTime > .1)
+            this.impact.audio.play()
         this.impact.state = true
         this.impact.force_impact = force_impact
         this.impact.angle_impact = angle_impact
