@@ -11,7 +11,7 @@ class Room{
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
-        this.max_server_score = 10
+        this.max_server_score = 1
         this.spawn_timeout = 2000
     }
 
@@ -127,6 +127,7 @@ class Room{
 
     removePlayer({id}){
         if (this.players[id]){
+            this.players[id].functions_worker.terminate()
             delete this.players[id]
             this.toMainThread({
                 ids: this.getIds({excepted: [id]}),

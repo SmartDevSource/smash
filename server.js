@@ -35,9 +35,6 @@ const initRooms = () => {
 const setRoomListeners = room => {
     room.on('message', data => {
         switch(data.header){
-            case "test":
-                sendToPlayers(data.ids, "test", data)
-            break
             case "init_game":
                 sendToPlayers(data.ids, "init_game", {
                     max_server_score: data.max_server_score,

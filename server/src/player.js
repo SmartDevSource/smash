@@ -1,5 +1,6 @@
 const { getDistance, getDistanceToLine, getAngleTo } = require('./server_misc_functions.js')
-
+const { Worker } = require('node:worker_threads')
+const path = require('path')
 class Player{
     constructor({id, username, color, map_data}){
         this.id = id
@@ -41,6 +42,21 @@ class Player{
 
         this.rotation_offset = .1
         this.current_delta_time = Date.now()
+
+        this.functions_worker = new Worker(path.resolve(__dirname, 'workers/functions_worker.js'))
+        this.initWorkerListener()
+    }
+
+    initWorkerListener(){
+        this.functions_worker.on("message", data => {
+            switch(data.header){
+                case "lines_colliders":
+                    if (data.intersect){
+                        this.is_alive = false
+                    }
+                break
+            }
+        })
     }
 
     getPlayerData(){
@@ -70,19 +86,13 @@ class Player{
 
     handleLinesCollisions(){
         if (this.is_alive){
-            for (const line of this.lines_colliders){
-                const line_coords = getDistanceToLine({
-                    first_point: line.points.a,
-                    second_point: line.points.b,
-                    vector: {
-                        x: this.position.x + (this.offset / 2),
-                        y: this.position.y + (this.offset / 2),
-                    }
-                })
-                if (line_coords.distance && line_coords.distance < this.line_distance_collider){
-                    this.is_alive = false
-                }
-            }
+            this.functions_worker.postMessage({
+                header: "lines_colliders",
+                lines_colliders: this.lines_colliders,
+                position: this.position,
+                offset: this.offset,
+                line_distance_collider: this.line_distance_collider
+            })
         }
     }
 
