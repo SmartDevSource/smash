@@ -16,6 +16,15 @@ export class GameEngine{
 
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
+        this.colliders_image = {
+            sprite: this.images[`halo_${init_data.map_data.name}`],
+            timer: 0,
+            reverse: true,
+            speed_frame: 70,
+            min_alpha: .6,
+            current_alpha: 1,
+            max_alpha: 1
+        }
 
         this.max_server_score = init_data.max_server_score
 
@@ -155,13 +164,39 @@ export class GameEngine{
             this.screen.w,
             this.screen.h
         )
+        // COLLIDERS IMAGES//
+        this.colliders_image.timer += 1 * this.current_delta_time
+        if (this.colliders_image.timer > this.colliders_image.speed_frame){
+            this.colliders_image.current_alpha += this.colliders_image.reverse ? -.1 : .1
+            if (this.colliders_image.current_alpha < this.colliders_image.min_alpha ||
+                this.colliders_image.current_alpha > this.colliders_image.max_alpha)
+            {
+                this.colliders_image.reverse = !this.colliders_image.reverse
+            }
+            this.colliders_image.timer = 0
+        }
+        console.log(this.colliders_image.reverse)
+        this.ctx.save()
+        this.ctx.globalAlpha = this.colliders_image.current_alpha
+        this.ctx.drawImage(
+            this.colliders_image.sprite,
+            0,
+            0,
+            this.colliders_image.sprite.width,
+            this.colliders_image.sprite.height,
+            0,
+            0,
+            this.screen.w,
+            this.screen.h
+        )
+        this.ctx.restore()
         // OTHERS SHIPS //
         for (const id in this.ships)
             this.ships[id].drawShip(this.current_delta_time)
         for (const id in this.ships)
             this.ships[id].drawInfos()
         // COLLIDERS //
-        this.drawColliders()
+        // this.drawColliders()
     }
 
     drawColliders(){

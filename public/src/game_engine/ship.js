@@ -12,6 +12,12 @@ export class Ship {
         this.audios = audios
         this.images = images
 
+        this.glow = {
+            sprite: this.images[this.color],
+            scale: 100,
+            offset: -25
+        }
+
         this.explosion = {
             state: false,
             audio: this.audios.explosion,
@@ -132,15 +138,15 @@ export class Ship {
         if (!this.is_dead){
             // GLOW //
             this.ctx.drawImage(
-                this.images[this.color],
+                this.glow.sprite,
                 0,
                 0,
-                this.images[this.color].width,
-                this.images[this.color].height,
-                this.position.x - this.offset / 2,
-                this.position.y - this.offset / 2,
-                this.offset * 3,
-                this.offset * 3
+                this.glow.sprite.width,
+                this.glow.sprite.height,
+                this.position.x + this.glow.offset,
+                this.position.y + this.glow.offset,
+                this.glow.scale,
+                this.glow.scale
             )
             // SHIP //
             this.ctx.save()

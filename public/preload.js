@@ -51,6 +51,8 @@ const images = [
     './assets/gfx/sprites/explosion.png',
     './assets/gfx/sprites/impact.png',
     './assets/gfx/maps/first.png',
+    './assets/gfx/maps/halo_first.png',
+    './assets/gfx/maps/first.png',
     './assets/gfx/maps/second.png',
 ]
 
