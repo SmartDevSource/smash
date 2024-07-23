@@ -17,12 +17,15 @@ export class Menu{
         this.bg_video = document.getElementById("bg_video")
 
         this.pages = {
+            connection: null,
             username: null,
             maps: null
         }
 
         this.widgets = {
             span_alert: null,
+            text_new_username: null,
+            button_create_account: null,
             button_to_maps_page: null,
             button_join: null,
             button_back: null,
@@ -62,7 +65,7 @@ export class Menu{
         this.current_page = ""
     
         this.is_menu_loaded = false
-        this.loadHtml()
+        this.load()
         this.networkListener()
     }
 
@@ -86,24 +89,130 @@ export class Menu{
         this.bg_video.remove()
     }
 
-    loadHtml(){
+    load(){
+        fetch('/session_status', { method: 'GET'})
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if (data.is_logged){
+            this.fetchHtml({load_google_button: false})
+            this.checkIfGoogleIdExists()
+          } else {
+            this.fetchHtml({load_google_button: true})
+          }
+        })
+    }
+
+    checkIfGoogleIdExists(){
+        fetch('/googleexists', { method: 'GET'})
+        .then(res => res.json())
+        .then(data => {
+          if (data.exists){
+            this.setCurrentPage({page: "maps"})
+          } else {
+            this.widgets.text_new_username.innerHTML = `Bienvenue ${data.name} !`
+            this.setCurrentPage({page: "username"})
+          }
+        })
+    }
+
+    setCurrentPage({page}){
+        for (const key in this.pages){
+            if (key == page){
+                this.pages[key].style.display = "flex"
+            } else {
+                this.pages[key].style.display = "none"
+            }
+        }
+    }
+
+    onSignIn = response => {
+        const credential = response.credential
+        fetch('/tokensignin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'idToken=' + encodeURIComponent(credential)
+        }).then(response => {
+          if (response.status == 200){
+            this.checkIfGoogleIdExists()
+          } else {
+          //   signin_page.style.display = "flex"
+          //   logged_page.style.display = "none"
+          }
+        })
+    }
+
+    fetchHtml({load_google_button}){
         try{
             fetch('/src/html/menu.html')
                 .then(res => res.text())
                 .then(data => {
                     this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
+
+                    if (load_google_button){
+                        google.accounts.id.initialize({
+                            client_id: '306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com',
+                            callback: this.onSignIn
+                          })
+                        google.accounts.id.renderButton(
+                        document.querySelector('.g_id_signin'),
+                        { 
+                            theme: "outline",
+                            size: "large",
+                            shape: "square",
+                            logo_alignment: "left",
+                            width: "300"
+                        }
+                        )
+                        google.accounts.id.prompt()
+                    }
                 })
         } catch (err) {
             console.error(err)
         }
     }
 
+    createIfNotExists({username}){
+        return fetch('/createaccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(username)})
+        .then(res => res.json())
+    }
+
+    createAccount(){
+        const username = this.widgets.input_username.value
+        if (username.length < 3){
+            this.popup("warning", "Pseudo : minimum 3 lettres.")
+        } else {
+            this.createIfNotExists({username: username}).then(data => {
+                    if (data.already_exists){
+                        this.popup("warning", "Pseudo déjà pris.")
+                    } else {
+                        this.popup("success", "Compte crée avec succès !")
+                        setInterval(() => {
+                            this.setCurrentPage("maps")
+                        }, 1000)
+                    }
+                }
+            )
+        }
+    }
+
     initWidgetsAndListeners(){
-        ///////// WIDGETS //////////
+        ///////// PAGES //////////
+        this.pages.connection = document.getElementById("connection_page")
         this.pages.username = document.getElementById("username_page")
         this.pages.maps = document.getElementById("maps_page")
+        ///////// WIDGETS //////////
         this.widgets.span_alert = document.getElementById("span_alert")
+        this.widgets.text_new_username = document.getElementById("text_new_username")
+        this.widgets.button_create_account = document.getElementById("button_create_account")
         this.widgets.button_to_maps_page = document.getElementById("button_to_maps_page")
         this.widgets.button_join = document.getElementById("button_join")
         this.widgets.button_back = document.getElementById("button_back")
@@ -117,13 +226,14 @@ export class Menu{
         this.server_images.first = document.getElementById("first_map")
         this.server_images.second = document.getElementById("second_map")
         ///////// LISTENERS /////////
-        this.widgets.button_to_maps_page.onclick = () => {
-            const username = this.widgets.input_username.value
-            if (username.length < 3)
-                this.popup("warning", "Pseudo : minimum 3 lettres.")
-            else
-                this.loadMapPage(username)
-        }
+        // this.widgets.button_to_maps_page.onclick = () => {
+        //     const username = this.widgets.input_username.value
+        //     if (username.length < 3)
+        //         this.popup("warning", "Pseudo : minimum 3 lettres.")
+        //     else
+        //         this.loadMapPage(username)
+        // }
+        this.widgets.button_create_account.onclick = () => this.createAccount()
 
         this.widgets.button_back.onclick = () => {
             this.pages[this.current_page].style.display = "none"
@@ -181,6 +291,10 @@ export class Menu{
             case "warning":
                 this.widgets.span_alert.style.backgroundColor = "rgb(255, 66, 66)"
                 this.widgets.span_alert.style.borderColor = "rgb(192, 51, 51)"
+            break
+            case "success":
+                this.widgets.span_alert.style.backgroundColor = "lime"
+                this.widgets.span_alert.style.borderColor = "green"
             break
         }
         this.widgets.span_alert.style.display = "block"

@@ -1,8 +1,19 @@
 <span id = "span_alert"></span>
 
-<div id = "username_page" class = "flex_container outline_container">
+<div id = "connection_page" class = "flex_container outline_container">
     <span class = "title">Smash!</span>
-    <span class = "text">Pseudo</span>
+    <div id="g_id_onload"
+        data-client_id="306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com"
+        data-login_uri="http://localhost:4000/tokensignin"
+        data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+</div>
+
+<div id = "username_page" class = "flex_container outline_container" style = "display:none;">
+    <span class = "title">Smash!</span>
+    <span class = "text" id = "text_new_username"></span>
+    <span class = "text">Nouveau pseudo :</span>
     <input id = "input_username"
         type = "text"
         value = "test"
@@ -11,11 +22,16 @@
         onkeydown = "restrictInput(event)"
         autocomplete = "off">
     </input>
-    <button id = "button_to_maps_page" 
+    <button id = "button_create_account" 
+            class = "cstm_button"
+            onmouseenter = "wobble(this)">
+        Créer mon compte
+    </button>
+    <!-- <button id = "button_to_maps_page" 
             class = "cstm_button"
             onmouseenter = "wobble(this)">
         Rejoindre une partie
-    </button>
+    </button> -->
 </div>
 
 <div id = "maps_page" class = "flex_container outline_container" style = "display: none;">

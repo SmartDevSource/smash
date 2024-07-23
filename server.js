@@ -11,18 +11,24 @@ const credentials = {key: private_key, cert: certificate}
 
 const express = require('express')
 const app = express()
-const server = require('https').createServer(credentials, app)
-// const server = require('http').createServer(app)
+// const server = require('https').createServer(credentials, app)
+const server = require('http').createServer(app)
 const socket_io = require('socket.io')
 const ShortUniqueId = require('short-unique-id')
 const io = socket_io(server, {cors: { origin: '*', methods: ['GET']}})
 
-const port = process.env.PORT
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const { OAuth2Client } = require('google-auth-library')
+const session = require('express-session')
+const { Database } = require('./server/src/database.js')
+
+const PORT = process.env.PORT
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 
 ////////////////////////// SETTING UP FUNCTIONS /////////////////////////////////
 const initRooms = () => {
     const maps_data = JSON.parse(fs.readFileSync("./server/data/maps_data.json", {encoding: "utf-8"}))
-
     for (const key in maps){
         maps[key].postMessage({
             header: "instantiate",
@@ -91,6 +97,14 @@ const setRoomListeners = room => {
     })
 }
 
+const verifyToken = async token => {
+    const ticket = await google_client.verifyIdToken({
+        idToken: token,
+        audience: GOOGLE_CLIENT_ID
+    })
+    return ticket.getPayload()
+}
+
 ////////////////////////// SETTING UP VARIABLES & OBJECTS /////////////////////////////////
 const sockets = {}
 const players_ids = {}
@@ -102,13 +116,108 @@ const maps = {
 }
 
 initRooms()
+const google_client = new OAuth2Client(GOOGLE_CLIENT_ID)
+const database = new Database()
+
+database.getAllUsers().then(all_users=>{
+    console.log(all_users)
+})
 
 app.use(express.static(path.join(__dirname, 'public')))
-server.listen(port, () => console.log(`Serveur lancé sur le port ${port}`))
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(cookieParser())
+app.use(session({
+    secret: process.env.GOOGLE_SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        secure: false,
+        maxAge: 2629800000 // ce qui représente 1 mois de session active en millisecondes
+    }
+}))
+
+server.listen(PORT, () => console.log(`Serveur lancé sur le port ${PORT}`))
 io.setMaxListeners(0)
 
 /////////////////////////////////// HTTP REQUESTS ///////////////////////////////////
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
+
+app.get('/session_status', (req, res) => {
+    if (req.session.user){
+     res.json({is_logged: true, user: req.session.user})
+    } else {
+     res.json({is_logged: false})
+    }
+ })
+
+app.get('/googleexists', (req, res) => {
+    if (req.session.user){
+        database.getUser({id: req.session.user.id}).then(response=>{
+            if (response){
+                res.json({exists: true})
+            } else {
+                res.json({exists: false, name: req.session.user.name})
+            }
+        })
+    }
+ })
+
+app.post('/createaccount', (req, res) => {
+    if (req.session.user){
+        database.checkUsername({username: req.body.username}).then(response=>{
+            if (response){
+                res.json({already_exists: true})
+            } else {
+                const user = {
+                    google_id: req.session.user.id,
+                    name: req.session.user.name,
+                    nickname: req.body.username,
+                    email: req.session.user.email
+                }
+                database.addUser({user: user}).then(()=>{
+                    res.json({already_exists: false})
+                    console.log("yep !")
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).json({error: 'Impossible de créer le compte.'})
+                })
+            }
+        })
+    }
+ })
+ 
+ app.post('/tokensignin', async (req, res) => {
+     const token = req.body.idToken
+     try{
+         const payload = await verifyToken(token)
+        //  console.log("Payload : ", payload)
+         req.session.user = {
+             id: payload.sub,
+             email: payload.email,
+             name: payload.name,
+             imageUrl: payload.picture
+         }
+         console.log(payload.name, "s'est connecté.")
+         res.send(req.session.user)
+     } catch (err){
+         console.log(err)
+         res.status(400).send('Token Invalide')
+     }
+ })
+ 
+ app.post('/signout', async (req, res) => {
+     if (req.session.user){
+         const name = req.session.user.name
+         req.session.destroy(err=> {
+             if (err){
+                 res.status(500).json({error: 'Déconnexion impossible.'})
+             } else {
+                 console.log(name, "s'est déconnecté.")
+                 res.json({message: 'Déconnexion OK.'})
+             }
+         })
+     }
+ })
 
 /////////////////////////////////// FUNCTIONS ///////////////////////////////////
 const showInfos = () => {
