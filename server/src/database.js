@@ -2,14 +2,18 @@ const { Pool } = require('pg')
 
 class Database{
     constructor(){
-        this.pool = new Pool({
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DB_DATABASE,
-            password: process.env.DB_PASSWORD,
-            port: 5432,
-            ssl:{ rejectUnauthorized: false }
-        })
+        try{
+            this.pool = new Pool({
+                user: process.env.DB_USER,
+                host: process.env.DB_HOST,
+                database: process.env.DB_DATABASE,
+                password: process.env.DB_PASSWORD,
+                port: 5432,
+                ssl:{ rejectUnauthorized: false }
+            })
+        } catch (err) {
+            console.log(err)
+        }
         this.pool.connect((err, client, release)=>{
             if (err){
                 console.log("Connexion à la base de données impossible.")
@@ -24,6 +28,7 @@ class Database{
         const query = `INSERT INTO users (google_id, name, nickname, email) 
         VALUES ($1, $2, $3, $4)`
         const values = [user.google_id, user.name, user.nickname, user.email]
+        console.log(values)
         return new Promise((resolve, reject)=>{
             this.pool.query(query, values, (err, res) => {
                 if (err){
@@ -61,7 +66,7 @@ class Database{
                     reject(err)
                 } else {
                     if (res.rows.length > 0){
-                        resolve(res.rows[0])
+                        resolve(res.rows)
                     } else {
                         resolve(null)
                     }
@@ -121,12 +126,30 @@ class Database{
             email VARCHAR(255),
             score INT DEFAULT 0
         )`
-        this.pool.query(query_create_table, (err, res) => {
-            if (err){
-                console.log(err.stack)
-            } else {
-                console.log("Table users créee !")
-            }
+        return new Promise((resolve, reject) => {
+            this.pool.query(query_create_table, (err, res) => {
+                if (err){
+                    console.log(err.stack)
+                    reject(false)
+                } else {
+                    console.log("Table users créee !")
+                    resolve(true)
+                }
+            })
+        })
+    }
+
+    destroyUsersTable(){
+        return new Promise((resolve, reject) => {
+            this.pool.query('DROP TABLE IF EXISTS users', (err, res) => {
+                if (err){
+                    console.log(err.stack)
+                    reject(false)
+                } else {
+                    console.log("Table users détruite !")
+                    resolve(true)
+                }
+            })
         })
     }
 
@@ -139,7 +162,7 @@ class Database{
                     return reject(err)
                 } else {
                     if (res.rows.length > 0){
-                        resolve(res.rows[0])
+                        resolve(res.rows)
                     } else {
                         resolve(null)
                     }
@@ -147,25 +170,8 @@ class Database{
             })
         })
     }
-
-    destroyUsersTable(){
-        this.pool.query('DROP TABLE IF EXISTS users', (err, res) => {
-            if (err){
-                console.log(err.stack)
-            } else {
-                console.log("Table users détruite !")
-            }
-        })
-    }
 }
 
 module.exports = { Database }
-
-// const query_create_table = `CREATE TABLE users(
-//     id INT PRIMARY KEY NOT NULL,
-//     name VARCHAR(255),
-//     email VARCHAR(255),
-//     victories INT
-// )`
 
 // const query_alter = 'ALTER TABLE users ADD COLUMN google_id VARCHAR(255)'

@@ -19,16 +19,18 @@ export class Menu{
         this.pages = {
             connection: null,
             username: null,
-            maps: null
+            maps: null,
+            redirect: null
         }
 
         this.widgets = {
             span_alert: null,
+            div_player_infos: null,
             text_new_username: null,
             button_create_account: null,
             button_to_maps_page: null,
             button_join: null,
-            button_back: null,
+            button_disconnect: null,
             input_username: null,
             first_players_count: null,
             second_players_count: null,
@@ -93,7 +95,6 @@ export class Menu{
         fetch('/session_status', { method: 'GET'})
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.is_logged){
             this.fetchHtml({load_google_button: false})
             this.checkIfGoogleIdExists()
@@ -109,6 +110,14 @@ export class Menu{
         .then(data => {
           if (data.exists){
             this.setCurrentPage({page: "maps"})
+            this.widgets.div_player_infos.innerHTML = `
+                <span class = "white_text">Pseudo :</span>
+                <span class = "yellow_text">${data.nickname}</span>
+                <p></p>
+                <span class = "white_text">Victoires :</span>
+                <span class = "yellow_text">${data.score}</span>
+            `
+            this.widgets.div_player_infos.style.display = "block"
           } else {
             this.widgets.text_new_username.innerHTML = `Bienvenue ${data.name} !`
             this.setCurrentPage({page: "username"})
@@ -137,9 +146,6 @@ export class Menu{
         }).then(response => {
           if (response.status == 200){
             this.checkIfGoogleIdExists()
-          } else {
-          //   signin_page.style.display = "flex"
-          //   logged_page.style.display = "none"
           }
         })
     }
@@ -181,7 +187,7 @@ export class Menu{
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(username)})
+            body: JSON.stringify({username: username})})
         .then(res => res.json())
     }
 
@@ -195,8 +201,9 @@ export class Menu{
                         this.popup("warning", "Pseudo déjà pris.")
                     } else {
                         this.popup("success", "Compte crée avec succès !")
+                        this.widgets.button_create_account.style.display = "none"
                         setInterval(() => {
-                            this.setCurrentPage("maps")
+                            this.setCurrentPage({page:"maps"})
                         }, 1000)
                     }
                 }
@@ -204,18 +211,33 @@ export class Menu{
         }
     }
 
+    signOut(){
+        fetch('/signout', { method:'POST' })
+            .then(res => res.json())
+            .then(data => {
+                this.widgets.div_player_infos.style.display = "none"
+                this.setCurrentPage({page: "redirect"})
+                setTimeout(() => {
+                    location.reload()
+                }, 1000)
+            }
+        )
+    }
+
     initWidgetsAndListeners(){
         ///////// PAGES //////////
         this.pages.connection = document.getElementById("connection_page")
         this.pages.username = document.getElementById("username_page")
         this.pages.maps = document.getElementById("maps_page")
+        this.pages.redirect = document.getElementById("redirect_page")
         ///////// WIDGETS //////////
         this.widgets.span_alert = document.getElementById("span_alert")
+        this.widgets.div_player_infos = document.getElementById("div_player_infos")
         this.widgets.text_new_username = document.getElementById("text_new_username")
         this.widgets.button_create_account = document.getElementById("button_create_account")
         this.widgets.button_to_maps_page = document.getElementById("button_to_maps_page")
         this.widgets.button_join = document.getElementById("button_join")
-        this.widgets.button_back = document.getElementById("button_back")
+        this.widgets.button_disconnect = document.getElementById("button_disconnect")
         this.widgets.input_username = document.getElementById("input_username")
         this.widgets.first_players_count = document.getElementById("first_players_count")
         this.widgets.second_players_count = document.getElementById("second_players_count")
@@ -226,21 +248,8 @@ export class Menu{
         this.server_images.first = document.getElementById("first_map")
         this.server_images.second = document.getElementById("second_map")
         ///////// LISTENERS /////////
-        // this.widgets.button_to_maps_page.onclick = () => {
-        //     const username = this.widgets.input_username.value
-        //     if (username.length < 3)
-        //         this.popup("warning", "Pseudo : minimum 3 lettres.")
-        //     else
-        //         this.loadMapPage(username)
-        // }
         this.widgets.button_create_account.onclick = () => this.createAccount()
-
-        this.widgets.button_back.onclick = () => {
-            this.pages[this.current_page].style.display = "none"
-            this.pages[this.last_page].style.display = "flex"
-            this.current_page = this.last_page
-        }
-
+        this.widgets.button_disconnect.onclick = () => this.signOut()
         this.widgets.button_join.onclick = () => {
             if (this.server_selected.current == ""){
                 this.popup("warning", "Veuillez choisir un serveur.")
@@ -290,11 +299,14 @@ export class Menu{
         switch(type){
             case "warning":
                 this.widgets.span_alert.style.backgroundColor = "rgb(255, 66, 66)"
-                this.widgets.span_alert.style.borderColor = "rgb(192, 51, 51)"
+                this.widgets.span_alert.style.borderColor = "#963b3b"
+                this.widgets.span_alert.style.color = "white"
+
             break
             case "success":
-                this.widgets.span_alert.style.backgroundColor = "lime"
+                this.widgets.span_alert.style.backgroundColor = "#64963b"
                 this.widgets.span_alert.style.borderColor = "green"
+                this.widgets.span_alert.style.color = "rgb(230, 230, 230)"
             break
         }
         this.widgets.span_alert.style.display = "block"

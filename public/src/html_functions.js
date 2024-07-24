@@ -20,29 +20,6 @@ const reverseColor = element => {
     }
 }
 
-const signOut = () => {
-  fetch('/signout', { method:'POST' })
-    .then(res => res.json())
-    .then(data => {
-    //   signin_page.style.display = "flex"
-    //   logged_page.style.display = "none"
-      console.log(data)
-    })
-}
-
-// window.onload = function() {
-//   fetch('/session_status', { method: 'GET'})
-//     .then(res => res.json())
-//     .then(data => {
-//       console.log(data)
-//     //   if (data.is_logged){
-//     //     logged_page.style.display = "flex"
-//     //   } else {
-//     //     signin_page.style.display = "flex"
-//     //   }
-//     })
-// }
-
 const getMyIp = async () => {
   return await fetch('https://api.ipify.org?format=json')
     .then(res => res.json())

@@ -1,4 +1,5 @@
 <span id = "span_alert"></span>
+<div id = "div_player_infos"></div>
 
 <div id = "connection_page" class = "flex_container outline_container">
     <span class = "title">Smash!</span>
@@ -27,11 +28,6 @@
             onmouseenter = "wobble(this)">
         Créer mon compte
     </button>
-    <!-- <button id = "button_to_maps_page" 
-            class = "cstm_button"
-            onmouseenter = "wobble(this)">
-        Rejoindre une partie
-    </button> -->
 </div>
 
 <div id = "maps_page" class = "flex_container outline_container" style = "display: none;">
@@ -57,9 +53,15 @@
             onmouseenter = "wobble(this)">
         C'est parti !
     </button>
-    <button id = "button_back" 
+    <button id = "button_disconnect" 
             class = "cstm_button"
             onmouseenter = "wobble(this)">
-        Retour
+        Se déconnecter
     </button>
+</div>
+
+<div id = "redirect_page" class = "flex_container outline_container" style = "display:none;">
+    <span class = "title">Smash!</span>
+    <span class = "text" id = "text_new_username"></span>
+    <span class = "text">Vous allez être redirigé...</span>
 </div>

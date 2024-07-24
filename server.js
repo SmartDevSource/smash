@@ -105,6 +105,14 @@ const verifyToken = async token => {
     return ticket.getPayload()
 }
 
+const resetDatabase = database => {
+    database.destroyUsersTable().then(is_destroyed => {
+        if (is_destroyed){
+            database.createUsersTable()
+        }
+    })
+}
+
 ////////////////////////// SETTING UP VARIABLES & OBJECTS /////////////////////////////////
 const sockets = {}
 const players_ids = {}
@@ -119,10 +127,12 @@ initRooms()
 const google_client = new OAuth2Client(GOOGLE_CLIENT_ID)
 const database = new Database()
 
+// resetDatabase(database)
 database.getAllUsers().then(all_users=>{
     console.log(all_users)
 })
 
+app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cookieParser())
@@ -154,7 +164,8 @@ app.get('/googleexists', (req, res) => {
     if (req.session.user){
         database.getUser({id: req.session.user.id}).then(response=>{
             if (response){
-                res.json({exists: true})
+                console.log(response)
+                res.json({exists: true, nickname: response.nickname, score: response.score})
             } else {
                 res.json({exists: false, name: req.session.user.name})
             }
@@ -164,6 +175,7 @@ app.get('/googleexists', (req, res) => {
 
 app.post('/createaccount', (req, res) => {
     if (req.session.user){
+        console.log(req.body)
         database.checkUsername({username: req.body.username}).then(response=>{
             if (response){
                 res.json({already_exists: true})
@@ -176,7 +188,6 @@ app.post('/createaccount', (req, res) => {
                 }
                 database.addUser({user: user}).then(()=>{
                     res.json({already_exists: false})
-                    console.log("yep !")
                 }).catch(err => {
                     console.log(err)
                     res.status(500).json({error: 'Impossible de créer le compte.'})

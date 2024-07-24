@@ -28,13 +28,39 @@
     padding: 10px;
     border: 3px solid;
     border-radius: 5px;
-    color: white;
     font-weight: bold;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+}
+
+p {
+    background: none;
+}
+
+span{
+    background: none;
+}
+
+.yellow_text {
+    color: yellow;
+}
+
+.white_text {
+    color: white;
+}
+
+#div_player_infos {
+    display: none;
+    position: absolute;
+    text-align: start;
+    left: 50%;
+    top: 20%;
+    transform: translate(-50%, -80%);
+    font-size: 30px;
+    background: none;
 }
 
 .outline_container{
