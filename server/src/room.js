@@ -11,6 +11,8 @@ class Room{
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
         this.max_server_score = 1
         this.spawn_timeout = 2000
+        this.is_game_started = true
+        this.interval_before_restart = 3000
     }
 
     toMainThread(data){
@@ -18,69 +20,116 @@ class Room{
     }
 
     update(){
-        this.current_delta_time = (Date.now() - this.last_delta_time)
-        this.last_delta_time = Date.now()
-        for (const id in this.players){
-            const player = this.players[id]
-            player.update(this.current_delta_time, this.players)
-            if (!player.isStopped() && player.is_alive){
-                this.toMainThread({
-                    ids: this.getIds([]),
-                    header: "coords",
-                    id: id,
-                    position: player.position,
-                    angle: player.angle
-                })
-            }
-            if (player.has_collided_by_opponent){
-                this.toMainThread({
-                    ids: this.getIds([]),
-                    header: "collision",
-                    by: player.collided_by,
-                    force_impact: player.force_impact,
-                    angle_impact: player.angle_impact,
-                    id: id
-                })
-                if (player.collided_by)
-                    this.players[player.collided_by].has_collided_by_opponent = false
-                player.has_collided_by_opponent = false
-            }
-            if (!player.is_alive && !player.is_waiting_for_respawn){
-                player.is_waiting_for_respawn = true
-                const opponent_id = player.collided_by
-                if (opponent_id && this.players[opponent_id]){
-                    this.players[opponent_id].score++
+        if (this.is_game_started){
+            this.current_delta_time = (Date.now() - this.last_delta_time)
+            this.last_delta_time = Date.now()
+            for (const id in this.players){
+                const player = this.players[id]
+                player.update(this.current_delta_time, this.players)
+                if (!player.isStopped() && player.is_alive){
                     this.toMainThread({
                         ids: this.getIds([]),
-                        header: "score",
-                        score: this.players[opponent_id].score,
-                        id: opponent_id
-                    })
-                } else {
-                    if (player.score > 0) player.score--
-                    this.toMainThread({
-                        ids: this.getIds([]),
-                        header: "score",
-                        score: player.score,
-                        id: id
-                    })
-                }
-                this.toMainThread({
-                    ids: this.getIds([]),
-                    header: "player_dead",
-                    id: id
-                })
-                setTimeout(() => {
-                    player.respawn()
-                    this.toMainThread({
-                        ids: this.getIds([]),
-                        header: "player_respawn",
+                        header: "coords",
                         id: id,
                         position: player.position,
                         angle: player.angle
                     })
-                }, this.spawn_timeout)
+                }
+                if (player.has_collided_by_opponent){
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "collision",
+                        by: player.collided_by,
+                        force_impact: player.force_impact,
+                        angle_impact: player.angle_impact,
+                        id: id
+                    })
+                    if (player.collided_by)
+                        this.players[player.collided_by].has_collided_by_opponent = false
+                    player.has_collided_by_opponent = false
+                }
+                if (!player.is_alive && !player.is_waiting_for_respawn){
+                    player.is_waiting_for_respawn = true
+                    const opponent_id = player.collided_by
+                    if (opponent_id && this.players[opponent_id]){
+                        this.players[opponent_id].score++
+                        if (this.players[opponent_id].score > this.max_server_score){
+                            this.players[opponent_id].score = this.max_server_score
+                            this.endGame({winner_id: opponent_id})
+                        }
+                        this.toMainThread({
+                            ids: this.getIds([]),
+                            header: "score",
+                            score: this.players[opponent_id].score,
+                            id: opponent_id
+                        })
+                    } else {
+                        if (player.score > 0) player.score--
+                        this.toMainThread({
+                            ids: this.getIds([]),
+                            header: "score",
+                            score: player.score,
+                            id: id
+                        })
+                    }
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "player_dead",
+                        id: id
+                    })
+                    setTimeout(() => {
+                        player.respawn()
+                        this.toMainThread({
+                            ids: this.getIds([]),
+                            header: "player_respawn",
+                            id: id,
+                            position: player.position,
+                            angle: player.angle
+                        })
+                    }, this.spawn_timeout)
+                }
             }
+        }
+    }
+
+    restartGame(){
+        const players_data = {}
+        for (const id in this.players)
+            players_data[id] = this.players[id].getPlayerData()
+        this.toMainThread({
+            ids: this.getIds([]),
+            header: "restart_game",
+            players_data: players_data
+        })
+        setTimeout(()=> this.is_game_started = true, 1000)
+    }
+
+    endGame({winner_id}){
+        this.toMainThread({
+            ids: this.getIds([]),
+            header: "end_game",
+            winner_id: winner_id
+        })
+        this.is_game_started = false
+        setTimeout(() => {
+            this.startCounter()
+        }, this.interval_before_restart)
+    }
+
+    startCounter(){
+        let counter = 3
+        for(let i = 1 ; i <=3 ; i++){
+            setTimeout(()=> {
+                if (counter > 0){
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "start_counter",
+                        counter: counter
+                    })
+                }
+                if (counter <= 0) this.restartGame()
+                counter--
+            }, i*1000)
         }
     }
 
@@ -122,6 +171,8 @@ class Room{
             header: "new_player",
             player_data: this.players[id].getPlayerData()
         })
+
+        this.showInfos()
     }
 
     removePlayer({id}){

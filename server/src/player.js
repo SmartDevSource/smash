@@ -85,6 +85,28 @@ class Player{
         this.is_alive = true
     }
 
+    reset(){
+        this.position = {...this.spawn_position}
+        this.angle = 0
+        this.is_waiting_for_respawn = false
+        this.is_alive = true
+        this.score = 0
+        this.directions = {horizontal: '', vertical: ''}
+        this.velocity = {
+            vertical: 0,
+            horizontal: 0,
+            vertical_max_default: 6,
+            horizontal_max_default: 6,
+            vertical_max: 6,
+            horizontal_max: 6,
+            step: .006
+        }
+        this.collided_by = null
+        this.force_impact = null
+        this.angle_impact = null
+        this.has_collided_by_opponent = false
+    }
+
     handleLinesCollisions(){
         if (this.is_alive){
             this.functions_worker.postMessage({
