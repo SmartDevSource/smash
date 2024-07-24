@@ -90,14 +90,15 @@ class Room{
         console.log("*".repeat(50))
     }
 
-    addPlayer({id, username, color}){
+    addPlayer({id, google_id, username, color}){
         const players_data = {}
         for (const id in this.players)
             players_data[id] = this.players[id].getPlayerData()
 
         if (!this.players[id])
             this.players[id] = new Player({
-                id: id, 
+                id: id,
+                google_id: google_id,
                 username: username, 
                 color: color, 
                 map_data: {...this.map_data}
@@ -163,6 +164,7 @@ parentPort.on('message', data => {
         case "connection":
             room.addPlayer({
                 id: data.id,
+                google_id: data.google_id,
                 username: data.username,
                 color: data.color
             })

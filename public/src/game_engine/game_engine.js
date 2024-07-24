@@ -175,7 +175,6 @@ export class GameEngine{
             }
             this.colliders_image.timer = 0
         }
-        console.log(this.colliders_image.reverse)
         this.ctx.save()
         this.ctx.globalAlpha = this.colliders_image.current_alpha
         this.ctx.drawImage(

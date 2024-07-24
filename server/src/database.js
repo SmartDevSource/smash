@@ -97,13 +97,15 @@ class Database{
     checkUsername({nickname}){
         const query = `SELECT * FROM users WHERE nickname = $1`
         const values = [nickname]
+        console.log("username values", values)
         return new Promise((resolve, reject)=>{
             this.pool.query(query, values, (err, res) => {
                 if (err){
                     console.log(err.stack)
-                    return reject(err)
+                    reject(err)
                 } else {
                     if (res.rows.length > 0){
+                        console.log(res.rows)
                         resolve(res.rows[0])
                     } else {
                         resolve(null)

@@ -2,8 +2,9 @@ const { getDistance, getDistanceToLine, getAngleTo } = require('./server_misc_fu
 const { Worker } = require('node:worker_threads')
 const path = require('path')
 class Player{
-    constructor({id, username, color, map_data}){
+    constructor({id, google_id, username, color, map_data}){
         this.id = id
+        this.google_id = google_id
         this.username = username
         this.color = color
         this.position = {...map_data.spawn}

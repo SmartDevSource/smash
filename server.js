@@ -129,6 +129,7 @@ const database = new Database()
 
 // resetDatabase(database)
 database.getAllUsers().then(all_users=>{
+    console.log("Database users :")
     console.log(all_users)
 })
 
@@ -164,10 +165,17 @@ app.get('/googleexists', (req, res) => {
     if (req.session.user){
         database.getUser({id: req.session.user.id}).then(response=>{
             if (response){
-                console.log(response)
-                res.json({exists: true, nickname: response.nickname, score: response.score})
+                res.json({
+                    exists: true,
+                    nickname: response.nickname,
+                    score: response.score,
+                    google_id: req.session.user.id
+                })
             } else {
-                res.json({exists: false, name: req.session.user.name})
+                res.json({
+                    exists: false,
+                    name: req.session.user.name
+                })
             }
         })
     }
@@ -176,7 +184,8 @@ app.get('/googleexists', (req, res) => {
 app.post('/createaccount', (req, res) => {
     if (req.session.user){
         console.log(req.body)
-        database.checkUsername({username: req.body.username}).then(response=>{
+        database.checkUsername({nickname: req.body.username}).then(response=>{
+            console.log("response /createaccount", response)
             if (response){
                 res.json({already_exists: true})
             } else {
@@ -197,38 +206,38 @@ app.post('/createaccount', (req, res) => {
     }
  })
  
- app.post('/tokensignin', async (req, res) => {
-     const token = req.body.idToken
-     try{
-         const payload = await verifyToken(token)
-        //  console.log("Payload : ", payload)
-         req.session.user = {
-             id: payload.sub,
-             email: payload.email,
-             name: payload.name,
-             imageUrl: payload.picture
-         }
-         console.log(payload.name, "s'est connecté.")
-         res.send(req.session.user)
-     } catch (err){
-         console.log(err)
-         res.status(400).send('Token Invalide')
-     }
- })
+app.post('/tokensignin', async (req, res) => {
+    const token = req.body.idToken
+    try{
+        const payload = await verifyToken(token)
+        // console.log("Payload : ", payload)
+        req.session.user = {
+            id: payload.sub,
+            email: payload.email,
+            name: payload.name,
+            imageUrl: payload.picture
+        }
+        console.log(payload.name, "s'est connecté.")
+        res.send(req.session.user)
+    } catch (err){
+        console.log(err)
+        res.status(400).send('Token Invalide')
+    }
+})
  
- app.post('/signout', async (req, res) => {
-     if (req.session.user){
-         const name = req.session.user.name
-         req.session.destroy(err=> {
-             if (err){
-                 res.status(500).json({error: 'Déconnexion impossible.'})
-             } else {
-                 console.log(name, "s'est déconnecté.")
-                 res.json({message: 'Déconnexion OK.'})
-             }
-         })
-     }
- })
+app.post('/signout', async (req, res) => {
+    if (req.session.user){
+        const name = req.session.user.name
+        req.session.destroy(err=> {
+            if (err){
+                res.status(500).json({error: 'Déconnexion impossible.'})
+            } else {
+                console.log(name, "s'est déconnecté.")
+                res.json({message: 'Déconnexion OK.'})
+            }
+        })
+    }
+})
 
 /////////////////////////////////// FUNCTIONS ///////////////////////////////////
 const showInfos = () => {
@@ -275,9 +284,9 @@ io.on('connection', socket => {
         }
         showInfos()
     })
-
-    socket.on("get_players_count", () => sendPlayersCount({[socket.id]: socket}))
-
+    socket.on("get_players_count", () => {
+        sendPlayersCount({[socket.id]: socket})
+    })
     socket.on("join_server", data => {
         const players_in_room = Object.values(players_ids).filter(e=>e==data.server).length
         if (players_in_room < max_room_players){
@@ -285,6 +294,7 @@ io.on('connection', socket => {
             maps[data.server].postMessage({
                 header: "connection", 
                 id: socket.id,
+                google_id: data.google_id,
                 color: data.color,
                 username: data.username
             })

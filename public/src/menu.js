@@ -6,6 +6,7 @@ export class Menu{
 
         this.players_online = 0
         this.username = ""
+        this.google_id = ""
 
         this.current_map = 0
 
@@ -109,10 +110,12 @@ export class Menu{
         .then(res => res.json())
         .then(data => {
           if (data.exists){
+            this.username = data.nickname
+            this.google_id = data.google_id
             this.setCurrentPage({page: "maps"})
             this.widgets.div_player_infos.innerHTML = `
                 <span class = "white_text">Pseudo :</span>
-                <span class = "yellow_text">${data.nickname}</span>
+                <span class = "yellow_text">${this.username}</span>
                 <p></p>
                 <span class = "white_text">Victoires :</span>
                 <span class = "yellow_text">${data.score}</span>
@@ -250,14 +253,7 @@ export class Menu{
         ///////// LISTENERS /////////
         this.widgets.button_create_account.onclick = () => this.createAccount()
         this.widgets.button_disconnect.onclick = () => this.signOut()
-        this.widgets.button_join.onclick = () => {
-            if (this.server_selected.current == ""){
-                this.popup("warning", "Veuillez choisir un serveur.")
-            } else {
-                this.widgets.button_join.disabled = true
-                this.joinServer()
-            }
-        }
+        this.widgets.button_join.onclick = () => this.joinServer()
         
         this.widgets.left_color_arrow.onclick = () => {
             this.colors.current--
@@ -315,20 +311,21 @@ export class Menu{
         }, 3000)
     }
 
-    quickLaunch({map_name}){
-        this.username = `toto_${this.socket.id.substr(0, 3)}`
-    }
-
     joinServer(){
-        const color = this.colors.images[this.colors.current]
-                    .split('/').at(-1).split('.').at(0)
-
-        if (this.socket){
-            this.socket.emit("join_server", {
-                username: this.username,
-                color: color,
-                server: this.server_selected.current
-            })
+        if (this.server_selected.current == ""){
+            this.popup("warning", "Veuillez choisir un serveur.")
+        } else {
+            this.widgets.button_join.disabled = true
+            const color = this.colors.images[this.colors.current]
+                         .split('/').at(-1).split('.').at(0)
+            if (this.socket){
+                this.socket.emit("join_server", {
+                    username: this.username,
+                    google_id: this.google_id,
+                    color: color,
+                    server: this.server_selected.current
+                })
+            }
         }
     }
 
