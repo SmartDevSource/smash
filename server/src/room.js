@@ -193,11 +193,13 @@ class Room{
     }
 
     handleJoystickCoords({id, coords}){
-        this.players[id].handleJoystickDirection(coords)
+        if (this.is_game_started)
+            this.players[id].handleJoystickDirection(coords)
     }
 
     handleKeyPress({id, key}){
-        this.players[id].handleKeyDirection(key)
+        if (this.is_game_started)
+            this.players[id].handleKeyDirection(key)
     }
 
     getIds({excepted=[]}){

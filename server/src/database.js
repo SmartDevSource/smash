@@ -51,7 +51,6 @@ class Database{
                     console.log(err.stack)
                     reject(err.stack)
                 } else {
-                    console.log("Ok pour le google id ", google_id)
                     resolve(true)
                 }
             })

@@ -58,8 +58,20 @@ export class GameEngine{
 
         this.counter_screen = {
             show: false,
-            value : 0
+            sprite: this.images.counter,
+            frames_count: 4,
+            value : 0,
+            timer: 0,
+            speed_frame: 60,
+            current_frame: 0,
+            opacity: 1,
+            opacity_min: .5,
+            opacity_offset: .025,
+            scale: 180
         }
+
+        this.default_win_screen = {...this.win_screen}
+        this.default_counter_screen = {...this.counter_screen}
 
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
@@ -77,17 +89,11 @@ export class GameEngine{
     }
 
     resetWinScreen(){
-        this.win_screen = {
-            show: false,
-            show_message: false,
-            show_winner: false,
-            value: '',
-            timer: 0,
-            speed_frame: 40,
-            offset: 0,
-            offset_step: 2,
-            offset_max: 200
-        }
+        this.win_screen = {...this.default_win_screen}
+    }
+
+    resetCounterScreen(){
+        this.counter_screen = {...this.default_counter_screen}
     }
 
     initSocketListeners(){
@@ -152,9 +158,17 @@ export class GameEngine{
             }, 1000)
         })
         this.socket.on("start_counter", data => {
-            this.counter_screen.show = true
+            if (!this.counter_screen.show)
+                this.counter_screen.show = true
+            this.counter_screen.current_frame = data.counter
+            this.counter_screen.opacity = 1
         })
         this.socket.on("restart_game", data => {
+            this.counter_screen.current_frame = 0
+            this.counter_screen.opacity = .8
+            setTimeout(() => {
+                this.resetCounterScreen()
+            }, 2000)
             this.resetWinScreen()
             this.resetPlayers(data.players_data)
         })
@@ -254,6 +268,9 @@ export class GameEngine{
         // WIN SCREEN //
         if (this.win_screen.show)
             this.showWinScreen()
+        // COUNTER SCREEN //
+        if (this.counter_screen.show)
+            this.showCounterScreen()
         // COLLIDERS //
         // this.drawColliders()
     }
@@ -312,6 +329,30 @@ export class GameEngine{
                 450
             )
         }
+        this.ctx.restore()
+    }
+
+    showCounterScreen(){
+        this.counter_screen.timer += 1 * this.current_delta_time
+        if (this.counter_screen.timer >= this.counter_screen.speed_frame && 
+            this.counter_screen.opacity > 0 && this.counter_screen.current_frame > this.counter_screen.opacity_min)
+        {
+            this.counter_screen.timer = 0
+            this.counter_screen.opacity -= this.counter_screen.opacity_offset
+        }
+        this.ctx.save()
+        this.ctx.globalAlpha = this.counter_screen.opacity
+        this.ctx.drawImage(
+            this.counter_screen.sprite,
+            this.counter_screen.current_frame * this.counter_screen.sprite.width / this.counter_screen.frames_count,
+            0,
+            this.counter_screen.sprite.width / this.counter_screen.frames_count,
+            this.counter_screen.sprite.height,
+            530,
+            250,
+            this.counter_screen.scale,
+            this.counter_screen.scale
+        )
         this.ctx.restore()
     }
 
