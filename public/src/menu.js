@@ -17,6 +17,8 @@ export class Menu{
         this.menu_container = document.getElementById("menu_container")
         this.bg_video = document.getElementById("bg_video")
 
+        this.redirect_timer = 2500
+    
         this.pages = {
             connection: null,
             username: null,
@@ -28,6 +30,7 @@ export class Menu{
             span_alert: null,
             div_player_infos: null,
             text_new_username: null,
+            text_redirect: null,
             button_create_account: null,
             button_to_maps_page: null,
             button_join: null,
@@ -160,11 +163,12 @@ export class Menu{
                 .then(data => {
                     this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
+                    this.socket.emit("get_players_count")
                     if (load_google_button){
                         google.accounts.id.initialize({
                             client_id: '306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com',
                             callback: this.onSignIn
-                          })
+                        })
                         google.accounts.id.renderButton(
                         document.querySelector('.g_id_signin'),
                         { 
@@ -202,11 +206,12 @@ export class Menu{
                     if (data.already_exists){
                         this.popup("warning", "Pseudo déjà pris.")
                     } else {
-                        this.popup("success", "Compte crée avec succès !")
                         this.widgets.button_create_account.style.display = "none"
+                        this.widgets.text_redirect.textContent = "Compte crée avec succès !"
+                        this.setCurrentPage({page:"redirect"})
                         setInterval(() => {
-                            this.setCurrentPage({page:"maps"})
-                        }, 1000)
+                            location.reload()
+                        }, this.redirect_timer)
                     }
                 }
             )
@@ -218,10 +223,11 @@ export class Menu{
             .then(res => res.json())
             .then(data => {
                 this.widgets.div_player_infos.style.display = "none"
+                this.widgets.text_redirect.textContent = "Déconnexion en cours..."
                 this.setCurrentPage({page: "redirect"})
                 setTimeout(() => {
                     location.reload()
-                }, 1000)
+                }, this.redirect_timer)
             }
         )
     }
@@ -236,6 +242,7 @@ export class Menu{
         this.widgets.span_alert = document.getElementById("span_alert")
         this.widgets.div_player_infos = document.getElementById("div_player_infos")
         this.widgets.text_new_username = document.getElementById("text_new_username")
+        this.widgets.text_redirect = document.getElementById("text_redirect")
         this.widgets.button_create_account = document.getElementById("button_create_account")
         this.widgets.button_to_maps_page = document.getElementById("button_to_maps_page")
         this.widgets.button_join = document.getElementById("button_join")
@@ -278,15 +285,6 @@ export class Menu{
 
         this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
         this.is_menu_loaded = true
-    }
-
-    loadMapPage(username){
-        this.username = username
-        this.pages.username.style.display = "none"
-        this.pages.maps.style.display = "flex"
-        this.last_page = "username"
-        this.current_page = "maps"
-        this.socket.emit("get_players_count")
     }
 
     popup(type, message){

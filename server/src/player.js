@@ -32,6 +32,7 @@ class Player{
         }
 
         this.collided_by = null
+        this.collided_by_timer = 1000
         this.force_impact = null
         this.angle_impact = null
         this.has_collided_by_opponent = false
@@ -151,7 +152,7 @@ class Player{
                 this.force_impact = Math.abs((ship.velocity.horizontal + ship.velocity.vertical) / 2)
                 setTimeout(() => {
                     this.collided_by = null
-                }, Math.floor(this.collide_time_multiplier * this.force_impact))
+                }, this.collided_by_timer)
             } else if (distance <= this.collide_repulsion){
                 this.can_collide = false
                 setTimeout(() => this.can_collide = true, 300)

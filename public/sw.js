@@ -1,12 +1,12 @@
 self.addEventListener('install', (event)=>{
-    // event.waitUntil(
-    //     caches.open('sw-cache').then((cache)=>{ 
-    //         return cache.addAll([
-    //             './index.html',
-    //             './style.css'
-    //         ]) 
-    //     })
-    // )
+    event.waitUntil(
+        caches.open('sw-cache').then((cache)=>{ 
+            return cache.addAll([
+                './index.html',
+                './style.css'
+            ]) 
+        })
+    )
 })
 
 self.addEventListener('fetch', (event)=>{

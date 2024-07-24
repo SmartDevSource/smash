@@ -44,13 +44,14 @@ class Database{
 
     updateScore({google_id}){
         const query = `UPDATE users SET score = score + 1 WHERE google_id = $1`
-        const values = [ google_id]
+        const values = [google_id]
         return new Promise((resolve, reject) => {
             this.pool.query(query, values, (err, res)=>{
                 if (err){
                     console.log(err.stack)
                     reject(err.stack)
                 } else {
+                    console.log("Ok pour le google id ", google_id)
                     resolve(true)
                 }
             })

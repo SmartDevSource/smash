@@ -43,6 +43,24 @@ export class GameEngine{
                 images: this.images
             })
         }
+
+        this.win_screen = {
+            show: false,
+            show_message: false,
+            show_winner: false,
+            value: '',
+            timer: 0,
+            speed_frame: 40,
+            offset: 0,
+            offset_step: 2,
+            offset_max: 200
+        }
+
+        this.counter_screen = {
+            show: false,
+            value : 0
+        }
+
         this.initPlayers(init_data.players_data)
         this.initSocketListeners()
 
@@ -56,6 +74,20 @@ export class GameEngine{
         this.events(keys)
         this.draw()
         this.joystick.update()
+    }
+
+    resetWinScreen(){
+        this.win_screen = {
+            show: false,
+            show_message: false,
+            show_winner: false,
+            value: '',
+            timer: 0,
+            speed_frame: 40,
+            offset: 0,
+            offset_step: 2,
+            offset_max: 200
+        }
     }
 
     initSocketListeners(){
@@ -112,15 +144,30 @@ export class GameEngine{
             }
         })
         this.socket.on("end_game", data => {
-            console.log("Winner id :", data.winner_id)
-            console.log("Winner nickname :", this.ships[data.winner_id].username)
+            this.win_screen.show = true
+            this.win_screen.value = this.ships[data.winner_id].username
+            setTimeout(() => {
+                this.win_screen.show_winner = true
+                setTimeout(()=> { this.win_screen.show_message = true }, 1000)
+            }, 1000)
         })
         this.socket.on("start_counter", data => {
-            console.log("Counter :", data.counter)
+            this.counter_screen.show = true
         })
         this.socket.on("restart_game", data => {
-            console.log("Players data :", data.players_data)
+            this.resetWinScreen()
+            this.resetPlayers(data.players_data)
         })
+    }
+
+    resetPlayers(players_data){
+        for (const id in players_data){
+            if (this.ships[id]){
+                this.ships[id].angle = players_data[id].angle
+                this.ships[id].position = players_data[id].position
+                this.ships[id].score = players_data[id].score
+            }
+        }
     }
 
     initPlayers(players_data){
@@ -204,8 +251,68 @@ export class GameEngine{
             this.ships[id].drawShip(this.current_delta_time)
         for (const id in this.ships)
             this.ships[id].drawInfos()
+        // WIN SCREEN //
+        if (this.win_screen.show)
+            this.showWinScreen()
         // COLLIDERS //
         // this.drawColliders()
+    }
+
+    showWinScreen(){
+        this.win_screen.timer += 1 * this.current_delta_time
+        if (this.win_screen.timer >= this.win_screen.speed_frame && 
+            this.win_screen.offset < this.win_screen.offset_max)
+        {
+            this.win_screen.timer = 0
+            this.win_screen.offset += 5
+        }
+        this.ctx.save()
+        this.ctx.fillStyle = "rgb(30,30,30)"
+        this.ctx.fillRect(
+            0, 
+            0, 
+            this.screen.w, 
+            this.win_screen.offset
+        )
+        this.ctx.fillRect(
+            0,
+            this.screen.h,
+            this.screen.w,
+            -this.win_screen.offset
+        )
+        this.ctx.fillStyle = "orange"
+        this.ctx.strokeStyle = "black"
+        this.ctx.lineWidth = 4
+
+        if (this.win_screen.show_winner){
+            this.ctx.font = "120px quicksand bold"
+            this.ctx.strokeText(
+                this.win_screen.value,
+                550 - ((this.win_screen.value.length-3) * 20),
+                320
+            )
+            this.ctx.fillText(
+                this.win_screen.value,
+                550 - ((this.win_screen.value.length-3) * 20),
+                320
+            )
+        }
+
+        if (this.win_screen.show_message){
+            this.ctx.font = "60px quicksand bold"
+            this.ctx.strokeText(
+                "Remporte la victoire !",
+                380,
+                450
+            )
+            this.ctx.fillStyle = "orange"
+            this.ctx.fillText(
+                "Remporte la victoire !",
+                380,
+                450
+            )
+        }
+        this.ctx.restore()
     }
 
     drawColliders(){

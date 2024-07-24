@@ -12,7 +12,7 @@ class Room{
         this.max_server_score = 1
         this.spawn_timeout = 2000
         this.is_game_started = true
-        this.interval_before_restart = 3000
+        this.timer_before_restart = 4000
     }
 
     toMainThread(data){
@@ -53,9 +53,11 @@ class Room{
                     const opponent_id = player.collided_by
                     if (opponent_id && this.players[opponent_id]){
                         this.players[opponent_id].score++
-                        if (this.players[opponent_id].score > this.max_server_score){
-                            this.players[opponent_id].score = this.max_server_score
-                            this.endGame({winner_id: opponent_id})
+                        if (this.players[opponent_id].score == this.max_server_score){
+                            this.endGame({
+                                winner_id: opponent_id,
+                                google_id: this.players[opponent_id].google_id
+                            })
                         }
                         this.toMainThread({
                             ids: this.getIds([]),
@@ -94,8 +96,10 @@ class Room{
 
     restartGame(){
         const players_data = {}
-        for (const id in this.players)
+        for (const id in this.players){
+            this.players[id].reset()
             players_data[id] = this.players[id].getPlayerData()
+        }
         this.toMainThread({
             ids: this.getIds([]),
             header: "restart_game",
@@ -104,21 +108,22 @@ class Room{
         setTimeout(() => this.is_game_started = true, 1000)
     }
 
-    endGame({winner_id}){
+    endGame({winner_id, google_id}){
         this.toMainThread({
             ids: this.getIds([]),
             header: "end_game",
-            winner_id: winner_id
+            winner_id: winner_id,
+            google_id: google_id
         })
         this.is_game_started = false
         setTimeout(() => {
             this.startCounter()
-        }, this.interval_before_restart)
+        }, this.timer_before_restart)
     }
 
     startCounter(){
         let counter = 3
-        for(let i = 1 ; i <=3 ; i++){
+        for(let i = 0 ; i <=3 ; i++){
             setTimeout(()=> {
                 if (counter > 0){
                     this.toMainThread({
@@ -171,8 +176,7 @@ class Room{
             header: "new_player",
             player_data: this.players[id].getPlayerData()
         })
-
-        this.showInfos()
+        // this.showInfos()
     }
 
     removePlayer({id}){
@@ -185,7 +189,7 @@ class Room{
                 id: id
             })
         }
-        this.showInfos()
+        // this.showInfos()
     }
 
     handleJoystickCoords({id, coords}){

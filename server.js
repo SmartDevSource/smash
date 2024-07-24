@@ -97,6 +97,7 @@ const setRoomListeners = room => {
                 sendToPlayers(data.ids, "end_game", {
                     winner_id: data.winner_id,
                 })
+                database.updateScore({google_id: data.google_id})
             break
             case "start_counter":
                 sendToPlayers(data.ids, "start_counter", {
