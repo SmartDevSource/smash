@@ -317,7 +317,7 @@ export class Menu{
         } else {
             this.widgets.button_join.disabled = true
             const color = this.colors.images[this.colors.current]
-                         .split('/').at(-1).split('.').at(0)
+                        .split('/').at(-1).split('.').at(0)
             if (this.socket){
                 this.socket.emit("join_server", {
                     username: this.username,

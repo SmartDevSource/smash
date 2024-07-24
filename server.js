@@ -93,6 +93,21 @@ const setRoomListeners = room => {
                     angle: data.angle
                 })
             break
+            case "end_game":
+                sendToPlayers(data.ids, "end_game", {
+                    winner_id: data.winner_id,
+                })
+            break
+            case "start_counter":
+                sendToPlayers(data.ids, "start_counter", {
+                    counter: data.counter,
+                })
+            break
+            case "restart_game":
+                sendToPlayers(data.ids, "restart_game", {
+                    players_data: data.players_data,
+                })
+            break
         }
     })
 }
@@ -151,7 +166,9 @@ server.listen(PORT, () => console.log(`Serveur lancé sur le port ${PORT}`))
 io.setMaxListeners(0)
 
 /////////////////////////////////// HTTP REQUESTS ///////////////////////////////////
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
 
 app.get('/session_status', (req, res) => {
     if (req.session.user){

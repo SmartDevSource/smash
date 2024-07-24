@@ -101,7 +101,7 @@ class Room{
             header: "restart_game",
             players_data: players_data
         })
-        setTimeout(()=> this.is_game_started = true, 1000)
+        setTimeout(() => this.is_game_started = true, 1000)
     }
 
     endGame({winner_id}){

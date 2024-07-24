@@ -111,6 +111,16 @@ export class GameEngine{
                 })
             }
         })
+        this.socket.on("end_game", data => {
+            console.log("Winner id :", data.winner_id)
+            console.log("Winner nickname :", this.ships[data.winner_id].username)
+        })
+        this.socket.on("start_counter", data => {
+            console.log("Counter :", data.counter)
+        })
+        this.socket.on("restart_game", data => {
+            console.log("Players data :", data.players_data)
+        })
     }
 
     initPlayers(players_data){
