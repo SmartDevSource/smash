@@ -160,7 +160,6 @@ export class Menu{
                 .then(data => {
                     this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
-
                     if (load_google_button){
                         google.accounts.id.initialize({
                             client_id: '306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com',
