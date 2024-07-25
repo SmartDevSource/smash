@@ -59,15 +59,14 @@ export class GameEngine{
         this.counter_screen = {
             show: false,
             sprite: this.images.counter,
-            frames_count: 4,
             value : 0,
             timer: 0,
             speed_frame: 60,
-            current_frame: 0,
+            value: 0,
             opacity: 1,
             opacity_min: .5,
             opacity_offset: .025,
-            scale: 180
+            x_offset: 590
         }
 
         this.default_win_screen = {...this.win_screen}
@@ -160,12 +159,12 @@ export class GameEngine{
         this.socket.on("start_counter", data => {
             if (!this.counter_screen.show)
                 this.counter_screen.show = true
-            this.counter_screen.current_frame = data.counter
+            this.counter_screen.value = data.counter
             this.counter_screen.opacity = 1
         })
         this.socket.on("restart_game", data => {
-            this.counter_screen.current_frame = 0
-            this.counter_screen.opacity = .8
+            this.counter_screen.value = "Go !"
+            this.counter_screen.x_offset = 520
             setTimeout(() => {
                 this.resetCounterScreen()
             }, 2000)
@@ -297,6 +296,7 @@ export class GameEngine{
             this.screen.w,
             -this.win_screen.offset
         )
+        
         this.ctx.fillStyle = "orange"
         this.ctx.strokeStyle = "black"
         this.ctx.lineWidth = 4
@@ -342,17 +342,23 @@ export class GameEngine{
         }
         this.ctx.save()
         this.ctx.globalAlpha = this.counter_screen.opacity
-        this.ctx.drawImage(
-            this.counter_screen.sprite,
-            this.counter_screen.current_frame * this.counter_screen.sprite.width / this.counter_screen.frames_count,
-            0,
-            this.counter_screen.sprite.width / this.counter_screen.frames_count,
-            this.counter_screen.sprite.height,
-            530,
-            250,
-            this.counter_screen.scale,
-            this.counter_screen.scale
+
+        this.ctx.fillStyle = "white"
+        this.ctx.strokeStyle = "black"
+        this.ctx.lineWidth = 6
+
+        this.ctx.font = "150px RaceSport bold"
+        this.ctx.strokeText(
+            this.counter_screen.value,
+            this.counter_screen.x_offset,
+            350
         )
+        this.ctx.fillText(
+            this.counter_screen.value,
+            this.counter_screen.x_offset,
+            350
+        )
+
         this.ctx.restore()
     }
 

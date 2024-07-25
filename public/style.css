@@ -2,6 +2,10 @@
     font-family: quicksand;
     src: url("./assets/fonts/quicksand.ttf");
 }
+@font-face {
+    font-family: RaceSport;
+    src: url("./assets/fonts/RaceSport.ttf");
+}
 
 *{
     margin: 0;
@@ -57,7 +61,7 @@ span{
     position: absolute;
     text-align: start;
     left: 50%;
-    top: 20%;
+    top: 17%;
     transform: translate(-50%, -80%);
     font-size: 30px;
     background: none;
