@@ -358,7 +358,6 @@ export class GameEngine{
             this.counter_screen.x_offset,
             350
         )
-
         this.ctx.restore()
     }
 

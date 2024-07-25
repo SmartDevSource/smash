@@ -117,13 +117,15 @@ export class Menu{
             this.google_id = data.google_id
             this.setCurrentPage({page: "maps"})
             this.widgets.div_player_infos.innerHTML = `
-                <span class = "white_text">Pseudo :</span>
-                <span class = "yellow_text">${this.username}</span>
-                <p></p>
-                <span class = "white_text">Victoires :</span>
-                <span class = "yellow_text">${data.score}</span>
+                <span class = "white_text span_player_info"> Pseudo : 
+                    <span class = "yellow_text"> ${this.username}</span>
+                </span>
+                <span class = "white_text span_player_info" style = "margin-left: 10px; margin-right: 10px">|</span>
+                <span class = "white_text span_player_info"> Victoires : 
+                    <span class = "yellow_text"> ${data.score}</span>
+                </span>
             `
-            this.widgets.div_player_infos.style.display = "block"
+            this.widgets.div_player_infos.style.display = "flex"
           } else {
             this.widgets.text_new_username.innerHTML = `Bienvenue ${data.name} !`
             this.setCurrentPage({page: "username"})

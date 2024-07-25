@@ -57,14 +57,9 @@ span{
 }
 
 #div_player_infos {
-    display: none;
-    position: absolute;
-    text-align: start;
-    left: 50%;
-    top: 17%;
-    transform: translate(-50%, -80%);
     font-size: 30px;
     background: none;
+    margin: 5px;
 }
 
 .outline_container{
@@ -73,13 +68,9 @@ span{
     border-radius: 10px;
 }
 
-.flex_container {
+.absolute_container {
     z-index: 1;
     position: absolute;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    background: none;
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%);
@@ -91,6 +82,7 @@ span{
     align-items: center;
     flex-direction: column;
     background: none;
+    text-align: center;
 }
 
 .flex_row {
@@ -99,6 +91,14 @@ span{
     align-items: center;
     flex-direction: row;
     background: none;
+}
+
+.space_between {
+    justify-content: space-between;
+}
+
+.align_items_center {
+    align-items: center;
 }
 
 #installButton{
@@ -150,10 +150,6 @@ canvas {
     background: none;
 }
 
-.g_id_signin{
-    
-}
-
 .button_arrow {
     background: none;
     color: white;
@@ -166,6 +162,7 @@ canvas {
     padding: 5px;
     text-align: center;
     cursor: pointer;
+    float: right;
 }
 
 input {
@@ -203,9 +200,46 @@ input:focus{
     animation: reverse_color .3s forwards;
 }
 
+.span_player_info {
+    font-size: 30px;
+}
+
 @media (max-width:515px) {
     #installButton{
         font-size: 18px;
+    }
+}
+
+@media (max-width:800px) {
+    .span_player_info{
+        font-size: 24px;
+    }
+}
+
+@media (max-width:650px) {
+    .span_player_info{
+        font-size: 20px;
+    }
+}
+
+@media (max-height:515px) {
+    .outline_container{
+        padding-top: 0px;
+    }
+    .title{
+        font-size: 38px;
+    }
+    .text {
+        font-size: 18px;
+    }
+    .button_arrow{
+        font-size: 22px;
+    }
+    .cstm_button{
+        font-size: 18px;
+    }
+    #div_player_infos{
+        font-size: 24px;
     }
 }
 

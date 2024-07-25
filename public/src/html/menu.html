@@ -1,7 +1,7 @@
 <span id = "span_alert"></span>
-<div id = "div_player_infos"></div>
+<button class = "cstm_button">Top 10</button>
 
-<div id = "connection_page" class = "flex_container outline_container">
+<div id = "connection_page" class = "flex_col absolute_container outline_container">
     <span class = "title">Smash!</span>
     <div id="g_id_onload"
         data-client_id="306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com"
@@ -11,7 +11,7 @@
     <div class="g_id_signin" data-type="standard"></div>
 </div>
 
-<div id = "username_page" class = "flex_container outline_container" style = "display:none;">
+<div id = "username_page" class = "flex_col absolute_container outline_container" style = "display:none;">
     <span class = "title">Smash!</span>
     <span class = "text" id = "text_new_username"></span>
     <span class = "text">Nouveau pseudo :</span>
@@ -30,37 +30,46 @@
     </button>
 </div>
 
-<div id = "maps_page" class = "flex_container outline_container" style = "display: none;">
-    <span class = "title">Smash!</span>
-    <div class = "flex_row">
-        <span class = "text">Votre couleur :</span>
-        <button id = "left_color_arrow" class = "button_arrow" onclick="reverseColor(this)"><</button>
-        <img id = "img_color_choice">
-        <button id = "right_color_arrow" class = "button_arrow" onclick="reverseColor(this)">></button>
-    </div>
-    <div class = "flex_row">
-        <div class = "flex_col">
-            <span class = "text" id = "first_players_count"></span>
-            <img class = "img_server_choice" id="first_map" src="../../assets/gfx/maps/first.png">
+<div id = "maps_page" class = "flex_col absolute_container" style="display: none;">
+    <div class = "outline_container">
+        <span class = "title">Smash!</span>
+        <div id = "div_player_infos" class = "flex_row space_between"></div>
+        <div class = "flex_row space_between">
+            <div>
+                <span class = "white_text span_player_info">Votre couleur :</span>
+            </div>
+            <div class="flex_row align_items_center">
+                <button id = "left_color_arrow" class = "button_arrow" onclick="reverseColor(this)"><</button>
+                <img id = "img_color_choice">
+                <button id = "right_color_arrow" class = "button_arrow" onclick="reverseColor(this)">></button>
+            </div>
+        </div>
+        <div class = "flex_row space_between">
+            <div class = "flex_col">
+                <span class = "white_text span_player_info" id = "first_players_count"></span>
+                <img class = "img_server_choice" id="first_map" src="../../assets/gfx/maps/first.png">
+            </div>
+            <div class = "flex_col">
+                <span class = "white_text span_player_info" id = "second_players_count"></span>
+                <img class = "img_server_choice" id = "second_map" src="../../assets/gfx/maps/second.png">
+            </div>
         </div>
         <div class = "flex_col">
-            <span class = "text" id = "second_players_count"></span>
-            <img class = "img_server_choice" id = "second_map" src="../../assets/gfx/maps/second.png">
+            <button id = "button_join" 
+                    class = "cstm_button"
+                    onmouseenter = "wobble(this)">
+                C'est parti !
+            </button>
+            <button id = "button_disconnect" 
+                    class = "cstm_button"
+                    onmouseenter = "wobble(this)">
+                Se déconnecter
+            </button>
         </div>
     </div>
-    <button id = "button_join" 
-            class = "cstm_button"
-            onmouseenter = "wobble(this)">
-        C'est parti !
-    </button>
-    <button id = "button_disconnect" 
-            class = "cstm_button"
-            onmouseenter = "wobble(this)">
-        Se déconnecter
-    </button>
 </div>
 
-<div id = "redirect_page" class = "flex_container outline_container" style = "display:none;">
+<div id = "redirect_page" class = "flex_col absolute_container outline_container" style = "display:none;">
     <span class = "title">Smash!</span>
     <span class = "text" id = "text_redirect"></span>
     <span class = "text" style="text-align: center;">Vous allez être redirigé...</span>
