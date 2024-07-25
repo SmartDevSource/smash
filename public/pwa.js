@@ -18,21 +18,21 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
     window.addEventListener('beforeinstallprompt', event => {
       event.preventDefault()
       deferredPrompt = event
-      document.getElementById('installButton').style.display = 'block'
+      document.getElementById('button_install').style.display = 'block'
     });
 
     window.addEventListener('appinstalled', event => {
-        installButton.style.display = 'none'
+      button_install.style.display = 'none'
     })
   
-    document.getElementById('installButton').addEventListener('click', () => {
+    document.getElementById('button_install').addEventListener('click', () => {
       if (deferredPrompt) {
         deferredPrompt.prompt()
         
         deferredPrompt.userChoice.then(choiceResult => {
           if (choiceResult.outcome === 'accepted') {
             console.log('L\'utilisateur a accepté l\'installation.')
-            installButton.style.display = 'none'
+            button_install.style.display = 'none'
           } else {
             console.log('L\'utilisateur a refusé l\'installation.')
           }

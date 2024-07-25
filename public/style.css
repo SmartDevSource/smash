@@ -83,6 +83,7 @@ span{
     flex-direction: column;
     background: none;
     text-align: center;
+    padding: 5px;
 }
 
 .flex_row {
@@ -97,11 +98,19 @@ span{
     justify-content: space-between;
 }
 
+.fit_content {
+    width: fit-content;
+}
+
 .align_items_center {
     align-items: center;
 }
 
-#installButton{
+.justify_center {
+    justify-content: center;
+}
+
+#button_install{
     z-index: 2;
     padding: 10px;
     border: none;
@@ -148,6 +157,10 @@ canvas {
     color: white;
     padding: 5px;
     background: none;
+}
+
+.text_center {
+    text-align: center;
 }
 
 .button_arrow {
@@ -205,7 +218,7 @@ input:focus{
 }
 
 @media (max-width:515px) {
-    #installButton{
+    #button_install{
         font-size: 18px;
     }
 }
@@ -237,9 +250,16 @@ input:focus{
     }
     .cstm_button{
         font-size: 18px;
+        padding: 3px;
+        margin-top: 2px;
     }
     #div_player_infos{
         font-size: 24px;
+    }
+    .img_server_choice {
+        width: 100px;
+        height: 50px;
+        margin: 0px;
     }
 }
 

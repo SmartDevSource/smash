@@ -35,6 +35,8 @@ export class Menu{
             button_to_maps_page: null,
             button_join: null,
             button_disconnect: null,
+            button_install: null,
+            button_top_ten: null,
             input_username: null,
             first_players_count: null,
             second_players_count: null,
@@ -134,6 +136,9 @@ export class Menu{
     }
 
     setCurrentPage({page}){
+        if (page != "connection" && this.widgets.button_install.style.display != "none"){
+            this.widgets.button_install.style.display = "none"
+        }
         for (const key in this.pages){
             if (key == page){
                 this.pages[key].style.display = "flex"
@@ -199,6 +204,10 @@ export class Menu{
         .then(res => res.json())
     }
 
+    showTopTen(){
+        
+    }
+
     createAccount(){
         const username = this.widgets.input_username.value
         if (username.length < 3){
@@ -249,6 +258,8 @@ export class Menu{
         this.widgets.button_to_maps_page = document.getElementById("button_to_maps_page")
         this.widgets.button_join = document.getElementById("button_join")
         this.widgets.button_disconnect = document.getElementById("button_disconnect")
+        this.widgets.button_install = document.getElementById("button_install")
+        this.widgets.button_top_ten = document.getElementById("button_top_ten")
         this.widgets.input_username = document.getElementById("input_username")
         this.widgets.first_players_count = document.getElementById("first_players_count")
         this.widgets.second_players_count = document.getElementById("second_players_count")
@@ -259,30 +270,26 @@ export class Menu{
         this.server_images.first = document.getElementById("first_map")
         this.server_images.second = document.getElementById("second_map")
         ///////// LISTENERS /////////
+        this.widgets.button_top_ten.onclick = () => this.showTopTen()
         this.widgets.button_create_account.onclick = () => this.createAccount()
         this.widgets.button_disconnect.onclick = () => this.signOut()
         this.widgets.button_join.onclick = () => this.joinServer()
-        
         this.widgets.left_color_arrow.onclick = () => {
             this.colors.current--
-            if (this.colors.current < 0){
+            if (this.colors.current < 0)
                 this.colors.current = this.colors.max
-            }
             this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
         }
-
         this.widgets.right_color_arrow.onclick = () => {
             this.colors.current++
-            if (this.colors.current > this.colors.max){
+            if (this.colors.current > this.colors.max)
                 this.colors.current = 0
-            }
             this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
         }
 
         for (const key in this.server_images){
-            this.server_images[key].onclick = () => {
+            this.server_images[key].onclick = () =>
                 this.server_selected.current = key
-            }
         }
 
         this.widgets.img_color_choice.src = this.colors.images[this.colors.current]
