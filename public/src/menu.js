@@ -29,6 +29,8 @@ export class Menu{
         this.widgets = {
             span_alert: null,
             div_player_infos: null,
+            div_topten_content: null,
+            div_topten_container: null,
             text_new_username: null,
             text_redirect: null,
             button_create_account: null,
@@ -36,7 +38,7 @@ export class Menu{
             button_join: null,
             button_disconnect: null,
             button_install: null,
-            button_top_ten: null,
+            button_topten: null,
             input_username: null,
             first_players_count: null,
             second_players_count: null,
@@ -194,7 +196,7 @@ export class Menu{
         }
     }
 
-    createIfNotExists({username}){
+    async createIfNotExists({username}){
         return fetch('/createaccount', {
             method: 'POST',
             headers: {
@@ -203,9 +205,14 @@ export class Menu{
             body: JSON.stringify({username: username})})
         .then(res => res.json())
     }
-
-    showTopTen(){
-        
+    
+    async getTopTen(){
+        return fetch('/topten', {
+            method: 'GET',
+            header: {
+                'Content-Type': 'Application/json'
+            }
+        }).then(res => res.json())
     }
 
     createAccount(){
@@ -242,6 +249,53 @@ export class Menu{
             }
         )
     }
+    
+    showTopTen(){
+        this.widgets.button_topten.disabled = true
+        this.widgets.button_topten.textContent = "Chargement..."
+        this.widgets.div_topten_content.innerHTML = `
+            <div class = "flex_row space_between topten_header" style = "width:100%;">
+                <span>Position</span>
+                <span>Pseudo</span>
+                <span>Victoires</span>
+            </div>
+
+        `
+        if (this.widgets.div_topten_container.style.display == "none"){
+            this.getTopTen().then(data=> {
+                let line_counter = 1
+                for (const nickname in data.topten){
+                    this.widgets.div_topten_content.innerHTML += `
+                    <div class = "flex_row space_between" style = "width:100%;">
+                        <span class = "topten_text white_text">
+                            ${line_counter}
+                        </span>    
+                    <span class = "topten_text yellow_text">
+                            ${nickname}
+                        </span>
+                        <span class = "topten_text orange_text">
+                            ${data.topten[nickname]}
+                        </span>
+                    </div>
+                    `
+                    line_counter++
+                }
+                this.widgets.div_topten_content.innerHTML += `
+                <button id = "button_close_topten" class = "cstm_button" onmouseenter = "wobble(this)">Fermer</button>
+                `
+
+                document.getElementById("button_close_topten").onclick = () => this.resetTopTenButton()
+
+                this.widgets.div_topten_container.style.display = "flex"
+            })
+        }
+    }
+
+    resetTopTenButton(){
+        this.widgets.div_topten_container.style.display = "none"
+        this.widgets.button_topten.disabled = false
+        this.widgets.button_topten.textContent = "Afficher le top 10"
+    }
 
     initWidgetsAndListeners(){
         ///////// PAGES //////////
@@ -252,6 +306,8 @@ export class Menu{
         ///////// WIDGETS //////////
         this.widgets.span_alert = document.getElementById("span_alert")
         this.widgets.div_player_infos = document.getElementById("div_player_infos")
+        this.widgets.div_topten_content = document.getElementById("div_topten_content")
+        this.widgets.div_topten_container = document.getElementById("div_topten_container")
         this.widgets.text_new_username = document.getElementById("text_new_username")
         this.widgets.text_redirect = document.getElementById("text_redirect")
         this.widgets.button_create_account = document.getElementById("button_create_account")
@@ -259,7 +315,7 @@ export class Menu{
         this.widgets.button_join = document.getElementById("button_join")
         this.widgets.button_disconnect = document.getElementById("button_disconnect")
         this.widgets.button_install = document.getElementById("button_install")
-        this.widgets.button_top_ten = document.getElementById("button_top_ten")
+        this.widgets.button_topten = document.getElementById("button_topten")
         this.widgets.input_username = document.getElementById("input_username")
         this.widgets.first_players_count = document.getElementById("first_players_count")
         this.widgets.second_players_count = document.getElementById("second_players_count")
@@ -270,7 +326,7 @@ export class Menu{
         this.server_images.first = document.getElementById("first_map")
         this.server_images.second = document.getElementById("second_map")
         ///////// LISTENERS /////////
-        this.widgets.button_top_ten.onclick = () => this.showTopTen()
+        this.widgets.button_topten.onclick = () => this.showTopTen()
         this.widgets.button_create_account.onclick = () => this.createAccount()
         this.widgets.button_disconnect.onclick = () => this.signOut()
         this.widgets.button_join.onclick = () => this.joinServer()

@@ -201,7 +201,6 @@ app.get('/googleexists', (req, res) => {
 
 app.post('/createaccount', (req, res) => {
     if (req.session.user){
-        console.log(req.body)
         database.checkUsername({nickname: req.body.username}).then(response=>{
             console.log("response /createaccount", response)
             if (response){
@@ -222,6 +221,14 @@ app.post('/createaccount', (req, res) => {
             }
         })
     }
+ })
+
+ app.get('/topten', (req, res) => {
+    database.getBestScores({limit: 10}).then(response=>{
+        const topten = {}
+        response.map(e=>{ topten[e.nickname] = e.score})
+        res.json({topten: topten})
+    })
  })
  
 app.post('/tokensignin', async (req, res) => {

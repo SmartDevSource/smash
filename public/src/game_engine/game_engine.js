@@ -157,8 +157,10 @@ export class GameEngine{
             }, 1000)
         })
         this.socket.on("start_counter", data => {
-            if (!this.counter_screen.show)
+            if (!this.counter_screen.show){
                 this.counter_screen.show = true
+                this.win_screen.show = false
+            }
             this.counter_screen.value = data.counter
             this.counter_screen.opacity = 1
         })
