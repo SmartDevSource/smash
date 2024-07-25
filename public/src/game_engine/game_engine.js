@@ -16,6 +16,7 @@ export class GameEngine{
 
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
+        console.log(init_data)
         this.colliders_image = {
             sprite: this.images[`halo_${init_data.map_data.name}`],
             timer: 0,

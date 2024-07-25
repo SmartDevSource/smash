@@ -52,8 +52,8 @@ const images = [
     './assets/gfx/sprites/impact.png',
     './assets/gfx/maps/first.png',
     './assets/gfx/maps/halo_first.png',
-    './assets/gfx/maps/first.png',
     './assets/gfx/maps/second.png',
+    './assets/gfx/maps/halo_second.png',
 ]
 
 export const preloadRessources = async () => {
