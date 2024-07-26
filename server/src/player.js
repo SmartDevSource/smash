@@ -1,6 +1,7 @@
 const { getDistance, getDistanceToLine, getAngleTo } = require('./server_utils.js')
 const { Worker } = require('node:worker_threads')
 const path = require('path')
+
 class Player{
     constructor({id, google_id, username, color, map_data}){
         this.id = id

@@ -1,6 +1,5 @@
 const { parentPort } = require('node:worker_threads')
 const Player = require('./player.js')
-const ShortUniqueId = require('short-unique-id')
 
 class Room{
     constructor(map_data){

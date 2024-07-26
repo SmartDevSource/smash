@@ -9,7 +9,6 @@ const express = require('express')
 const app = express()
 const server = require('http').createServer(app)
 const socket_io = require('socket.io')
-const ShortUniqueId = require('short-unique-id')
 const io = socket_io(server, {cors: { origin: '*', methods: ['GET']}})
 
 const bodyParser = require('body-parser')
