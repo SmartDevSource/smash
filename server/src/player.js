@@ -174,7 +174,6 @@ class Player{
         if (this.is_alive){
             this.velocity.horizontal_max = Math.abs(coords.x) + 1
             this.velocity.vertical_max = Math.abs(coords.y) + 1
-
             switch(true){
                 case coords.x < 0:
                     this.directions.horizontal = 'l'
