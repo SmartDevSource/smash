@@ -1,4 +1,4 @@
-import { getAngleTo, getPythagoreanDistance } from "../misc_functions.js"
+import { getAngleTo, getPythagoreanDistance } from "../client_utils.js"
 
 export class Joystick{
     constructor(ctx, screen, is_mobile){
@@ -66,8 +66,7 @@ export class Joystick{
                     y: mouse_event.clientY * this.ctx.canvas.height / this.ctx.canvas.offsetHeight
                 }
                 this.mouse.coords = coords_mouse
-                console.table(this.mouse.coords)
-
+                // console.table(this.mouse.coords)
             break
             case "mouse_up":
                 this.mouse.is_down = false

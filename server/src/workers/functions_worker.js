@@ -1,5 +1,5 @@
 const { parentPort } = require('worker_threads')
-const { getDistanceToLine } = require('../server_misc_functions.js')
+const { getDistanceToLine } = require('../server_utils.js')
 
 parentPort.on('message', data => {
     switch(data.header){

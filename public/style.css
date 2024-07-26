@@ -56,6 +56,16 @@
     text-align: center;
 }
 
+#button_ingame_disconnect {
+    z-index: 12;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#button_ingame_disconnect:hover {
+    animation: wobble .5s forwards;
+}
 
 #div_topten_container {
     z-index: 10;

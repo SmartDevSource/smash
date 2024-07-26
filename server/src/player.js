@@ -1,4 +1,4 @@
-const { getDistance, getDistanceToLine, getAngleTo } = require('./server_misc_functions.js')
+const { getDistance, getDistanceToLine, getAngleTo } = require('./server_utils.js')
 const { Worker } = require('node:worker_threads')
 const path = require('path')
 class Player{

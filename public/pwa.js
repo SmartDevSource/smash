@@ -1,4 +1,4 @@
-import { isStandalone } from "./src/misc_functions.js"
+import { isStandalone } from "./src/client_utils.js"
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     const ask_mobile = document.getElementById("askMobile")

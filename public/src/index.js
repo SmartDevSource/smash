@@ -1,4 +1,4 @@
-import { loadJson, isMobile, isIOS, isStandalone } from "./misc_functions.js"
+import { loadJson, isMobile, isIOS, isStandalone } from "./client_utils.js"
 import { GameEngine } from "./game_engine/game_engine.js"
 import { Menu } from "./menu.js"
 import { preloadRessources } from "../preload.js"

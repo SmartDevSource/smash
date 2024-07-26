@@ -1,6 +1,6 @@
 import { Ship } from "./ship.js"
 import { Joystick } from "./joystick.js"
-import { getDistance, getDistanceToLine, getPythagoreanDistance } from "../misc_functions.js"
+import { getDistance, getDistanceToLine, getPythagoreanDistance } from "../client_utils.js"
 
 export class GameEngine{
     constructor(ctx, screen, socket, is_mobile, init_data, images, audios){
@@ -16,7 +16,6 @@ export class GameEngine{
 
         this.map_data = init_data.map_data
         this.background_image = this.images[init_data.map_data.name]
-        console.log(init_data)
         this.colliders_image = {
             sprite: this.images[`halo_${init_data.map_data.name}`],
             timer: 0,
@@ -78,6 +77,13 @@ export class GameEngine{
 
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
+
+        this.button_disconnect = document.createElement("button")
+        this.button_disconnect.setAttribute("id", "button_ingame_disconnect")
+        this.button_disconnect.classList.add("cstm_button")
+        this.button_disconnect.textContent = "Se déconnecter"
+        this.button_disconnect.onclick = () => location.reload()
+        document.body.appendChild(this.button_disconnect)
     }
     
     update(keys){
@@ -368,7 +374,7 @@ export class GameEngine{
         for (const line of this.map_data.colliders){
             this.ctx.save()
             this.ctx.beginPath()
-            this.ctx.strokeStyle = "red"
+            this.ctx.strokeStyle = "lime"
             this.ctx.lineWidth = 4
             this.ctx.moveTo(line.points.a.x, line.points.a.y)
             this.ctx.lineTo(line.points.b.x, line.points.b.y)
