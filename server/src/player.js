@@ -17,7 +17,7 @@ class Player{
         this.is_alive = true
 
         this.bounce_offset = .30
-        this.mass = 1.3
+        this.mass = .7
         this.offset = 25
 
         this.directions = {horizontal: '', vertical: ''}
@@ -33,7 +33,7 @@ class Player{
 
         this.collided_by = null
         this.collided_by_timer = 1000
-        this.collide_force_multiplier = 1.5
+        this.collide_force_multiplier = 1
         this.collide_time_multiplier = 400
         this.collide_offset = 300
         this.collide_distance = 1400
