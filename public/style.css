@@ -263,7 +263,7 @@ input:focus{
     border: 1px solid white;
     color: white;
     padding: 5px;
-    margin-top: 5px;
+    margin: 5px;
     cursor: pointer;
 }
 
