@@ -1,4 +1,4 @@
-import { loadJson, isMobile, isIOS, isStandalone } from "./client_utils.js"
+import { isMobile, isIOS, isStandalone } from "./client_utils.js"
 import { GameEngine } from "./game_engine/game_engine.js"
 import { Menu } from "./menu.js"
 import { preloadRessources } from "../preload.js"
@@ -42,12 +42,6 @@ window.addEventListener("keyup", e=> {
     }
 })
 
-// window.addEventListener("onmousedown", () => {
-//     if (title_ost && title_ost.currentTime == 0){
-//         title_ost.play()
-//     }
-// })
-
 ////////////////// SOCKET LISTENERS //////////////////
 const initSocketListeners = () => {
     struct.socket.on("disconnect", () => {
@@ -90,7 +84,13 @@ const connectToServer = () =>{
         struct.socket = io()
         if (struct.socket){
             struct.socket.on('connect', () => {
-                struct.menu = new Menu(struct.socket, struct.images, struct.audios)
+                struct.menu = new Menu(
+                    struct.socket, 
+                    isMobile(), 
+                    isStandalone(), 
+                    struct.images, 
+                    struct.audios
+                )
                 initSocketListeners()
             })
         }

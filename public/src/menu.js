@@ -1,6 +1,8 @@
 export class Menu{
-    constructor(socket, images, audios){
+    constructor(socket, is_mobile, is_standalone, images, audios){
         this.socket = socket
+        this.is_mobile = is_mobile
+        this.is_standalone = is_standalone
         this.images = images
         this.audios = audios
 
@@ -20,6 +22,7 @@ export class Menu{
         this.redirect_timer = 2500
     
         this.pages = {
+            ask_for_mobile: null,
             connection: null,
             username: null,
             maps: null,
@@ -70,9 +73,6 @@ export class Menu{
                 6: "./assets/gfx/sprites/blue_glow.png"
             }
         }
-
-        this.last_page = ""
-        this.current_page = ""
     
         this.is_menu_loaded = false
         this.load()
@@ -138,7 +138,7 @@ export class Menu{
     }
 
     setCurrentPage({page}){
-        if (page != "connection" && this.widgets.button_install.style.display != "none"){
+        if ((page != "connection" && page != "ask_for_mobile") && this.widgets.button_install.style.display != "none"){
             this.widgets.button_install.style.display = "none"
         }
         for (const key in this.pages){
@@ -172,6 +172,11 @@ export class Menu{
                 .then(data => {
                     this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
+                    if (this.is_mobile && !this.is_standalone){
+                        this.setCurrentPage({page: "ask_for_mobile"})
+                    } else {
+                        this.setCurrentPage({page: "connection"})
+                    }
                     this.socket.emit("get_players_count")
                     if (load_google_button){
                         google.accounts.id.initialize({
@@ -281,11 +286,11 @@ export class Menu{
                     line_counter++
                 }
                 this.widgets.div_topten_content.innerHTML += `
-                <button id = "button_close_topten" class = "cstm_button" onmouseenter = "wobble(this)">Fermer</button>
+                <button id = "button_close_topten" class = "cstm_button" onmouseenter = "wobble(this)">
+                    Fermer
+                </button>
                 `
-
                 document.getElementById("button_close_topten").onclick = () => this.resetTopTenButton()
-
                 this.widgets.div_topten_container.style.display = "flex"
             })
         }
@@ -300,6 +305,7 @@ export class Menu{
     initWidgetsAndListeners(){
         ///////// PAGES //////////
         this.pages.connection = document.getElementById("connection_page")
+        this.pages.ask_for_mobile = document.getElementById("ask_for_mobile_page")
         this.pages.username = document.getElementById("username_page")
         this.pages.maps = document.getElementById("maps_page")
         this.pages.redirect = document.getElementById("redirect_page")

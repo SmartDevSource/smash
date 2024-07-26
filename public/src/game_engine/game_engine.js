@@ -91,7 +91,8 @@ export class GameEngine{
         this.last_delta_time = Date.now()
         this.events(keys)
         this.draw()
-        this.joystick.update()
+        if (this.is_mobile)
+            this.joystick.update()
     }
 
     resetWinScreen(){
