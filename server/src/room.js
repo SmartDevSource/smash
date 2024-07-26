@@ -9,7 +9,7 @@ class Room{
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
-        this.max_server_score = 1
+        this.max_server_score = 10
         this.spawn_timeout = 2000
         this.is_game_started = true
         this.timer_before_restart = 4000

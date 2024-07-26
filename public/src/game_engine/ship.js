@@ -91,15 +91,16 @@ export class Ship {
             this.ctx.font = "30px quicksand"
             this.ctx.strokeStyle = "black"
             this.ctx.lineWidth = 4
+            const username_width = this.ctx.measureText(this.username).width
             this.ctx.strokeText(
                 this.username,
-                this.position.x - ((this.username.length - 3) * 6),
+                (this.position.x + this.offset) - (username_width / 2),
                 this.position.y - 10
             )
             this.ctx.fillStyle = "white"
             this.ctx.fillText(
                 this.username,
-                this.position.x - ((this.username.length - 3) * 6),
+                (this.position.x + this.offset) - (username_width / 2),
                 this.position.y - 10
             )
             this.ctx.restore()
@@ -109,15 +110,17 @@ export class Ship {
             this.ctx.font = "20px quicksand"
             this.ctx.strokeStyle = "black"
             this.ctx.lineWidth = 3
+            const score = `[${this.score}/${this.max_server_score}]`
+            const score_width = this.ctx.measureText(score).width
             this.ctx.strokeText(
                 `[${this.score}/${this.max_server_score}]`,
-                this.position.x - 5,
+                (this.position.x + this.offset) - (score_width / 2),
                 this.position.y + 80
             )
             this.ctx.fillStyle = this.getScoreColor()
             this.ctx.fillText(
                 `[${this.score}/${this.max_server_score}]`,
-                this.position.x - 5,
+                (this.position.x + this.offset) - (score_width / 2),
                 this.position.y + 80
             )
             this.ctx.restore()

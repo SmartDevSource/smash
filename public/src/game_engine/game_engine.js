@@ -314,14 +314,16 @@ export class GameEngine{
 
         if (this.win_screen.show_winner){
             this.ctx.font = "120px quicksand bold"
+            const text_width = this.ctx.measureText(this.win_screen.value).width
+            console.log(this.ctx.measureText(text_width).width)
             this.ctx.strokeText(
                 this.win_screen.value,
-                550 - ((this.win_screen.value.length-3) * 20),
+                (this.screen.w / 2) - (text_width / 2),
                 320
             )
             this.ctx.fillText(
                 this.win_screen.value,
-                550 - ((this.win_screen.value.length-3) * 20),
+                (this.screen.w / 2) - (text_width / 2),
                 320
             )
         }
