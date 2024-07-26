@@ -141,6 +141,7 @@ export class GameEngine{
                 angle: player_data.angle,
                 color: player_data.color,
                 score: player_data.score,
+                can_collide: player_data.can_collide,
                 max_server_score: this.max_server_score,
                 audios: this.audios,
                 images: this.images
@@ -158,29 +159,28 @@ export class GameEngine{
                 })
             }
         })
+        this.socket.on("can_collide", data => {
+            if (this.ships[data.id])
+                this.ships[data.id].can_collide = data.can_collide
+        })
         this.socket.on("collision", data => {
-            if (this.ships[data.id]){
-                this.ships[data.id].takeImpact({
-                    force_impact: data.force_impact,
-                    angle_impact: data.angle_impact
-                })
-            }
+            if (this.ships[data.id])
+                this.ships[data.id].takeImpact()
         })
         this.socket.on("score", data => {
-            if (this.ships[data.id]){
+            if (this.ships[data.id])
                 this.ships[data.id].score = data.score
-            }
         })
         this.socket.on("player_dead", data => {
-            if (this.ships[data.id]){
+            if (this.ships[data.id])
                 this.ships[data.id].kill()
-            }
         })
         this.socket.on("player_respawn", data => {
             if (this.ships[data.id]){
                 this.ships[data.id].respawn({
                     position: data.position,
-                    angle: data.angle
+                    angle: data.angle,
+                    can_collide: data.can_collide
                 })
             }
         })
@@ -223,6 +223,7 @@ export class GameEngine{
                 this.ships[id].angle = players_data[id].angle
                 this.ships[id].position = players_data[id].position
                 this.ships[id].score = players_data[id].score
+                this.ships[id].can_collide = players_data[id].can_collide
             }
         }
     }
@@ -237,6 +238,7 @@ export class GameEngine{
                 angle: players_data[id].angle,
                 color: players_data[id].color,
                 score: players_data[id].score,
+                can_collide: players_data[id].can_collide,
                 max_server_score: this.max_server_score,
                 audios: this.audios,
                 images: this.images

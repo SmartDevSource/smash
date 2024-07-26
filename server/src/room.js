@@ -35,13 +35,20 @@ class Room{
                         angle: player.angle
                     })
                 }
+                if (player.can_collide_previous != player.can_collide){
+                    this.toMainThread({
+                        ids: this.getIds([]),
+                        header: "can_collide",
+                        can_collide: player.can_collide,
+                        id: id
+                    })
+                    player.can_collide_previous = player.can_collide
+                }
                 if (player.has_collided_by_opponent){
                     this.toMainThread({
                         ids: this.getIds([]),
                         header: "collision",
                         by: player.collided_by,
-                        force_impact: player.force_impact,
-                        angle_impact: player.angle_impact,
                         id: id
                     })
                     if (player.collided_by)
@@ -86,7 +93,8 @@ class Room{
                             header: "player_respawn",
                             id: id,
                             position: player.position,
-                            angle: player.angle
+                            angle: player.angle,
+                            can_collide: player.can_collide
                         })
                     }, this.spawn_timeout)
                 }

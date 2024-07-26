@@ -66,12 +66,16 @@ const setRoomListeners = room => {
                     angle: data.angle
                 })
             break
+            case "can_collide":
+                sendToPlayers(data.ids, "can_collide", {
+                    id: data.id,
+                    can_collide: data.can_collide
+                })
+            break
             case "collision":
                 sendToPlayers(data.ids, "collision", {
                     id: data.id,
-                    by: data.by,
-                    force_impact: data.force_impact,
-                    angle_impact: data.angle_impact
+                    by: data.by
                 })
             break
             case "score":
@@ -90,7 +94,8 @@ const setRoomListeners = room => {
                 sendToPlayers(data.ids, "player_respawn", {
                     id: data.id,
                     position: data.position,
-                    angle: data.angle
+                    angle: data.angle,
+                    can_collide: data.can_collide
                 })
             break
             case "end_game":

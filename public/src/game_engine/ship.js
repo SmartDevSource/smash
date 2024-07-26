@@ -1,5 +1,5 @@
 export class Ship {
-    constructor({ctx, screen, id, username, position, angle, color, score, max_server_score, audios, images}){
+    constructor({ctx, screen, id, username, position, angle, color, score, can_collide, max_server_score, audios, images}){
         this.ctx = ctx
         this.screen = screen
         this.half_screen = {x: screen.w / 2, y: screen.h / 2}
@@ -11,6 +11,7 @@ export class Ship {
         this.score = score
         this.audios = audios
         this.images = images
+        this.can_collide = can_collide
 
         this.glow = {
             sprite: this.images[this.color],
@@ -38,8 +39,6 @@ export class Ship {
             sprite: this.images.impact,
             frames_count: 7,
             frame_width: 0,
-            force_impact: 0,
-            angle_impact: 0,
             current_frame: 0,
             timer: 0,
             speed_frame: 40,
@@ -75,13 +74,14 @@ export class Ship {
         this.is_dead = true
     }
 
-    respawn({position, angle}){
+    respawn({position, angle, can_collide}){
         this.explosion.state = false
         this.explosion.current_frame = 0
         this.explosion.timer = 0
         this.is_dead = false
         this.position = position
         this.angle = angle
+        this.can_collide = can_collide
     }
 
     drawInfos(){
@@ -127,11 +127,9 @@ export class Ship {
         }
     }
 
-    takeImpact({force_impact, angle_impact}){
+    takeImpact(){
         this.impact.audio.play()
         this.impact.state = true
-        this.impact.force_impact = force_impact
-        this.impact.angle_impact = angle_impact
         this.impact.current_frame = 0
         this.impact.timer = 0
     }
@@ -139,6 +137,8 @@ export class Ship {
     drawShip(current_delta_time){
         if (!this.is_dead){
             // GLOW //
+            this.ctx.save()
+            this.ctx.globalAlpha = this.can_collide ? 1 : .5
             this.ctx.drawImage(
                 this.glow.sprite,
                 0,
@@ -150,8 +150,10 @@ export class Ship {
                 this.glow.scale,
                 this.glow.scale
             )
+            this.ctx.restore()
             // SHIP //
             this.ctx.save()
+            this.ctx.globalAlpha = this.can_collide ? 1 : .5
             this.ctx.translate(this.position.x + this.offset, this.position.y + this.offset)
             this.ctx.rotate(this.angle - Math.PI / 2)
             this.ctx.drawImage(

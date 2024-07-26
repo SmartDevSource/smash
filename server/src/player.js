@@ -33,14 +33,15 @@ class Player{
 
         this.collided_by = null
         this.collided_by_timer = 1000
-        this.force_impact = null
-        this.angle_impact = null
         this.has_collided_by_opponent = false
         this.collide_time_multiplier = 400
+        this.collide_offset = 600
         this.collide_distance = 1400
-        this.collide_repulsion = 1000
+        this.collide_spawn = 4500
         this.line_distance_collider = 30
-        this.can_collide = true
+
+        this.can_collide_previous = false
+        this.can_collide = false
 
         this.rotation_offset = .1
         this.current_delta_time = Date.now()
@@ -68,19 +69,23 @@ class Player{
             color: this.color,
             position: this.position,
             angle: this.angle,
-            score: this.score
+            score: this.score,
+            can_collide: this.can_collide
         }
     }
 
     update(current_delta_time, players){
         this.current_delta_time = current_delta_time
         this.move()
+        this.handleIfCanCollide()
         this.handlePlayersCollisions(players)
         this.handleLinesCollisions()
     }
 
     respawn(){
         this.position = {...this.spawn_position}
+        this.can_collide = false
+        this.can_collide_previous = false
         this.angle = 0
         this.is_waiting_for_respawn = false
         this.is_alive = true
@@ -103,9 +108,18 @@ class Player{
             step: .006
         }
         this.collided_by = null
-        this.force_impact = null
-        this.angle_impact = null
+        this.can_collide = false
+        this.can_collide_previous = false
         this.has_collided_by_opponent = false
+    }
+
+    handleIfCanCollide(){
+        if (!this.can_collide){
+            const distance = getDistance(this.position, this.spawn_position)
+            if (distance >= this.collide_spawn){
+                this.can_collide = true
+            }
+        }
     }
 
     handleLinesCollisions(){
@@ -124,9 +138,9 @@ class Player{
         for (const id in players){
             const ship = players[id]
             if (id == this.id || !ship.is_alive) continue
+            if (!this.can_collide || !ship.can_collide) continue
             const distance = getDistance(ship.position, this.position)
-            this.angle_impact = getAngleTo(ship.position, this.position)
-            if (distance > this.collide_repulsion && distance <= this.collide_distance && this.can_collide){
+            if (distance >= this.collide_distance - this.collide_offset && distance <= this.collide_distance){
                 switch(true){
                     case ship.velocity.horizontal > 0:
                         ship.velocity.horizontal = -ship.velocity.horizontal - this.bounce_offset
@@ -149,13 +163,9 @@ class Player{
                 }
                 this.collided_by = ship.id
                 this.has_collided_by_opponent = true
-                this.force_impact = Math.abs((ship.velocity.horizontal + ship.velocity.vertical) / 2)
                 setTimeout(() => {
                     this.collided_by = null
                 }, this.collided_by_timer)
-            } else if (distance <= this.collide_repulsion){
-                this.can_collide = false
-                setTimeout(() => this.can_collide = true, 300)
             }
         }
     }
