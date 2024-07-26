@@ -17,7 +17,7 @@ class Player{
         this.is_alive = true
 
         this.bounce_offset = .30
-        this.mass = 1
+        this.mass = 1.3
         this.offset = 25
 
         this.directions = {horizontal: '', vertical: ''}
@@ -33,13 +33,15 @@ class Player{
 
         this.collided_by = null
         this.collided_by_timer = 1000
-        this.has_collided_by_opponent = false
+        this.collide_force_multiplier = 1.5
         this.collide_time_multiplier = 400
         this.collide_offset = 300
         this.collide_distance = 1400
         this.collide_spawn = 4500
+
         this.line_distance_collider = 30
 
+        this.has_collided_by_opponent = false
         this.can_collide_previous = false
         this.can_collide = false
 
@@ -89,6 +91,8 @@ class Player{
         this.angle = 0
         this.is_waiting_for_respawn = false
         this.is_alive = true
+        this.velocity.horizontal = 0
+        this.velocity.vertical = 0
     }
 
     reset(){
@@ -143,21 +147,21 @@ class Player{
             if (distance <= this.collide_distance){
                 switch(true){
                     case ship.velocity.horizontal > 0:
-                        ship.velocity.horizontal = (-ship.velocity.horizontal * 1.5) - this.bounce_offset
+                        ship.velocity.horizontal = (-ship.velocity.horizontal * this.collide_force_multiplier) - this.bounce_offset
                         this.velocity.horizontal -= ship.velocity.horizontal / this.mass
                     break
                     case ship.velocity.horizontal < 0:
-                        ship.velocity.horizontal = Math.abs(ship.velocity.horizontal * 1.5) + this.bounce_offset
+                        ship.velocity.horizontal = Math.abs(ship.velocity.horizontal * this.collide_force_multiplier) + this.bounce_offset
                         this.velocity.horizontal -= ship.velocity.horizontal / this.mass
                     break
                 }
                 switch(true){
                     case ship.velocity.vertical > 0:
-                        ship.velocity.vertical = (-ship.velocity.vertical * 1.5) - this.bounce_offset
+                        ship.velocity.vertical = (-ship.velocity.vertical * this.collide_force_multiplier) - this.bounce_offset
                         this.velocity.vertical -= ship.velocity.vertical / this.mass
                     break
                     case ship.velocity.vertical < 0:
-                        ship.velocity.vertical = Math.abs(ship.velocity.vertical * 1.5) + this.bounce_offset
+                        ship.velocity.vertical = Math.abs(ship.velocity.vertical * this.collide_force_multiplier) + this.bounce_offset
                         this.velocity.vertical -= ship.velocity.vertical / this.mass
                     break
                 }
