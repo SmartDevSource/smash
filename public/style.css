@@ -145,7 +145,7 @@ span{
     flex-direction: column;
     background: none;
     text-align: center;
-    padding: 5px;
+    padding: 1px;
 }
 
 .flex_row {
@@ -263,7 +263,7 @@ input:focus{
     border: 1px solid white;
     color: white;
     padding: 5px;
-    margin-top: 10px;
+    margin-top: 5px;
     cursor: pointer;
 }
 
