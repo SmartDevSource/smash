@@ -107,7 +107,7 @@ export class Ship {
 
             // SCORE //
             this.ctx.save()
-            this.ctx.font = "20px quicksand"
+            this.ctx.font = "25px quicksand"
             this.ctx.strokeStyle = "black"
             this.ctx.lineWidth = 3
             const score = `[${this.score}/${this.max_server_score}]`

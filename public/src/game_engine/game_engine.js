@@ -29,6 +29,12 @@ export class GameEngine{
 
         this.max_server_score = init_data.max_server_score
 
+        this.ost_volume = .3
+        this.background_ost = this.audios[init_data.map_data.name+"_ost"]
+        this.background_ost.loop = true
+        this.background_ost.volume = this.ost_volume
+        this.background_ost.play()
+
         this.ships = {
             [init_data.id]: new Ship({
                 ctx: this.ctx,
@@ -79,12 +85,33 @@ export class GameEngine{
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
 
-        this.button_disconnect = document.createElement("button")
-        this.button_disconnect.setAttribute("id", "button_ingame_disconnect")
-        this.button_disconnect.classList.add("cstm_button")
-        this.button_disconnect.textContent = "Se déconnecter"
-        this.button_disconnect.onclick = () => location.reload()
-        document.body.appendChild(this.button_disconnect)
+        // IN GAME BUTTONS //
+        this.button_ingame_disconnect = document.createElement("button")
+        this.button_ingame_disconnect.setAttribute("id", "button_ingame_disconnect")
+        this.button_ingame_disconnect.classList.add("cstm_button")
+        this.button_ingame_disconnect.textContent = "Quitter"
+        this.button_ingame_disconnect.onclick = () => location.reload()
+        document.body.appendChild(this.button_ingame_disconnect)
+
+        this.button_ingame_music = document.createElement("button")
+        this.button_ingame_music.setAttribute("id", "button_ingame_music")
+        this.button_ingame_music.classList.add("cstm_button")
+        this.button_ingame_music.textContent = "Musique"
+        this.button_ingame_music.onclick = () => this.switchMusic()
+        document.body.appendChild(this.button_ingame_music)
+    }
+
+    switchMusic(){
+        switch(true){
+            case this.background_ost.volume >= this.ost_volume:
+                this.background_ost.volume = 0
+                this.button_ingame_music.classList.add("line_through")
+            break
+            case this.background_ost.volume < this.ost_volume:
+                this.background_ost.volume = this.ost_volume
+                this.button_ingame_music.classList.remove("line_through")
+            break
+        }
     }
     
     update(keys){
@@ -158,7 +185,10 @@ export class GameEngine{
             }
         })
         this.socket.on("end_game", data => {
+            this.audios.end_game.play()
             this.win_screen.show = true
+            this.background_ost.currentTime = 0
+            this.background_ost.pause()
             this.win_screen.value = this.ships[data.winner_id].username
             setTimeout(() => {
                 this.win_screen.show_winner = true
@@ -171,10 +201,13 @@ export class GameEngine{
                 this.win_screen.show = false
             }
             this.counter_screen.value = data.counter
+            this.audios[data.counter].play()
             this.counter_screen.opacity = 1
         })
         this.socket.on("restart_game", data => {
+            this.background_ost.play()
             this.counter_screen.value = "Go !"
+            this.audios.go.play()
             this.counter_screen.x_offset = 520
             setTimeout(() => {
                 this.resetCounterScreen()

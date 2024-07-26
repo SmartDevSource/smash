@@ -57,14 +57,33 @@
 }
 
 #button_ingame_disconnect {
+    font-family: 'Courier New', Courier, monospace;
     z-index: 12;
     position: absolute;
     top: 5px;
-    right: 5px;
+    right: 10px;
 }
 
 #button_ingame_disconnect:hover {
     animation: wobble .5s forwards;
+}
+
+#button_ingame_music {
+    font-family: 'Courier New', Courier, monospace;
+    z-index: 12;
+    position: absolute;
+    top: 55px;
+    right: 10px;
+}
+
+#button_ingame_music:hover {
+    animation: wobble .5s forwards;
+}
+
+.line_through {
+    text-decoration: line-through !important;
+    text-decoration-thickness: 3px !important;
+    text-decoration-color: rgba(255, 0, 0, 0.822) !important;
 }
 
 #div_topten_container {
@@ -72,9 +91,10 @@
     position: absolute;
     top: 10%;
     background: none;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(30px);
     max-height: 300px;
     width: 300px;
+    filter:contrast(1.75);
     overflow-y: scroll;
 }
 
@@ -91,6 +111,14 @@ span{
     background: none;
 }
 
+.bold {
+    font-weight: bold;
+}
+
+.purple_text {
+    color: purple;
+}
+
 .yellow_text {
     color: yellow;
 }
@@ -101,6 +129,10 @@ span{
 
 .white_text {
     color: white;
+}
+
+.green_text {
+    color: lime;
 }
 
 .topten_header {

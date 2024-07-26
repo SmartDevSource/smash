@@ -37,6 +37,13 @@ const preloadImages = async urls => {
 const audios = [
     './assets/audio/sounds/explosion.mp3',
     './assets/audio/sounds/hit.mp3',
+    './assets/audio/sounds/1.mp3',
+    './assets/audio/sounds/2.mp3',
+    './assets/audio/sounds/3.mp3',
+    './assets/audio/sounds/go.mp3',
+    './assets/audio/musics/first_ost.mp3',
+    './assets/audio/musics/second_ost.mp3',
+    './assets/audio/musics/end_game.mp3',
 ]
 
 const images = [

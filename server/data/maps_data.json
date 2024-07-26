@@ -104,7 +104,7 @@
     },
     "second":{
         "name": "second",
-        "spawn": {"x": 600, "y": 330},
+        "spawn": {"x": 630, "y": 330},
         "colliders": 
         [
             {

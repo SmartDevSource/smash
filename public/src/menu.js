@@ -281,7 +281,7 @@ export class Menu{
                     <span class = "topten_text yellow_text">
                             ${nickname}
                         </span>
-                        <span class = "topten_text orange_text">
+                        <span class = "topten_text green_text bold">
                             ${data.topten[nickname]}
                         </span>
                     </div>
