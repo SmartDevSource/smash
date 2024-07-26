@@ -5,13 +5,8 @@ const { Worker } = require('node:worker_threads')
 const fs = require('fs')
 const path = require('path')
 
-const private_key = fs.readFileSync('./mkcert/homekey.pem', 'utf-8')
-const certificate = fs.readFileSync('./mkcert/homecert.pem', 'utf-8')
-const credentials = {key: private_key, cert: certificate}
-
 const express = require('express')
 const app = express()
-// const server = require('https').createServer(credentials, app)
 const server = require('http').createServer(app)
 const socket_io = require('socket.io')
 const ShortUniqueId = require('short-unique-id')
@@ -240,7 +235,6 @@ app.post('/tokensignin', async (req, res) => {
     const token = req.body.idToken
     try{
         const payload = await verifyToken(token)
-        // console.log("Payload : ", payload)
         req.session.user = {
             id: payload.sub,
             email: payload.email,
