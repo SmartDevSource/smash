@@ -105,12 +105,15 @@ export class Menu{
         .then(data => {
           if (data.is_logged){
             this.fetchHtml({load_google_button: false})
-            this.checkIfGoogleIdExists()
+            if (!this.isNotStandard())
+                this.checkIfGoogleIdExists()
           } else {
             this.fetchHtml({load_google_button: true})
           }
         })
     }
+
+    isNotStandard = () => this.is_mobile && !this.is_standalone
 
     checkIfGoogleIdExists(){
         fetch('/googleexists', { method: 'GET'})
@@ -172,28 +175,28 @@ export class Menu{
                 .then(data => {
                     this.menu_container.innerHTML = data
                     this.initWidgetsAndListeners()
-                    if (this.is_mobile && !this.is_standalone){
+                    if (this.isNotStandard()){
                         this.setCurrentPage({page: "ask_for_mobile"})
                     } else {
                         this.setCurrentPage({page: "connection"})
-                    }
-                    this.socket.emit("get_players_count")
-                    if (load_google_button){
-                        google.accounts.id.initialize({
-                            client_id: '306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com',
-                            callback: this.onSignIn
-                        })
-                        google.accounts.id.renderButton(
-                        document.querySelector('.g_id_signin'),
-                        { 
-                            theme: "outline",
-                            size: "large",
-                            shape: "square",
-                            logo_alignment: "left",
-                            width: "300"
+                        this.socket.emit("get_players_count")
+                        if (load_google_button){
+                            google.accounts.id.initialize({
+                                client_id: '306304073551-q6q9l4diisetjps4set0e06dad2fkcc5.apps.googleusercontent.com',
+                                callback: this.onSignIn
+                            })
+                            google.accounts.id.renderButton(
+                            document.querySelector('.g_id_signin'),
+                            { 
+                                theme: "outline",
+                                size: "large",
+                                shape: "square",
+                                logo_alignment: "left",
+                                width: "300"
+                            }
+                            )
+                            google.accounts.id.prompt()
                         }
-                        )
-                        google.accounts.id.prompt()
                     }
                 })
         } catch (err) {
