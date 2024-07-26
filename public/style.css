@@ -50,9 +50,9 @@
     border-radius: 5px;
     font-weight: bold;
     position: absolute;
-    top: 50%;
+    top: 20%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     text-align: center;
 }
 
@@ -330,9 +330,6 @@ input:focus{
 }
 
 @media (max-height:515px) {
-    .outline_container{
-        padding-top: 0px;
-    }
     .title{
         font-size: 28px;
     }
@@ -352,8 +349,24 @@ input:focus{
     }
     .img_server_choice {
         width: 90px;
-        height: 40px;
-        margin: 0px;
+        height: 50px;
+        margin: 1px;
+    }
+    .outline_radius_container {
+        padding: 3px;
+    }
+    .outline_box_container {
+        padding: 3px;
+    }
+    .button_arrow {
+        font-size: 20px;
+        width: 25px;
+        height: 25px;
+        padding: 3px;
+    }
+    #img_color_choice{
+        width: 30px;
+        height: 30px;
     }
 }
 
