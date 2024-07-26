@@ -7,6 +7,7 @@ export class GameEngine{
         this.ctx = ctx
         this.screen = screen
         this.socket = socket
+        this.is_mobile = is_mobile
         this.images = images
         this.audios = audios
         this.force_divider = 20
