@@ -325,7 +325,7 @@ input:focus{
 
 @media (max-width:650px) {
     .span_player_info{
-        font-size: 20px;
+        font-size: 18px;
     }
 }
 
@@ -334,25 +334,25 @@ input:focus{
         padding-top: 0px;
     }
     .title{
-        font-size: 32px;
+        font-size: 28px;
     }
     .text {
         font-size: 16px;
     }
     .button_arrow{
-        font-size: 22px;
+        font-size: 20px;
     }
     .cstm_button{
-        font-size: 18px;
+        font-size: 16px;
         padding: 3px;
         margin-top: 2px;
     }
     #div_player_infos{
-        font-size: 24px;
+        font-size: 22px;
     }
     .img_server_choice {
-        width: 100px;
-        height: 50px;
+        width: 90px;
+        height: 40px;
         margin: 0px;
     }
 }
