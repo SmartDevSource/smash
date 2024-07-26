@@ -16,7 +16,7 @@ class Player{
         this.is_waiting_for_respawn = false
         this.is_alive = true
 
-        this.bounce_offset = .15
+        this.bounce_offset = .30
         this.mass = 1
         this.offset = 25
 
