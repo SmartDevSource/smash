@@ -22,7 +22,7 @@ export class Joystick{
         this.params = {
             pad_radius: 30,
             back_radius: 100,
-            max_distance: 120,
+            max_distance: 160,
             is_picked: false
         }
 

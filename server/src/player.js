@@ -24,18 +24,18 @@ class Player{
         this.velocity = {
             vertical: 0,
             horizontal: 0,
-            vertical_max_default: 6,
-            horizontal_max_default: 6,
-            vertical_max: 6,
-            horizontal_max: 6,
-            step: .006
+            vertical_max_default: 8,
+            horizontal_max_default: 8,
+            vertical_max: 8,
+            horizontal_max: 8,
+            step: .012
         }
 
         this.collided_by = null
         this.collided_by_timer = 1000
         this.has_collided_by_opponent = false
         this.collide_time_multiplier = 400
-        this.collide_offset = 600
+        this.collide_offset = 300
         this.collide_distance = 1400
         this.collide_spawn = 4500
         this.line_distance_collider = 30
