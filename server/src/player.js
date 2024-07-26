@@ -140,24 +140,24 @@ class Player{
             if (id == this.id || !ship.is_alive) continue
             if (!this.can_collide || !ship.can_collide) continue
             const distance = getDistance(ship.position, this.position)
-            if (distance >= this.collide_distance - this.collide_offset && distance <= this.collide_distance){
+            if (distance <= this.collide_distance){
                 switch(true){
                     case ship.velocity.horizontal > 0:
-                        ship.velocity.horizontal = -ship.velocity.horizontal - this.bounce_offset
+                        ship.velocity.horizontal = (-ship.velocity.horizontal * 1.5) - this.bounce_offset
                         this.velocity.horizontal -= ship.velocity.horizontal / this.mass
                     break
                     case ship.velocity.horizontal < 0:
-                        ship.velocity.horizontal = Math.abs(ship.velocity.horizontal) + this.bounce_offset
+                        ship.velocity.horizontal = Math.abs(ship.velocity.horizontal * 1.5) + this.bounce_offset
                         this.velocity.horizontal -= ship.velocity.horizontal / this.mass
                     break
                 }
                 switch(true){
                     case ship.velocity.vertical > 0:
-                        ship.velocity.vertical = -ship.velocity.vertical - this.bounce_offset
+                        ship.velocity.vertical = (-ship.velocity.vertical * 1.5) - this.bounce_offset
                         this.velocity.vertical -= ship.velocity.vertical / this.mass
                     break
                     case ship.velocity.vertical < 0:
-                        ship.velocity.vertical = Math.abs(ship.velocity.vertical) + this.bounce_offset
+                        ship.velocity.vertical = Math.abs(ship.velocity.vertical * 1.5) + this.bounce_offset
                         this.velocity.vertical -= ship.velocity.vertical / this.mass
                     break
                 }
@@ -220,9 +220,7 @@ class Player{
         }
     }
 
-    isStopped(){
-        return this.velocity.horizontal == 0 && this.velocity.vertical == 0
-    }
+    isStopped = () => this.velocity.horizontal == 0 && this.velocity.vertical == 0
 
     move(){
         switch(this.directions.horizontal){
