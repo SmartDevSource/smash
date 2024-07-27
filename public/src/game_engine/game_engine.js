@@ -29,7 +29,7 @@ export class GameEngine{
 
         this.max_server_score = init_data.max_server_score
 
-        this.ost_volume = .3
+        this.ost_volume = .15
         this.background_ost = this.audios[init_data.map_data.name+"_ost"]
         this.background_ost.loop = true
         this.background_ost.volume = this.ost_volume
@@ -96,7 +96,7 @@ export class GameEngine{
         this.button_ingame_music = document.createElement("button")
         this.button_ingame_music.setAttribute("id", "button_ingame_music")
         this.button_ingame_music.classList.add("cstm_button")
-        this.button_ingame_music.textContent = "Musique"
+        this.button_ingame_music.textContent = "Audio"
         this.button_ingame_music.onclick = () => this.switchMusic()
         document.body.appendChild(this.button_ingame_music)
     }
@@ -106,10 +106,14 @@ export class GameEngine{
             case this.background_ost.volume >= this.ost_volume:
                 this.background_ost.volume = 0
                 this.button_ingame_music.classList.add("line_through")
+                for (const id in this.ships)
+                    this.ships[id].manageSounds({type: "mute"})
             break
             case this.background_ost.volume < this.ost_volume:
                 this.background_ost.volume = this.ost_volume
                 this.button_ingame_music.classList.remove("line_through")
+                for (const id in this.ships)
+                    this.ships[id].manageSounds({type: "unmute"})
             break
         }
     }

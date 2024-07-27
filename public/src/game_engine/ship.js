@@ -127,6 +127,19 @@ export class Ship {
         }
     }
 
+    manageSounds({type}){
+        switch(type){
+            case "mute":
+                this.explosion.audio.volume = 0
+                this.impact.audio.volume = 0
+            break
+            case "unmute":
+                this.explosion.audio.volume = 1
+                this.impact.audio.volume = 1
+            break
+        }
+    }
+
     takeImpact(){
         this.impact.audio.play()
         this.impact.state = true

@@ -43,7 +43,7 @@ class Room{
                     })
                     player.can_collide_previous = player.can_collide
                 }
-                if (player.has_collided_by_opponent){
+                if (player.has_collided_by_opponent && player.is_touchable){
                     this.toMainThread({
                         ids: this.getIds([]),
                         header: "collision",
@@ -160,7 +160,7 @@ class Room{
             this.players[id] = new Player({
                 id: id,
                 google_id: google_id,
-                username: username, 
+                username: username,
                 color: color, 
                 map_data: {...this.map_data}
             })
@@ -172,8 +172,8 @@ class Room{
             map_data: this.map_data,
             players_data: players_data,
             username: username,
-            score: 0,
-            angle: 0,
+            score: this.players[id].score,
+            angle: this.players[id].angle,
             color: color,
             id: id
         })

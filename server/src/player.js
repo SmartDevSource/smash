@@ -11,7 +11,7 @@ class Player{
         this.position = {...map_data.spawn}
         this.spawn_position = {...map_data.spawn}
         this.lines_colliders = [...map_data.colliders]
-        this.angle = 0
+        this.angle = (Math.PI / 2)
         this.score = 0
 
         this.is_waiting_for_respawn = false
@@ -29,11 +29,13 @@ class Player{
             horizontal_max_default: 8,
             vertical_max: 8,
             horizontal_max: 8,
-            step: .012
+            step: .02
         }
 
+        this.is_touchable = false
         this.collided_by = null
         this.collided_by_timer = 1000
+        this.collide_interval = 50
         this.collide_force_multiplier = 1
         this.collide_time_multiplier = 400
         this.collide_offset = 300
@@ -41,6 +43,7 @@ class Player{
         this.collide_spawn = 4500
 
         this.line_distance_collider = 30
+        this.line_collide_bounce_offset = 1.5
 
         this.has_collided_by_opponent = false
         this.can_collide_previous = false
@@ -58,7 +61,12 @@ class Player{
             switch(data.header){
                 case "lines_colliders":
                     if (data.intersect){
-                        this.is_alive = false
+                        if (this.collided_by)
+                            this.is_alive = false
+                        else {
+                            this.velocity.horizontal = -this.velocity.horizontal - (this.line_collide_bounce_offset * Math.sign(this.velocity.horizontal))
+                            this.velocity.vertical = -this.velocity.vertical - (this.line_collide_bounce_offset * Math.sign(this.velocity.vertical))
+                        }
                     }
                 break
             }
@@ -87,6 +95,7 @@ class Player{
 
     respawn(){
         this.position = {...this.spawn_position}
+        this.is_touchable = false
         this.can_collide = false
         this.can_collide_previous = false
         this.angle = 0
@@ -102,6 +111,7 @@ class Player{
         this.is_waiting_for_respawn = false
         this.is_alive = true
         this.score = 0
+        this.is_touchable = false
         this.directions = {horizontal: '', vertical: ''}
         this.velocity = {
             vertical: 0,
@@ -123,6 +133,9 @@ class Player{
             const distance = getDistance(this.position, this.spawn_position)
             if (distance >= this.collide_spawn){
                 this.can_collide = true
+                this.is_touchable = true
+            } else {
+                this.is_touchable = false
             }
         }
     }
@@ -143,7 +156,7 @@ class Player{
         for (const id in players){
             const ship = players[id]
             if (id == this.id || !ship.is_alive) continue
-            if (!this.can_collide || !ship.can_collide) continue
+            if (!this.can_collide) continue
             const distance = getDistance(ship.position, this.position)
             if (distance <= this.collide_distance){
                 switch(true){
@@ -167,10 +180,11 @@ class Player{
                     break
                 }
                 this.collided_by = ship.id
+                ship.collided_by = null
                 this.has_collided_by_opponent = true
-                setTimeout(() => {
-                    this.collided_by = null
-                }, this.collided_by_timer)
+                this.can_collide = false
+                setTimeout(() => {this.collided_by = null}, this.collided_by_timer)
+                setTimeout(() => {this.can_collide = true}, this.collide_interval)
             }
         }
     }
@@ -203,21 +217,25 @@ class Player{
             switch(key){
                 case 'l':
                     this.directions.horizontal = key
+                    this.angle = Math.PI * 2
                     if (this.velocity.vertical == 0)
                         this.velocity.vertical = -this.rotation_offset
                 break
                 case 'r':
                     this.directions.horizontal = key
+                    this.angle = Math.PI
                     if (this.velocity.vertical == 0)
                         this.velocity.vertical = this.rotation_offset
                 break
                 case 'u':
                     this.directions.vertical = key
+                    this.angle = (Math.PI / 2)
                     if (this.velocity.horizontal == 0)
                         this.velocity.horizontal = -this.rotation_offset
                 break
                 case 'd':
                     this.directions.vertical = key
+                    this.angle = (Math.PI * 2) - (Math.PI / 2)
                     if (this.velocity.horizontal == 0)
                         this.velocity.horizontal = this.rotation_offset
                 break

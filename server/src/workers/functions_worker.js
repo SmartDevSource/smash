@@ -5,13 +5,13 @@ parentPort.on('message', data => {
     switch(data.header){
         case "lines_colliders":
             const intersect = handleLinesColliders(
-                data.lines_colliders, 
-                data.position, 
+                data.lines_colliders,
+                data.position,
                 data.offset,
                 data.line_distance_collider
             )
             parentPort.postMessage({
-                header: "lines_colliders", 
+                header: "lines_colliders",
                 intersect: intersect
             })
         break
