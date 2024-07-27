@@ -331,6 +331,9 @@ input:focus{
     #button_install{
         font-size: 18px;
     }
+    .text_rules {
+        font-size: 14px;
+    }
 }
 
 @media (max-width:800px) {
@@ -342,6 +345,9 @@ input:focus{
 @media (max-width:650px) {
     .span_player_info{
         font-size: 18px;
+    }
+    .text_rules {
+        font-size: 16px;
     }
 }
 
