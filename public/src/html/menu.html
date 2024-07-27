@@ -1,10 +1,65 @@
 <span id = "span_alert"></span>
+
+<div class = "flex_row">
+    <button id = "button_topten" 
+        class = "cstm_button"
+    >
+    Afficher le top 10
+    </button>
+    <button id = "button_rules" 
+        class = "cstm_button"
+    >
+    Règles et contrôles
+    </button>
+</div>
+
 <div id = "div_topten_container" class = "outline_box_container" style="display: none;">
     <div id = "div_topten_content" class = "flex_col" style="width: 100%;"></div>
 </div>
 
-<div class = "flex_col">
-    <button id = "button_topten" class = "cstm_button">Afficher le top 10</button>
+<div id = "div_rules_container" class = "outline_box_container" style="display: none;">
+    <div id = "div_rules_content" class = "flex_col" style="width: 100%;">
+        <div class = "flex_row topten_header" style = "width:100%; justify-content: center;">
+            <span>Règles</span>
+        </div>
+        <div>
+            <p class = "white_text text_rules">Vous devrez expulser vos adversaires dans les zones délimitées par les lasers.</p>
+            <p class = "white_text text_rules">Le premier joueur qui arrive à 10 points remporte la partie et augmente son classement.</p>
+        </div>
+
+        <div class = "flex_row space_between topten_header" style = "width:100%;">
+            <span>Touches (PC)</span>
+            <span>Action</span>
+        </div>
+
+        <div class = "flex_row space_between" style = "width:100%;">
+            <span class = "white_text text_rules">Z</span>
+            <span class = "white_text text_rules">Haut</span>
+        </div>
+        <div class = "flex_row space_between" style = "width:100%;">
+            <span class = "white_text text_rules">Q</span>
+            <span class = "white_text text_rules">Gauche</span>
+        </div>
+        <div class = "flex_row space_between" style = "width:100%;">
+            <span class = "white_text text_rules">S</span>
+            <span class = "white_text text_rules">Bas</span>
+        </div>
+        <div class = "flex_row space_between" style = "width:100%;">
+            <span class = "white_text text_rules">D</span>
+            <span class = "white_text text_rules">Droite</span>
+        </div>
+        <div class = "flex_row space_between" style = "margin-top: 10px; width:100%;">
+            <span class = "white_text text_rules">Joystick</span>
+            <span class = "white_text text_rules">Téléphone</span>
+        </div>
+
+        <button id = "button_close_rules" 
+            class = "cstm_button" 
+            onmouseenter = "wobble(this)"
+        >
+            Fermer
+        </button>
+    </div>
 </div>
 
 <div id = "ask_for_mobile_page" class = "flex_col align_items_center fit_content outline_radius_container" style="display: none;">

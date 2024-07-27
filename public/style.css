@@ -10,7 +10,6 @@
 *{
     margin: 0;
     padding: 0;
-    overflow: hidden;
     background: none;
     user-select: none;
 }
@@ -96,6 +95,23 @@
     width: 300px;
     filter:contrast(1.75);
     overflow-y: scroll;
+}
+
+#div_rules_container {
+    z-index: 10;
+    position: absolute;
+    top: 10%;
+    background: none;
+    backdrop-filter: blur(30px);
+    max-height: 300px;
+    width: 300px;
+    filter:contrast(1.75);
+    overflow-y: scroll;
+}
+
+.text_rules {
+    margin: 5px;
+    font-size: 18px;
 }
 
 .topten_text {

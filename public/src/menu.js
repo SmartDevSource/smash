@@ -12,10 +12,6 @@ export class Menu{
 
         this.current_map = 0
 
-        this.sounds = {
-            select: audios.select
-        }
-
         this.menu_container = document.getElementById("menu_container")
         this.bg_video = document.getElementById("bg_video")
 
@@ -34,8 +30,11 @@ export class Menu{
             div_player_infos: null,
             div_topten_content: null,
             div_topten_container: null,
+            div_rules_container: null,
             text_new_username: null,
             text_redirect: null,
+            button_rules: null,
+            button_close_rules: null,
             button_create_account: null,
             button_to_maps_page: null,
             button_join: null,
@@ -80,9 +79,7 @@ export class Menu{
     }
 
     update(){
-        if (this.is_menu_loaded){
-            this.handleEvents()
-        }
+        if (this.is_menu_loaded) this.handleEvents()
     }
 
     handleEvents(){
@@ -144,6 +141,8 @@ export class Menu{
         if ((page != "connection" && page != "ask_for_mobile") && this.widgets.button_install.style.display != "none"){
             this.widgets.button_install.style.display = "none"
         }
+        this.closeRules()
+        this.resetTopTenButton()
         for (const key in this.pages){
             if (key == page){
                 this.pages[key].style.display = "flex"
@@ -187,13 +186,13 @@ export class Menu{
                             })
                             google.accounts.id.renderButton(
                             document.querySelector('.g_id_signin'),
-                            { 
-                                theme: "outline",
-                                size: "large",
-                                shape: "square",
-                                logo_alignment: "left",
-                                width: "300"
-                            }
+                                {
+                                    theme: "outline",
+                                    size: "large",
+                                    shape: "square",
+                                    logo_alignment: "left",
+                                    width: "300"
+                                }
                             )
                             google.accounts.id.prompt()
                         }
@@ -259,6 +258,7 @@ export class Menu{
     }
     
     showTopTen(){
+        this.closeRules()
         this.widgets.button_topten.disabled = true
         this.widgets.button_topten.textContent = "Chargement..."
         this.widgets.div_topten_content.innerHTML = `
@@ -299,6 +299,15 @@ export class Menu{
         }
     }
 
+    showRules(){
+        this.resetTopTenButton()
+        this.widgets.div_rules_container.style.display == "flex" ? 
+        this.widgets.div_rules_container.style.display = "none" :
+        this.widgets.div_rules_container.style.display = "flex"
+    }
+
+    closeRules = () => this.widgets.div_rules_container.style.display = "none"
+
     resetTopTenButton(){
         this.widgets.div_topten_container.style.display = "none"
         this.widgets.button_topten.disabled = false
@@ -317,8 +326,11 @@ export class Menu{
         this.widgets.div_player_infos = document.getElementById("div_player_infos")
         this.widgets.div_topten_content = document.getElementById("div_topten_content")
         this.widgets.div_topten_container = document.getElementById("div_topten_container")
+        this.widgets.div_rules_container = document.getElementById("div_rules_container")
         this.widgets.text_new_username = document.getElementById("text_new_username")
         this.widgets.text_redirect = document.getElementById("text_redirect")
+        this.widgets.button_rules = document.getElementById("button_rules")
+        this.widgets.button_close_rules = document.getElementById("button_close_rules")
         this.widgets.button_create_account = document.getElementById("button_create_account")
         this.widgets.button_to_maps_page = document.getElementById("button_to_maps_page")
         this.widgets.button_join = document.getElementById("button_join")
@@ -336,6 +348,8 @@ export class Menu{
         this.server_images.second = document.getElementById("second_map")
         ///////// LISTENERS /////////
         this.widgets.button_topten.onclick = () => this.showTopTen()
+        this.widgets.button_rules.onclick = () => this.showRules()
+        this.widgets.button_close_rules.onclick = () => this.closeRules()
         this.widgets.button_create_account.onclick = () => this.createAccount()
         this.widgets.button_disconnect.onclick = () => this.signOut()
         this.widgets.button_join.onclick = () => this.joinServer()
