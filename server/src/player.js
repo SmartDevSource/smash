@@ -131,13 +131,11 @@ class Player{
     }
 
     handleIfCanCollide(){
-        if (!this.can_collide){
+        if (!this.can_collide && !this.is_touchable){
             const distance = getDistance(this.position, this.spawn_position)
             if (distance >= this.collide_spawn){
                 this.can_collide = true
                 this.is_touchable = true
-            } else {
-                this.is_touchable = false
             }
         }
     }
@@ -185,7 +183,9 @@ class Player{
                 ship.collided_by = null
                 this.has_collided_by_opponent = true
                 this.can_collide = false
-                setTimeout(() => {this.collided_by = null}, this.collided_by_timer)
+                setTimeout(() => {
+                    this.collided_by = null}, 
+                this.collided_by_timer)
                 setTimeout(() => {
                     if (this.is_alive) 
                         this.can_collide = true}, 
