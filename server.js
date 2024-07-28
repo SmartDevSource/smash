@@ -26,7 +26,8 @@ const initRooms = () => {
     for (const key in maps){
         maps[key].postMessage({
             header: "instantiate",
-            map_data: maps_data[key]
+            map_data: maps_data[key],
+            room_name: key
         })
         setRoomListeners(maps[key])
     }
@@ -36,7 +37,7 @@ const setRoomListeners = room => {
     room.on('message', data => {
         switch(data.header){
             case "init_game":
-                sendToPlayers(data.ids, "init_game", {
+                sendToSinglePlayer(data.id, "init_game", {
                     max_server_score: data.max_server_score,
                     map_data: data.map_data,
                     players_data: data.players_data,
@@ -48,44 +49,44 @@ const setRoomListeners = room => {
                 })
             break
             case "new_player":
-                sendToPlayers(data.ids, "new_player", data.player_data)
+                sendToPlayers(data.room_name, "new_player", data.player_data)
             break
             case "del_player":
-                sendToPlayers(data.ids, "del_player", data.id)
+                sendToPlayers(data.room_name, "del_player", data.id)
             break
             case "coords":
-                sendToPlayers(data.ids, "coords", {
+                sendToPlayers(data.room_name, "coords", {
                     id: data.id,
                     position: data.position,
                     angle: data.angle
                 })
             break
             case "can_collide":
-                sendToPlayers(data.ids, "can_collide", {
+                sendToPlayers(data.room_name, "can_collide", {
                     id: data.id,
                     can_collide: data.can_collide
                 })
             break
             case "collision":
-                sendToPlayers(data.ids, "collision", {
+                sendToPlayers(data.room_name, "collision", {
                     id: data.id,
                     by: data.by
                 })
             break
             case "score":
-                sendToPlayers(data.ids, "score", {
+                sendToPlayers(data.room_name, "score", {
                     id: data.id,
                     score: data.score
                 })
             break
             case "player_dead":
-                sendToPlayers(data.ids, "player_dead", {
+                sendToPlayers(data.room_name, "player_dead", {
                     id: data.id,
                     by: data.by
                 })
             break
             case "player_respawn":
-                sendToPlayers(data.ids, "player_respawn", {
+                sendToPlayers(data.room_name, "player_respawn", {
                     id: data.id,
                     position: data.position,
                     angle: data.angle,
@@ -93,18 +94,18 @@ const setRoomListeners = room => {
                 })
             break
             case "end_game":
-                sendToPlayers(data.ids, "end_game", {
+                sendToPlayers(data.room_name, "end_game", {
                     winner_id: data.winner_id,
                 })
                 database.updateScore({google_id: data.google_id})
             break
             case "start_counter":
-                sendToPlayers(data.ids, "start_counter", {
+                sendToPlayers(data.room_name, "start_counter", {
                     counter: data.counter,
                 })
             break
             case "restart_game":
-                sendToPlayers(data.ids, "restart_game", {
+                sendToPlayers(data.room_name, "restart_game", {
                     players_data: data.players_data,
                 })
             break
@@ -270,10 +271,13 @@ const showInfos = () => {
     console.log("*".repeat(50))
 }
 
-const sendToPlayers = (ids, header, data) => {
-    for(const id of ids)
-        if (sockets[id])
-            sockets[id].emit(header, data)
+const sendToSinglePlayer = (id, header, data) => {
+    if (sockets[id])
+        sockets[id].emit(header, data)
+}
+
+const sendToPlayers = (room, header, data) => {
+    io.to(room).emit(header, data)
 }
 
 const sendPlayersCount = sockets => {
@@ -300,6 +304,7 @@ io.on('connection', socket => {
             const map_name = players_ids[socket.id]
             maps[map_name].postMessage({header: "disconnection", id: socket.id})
             delete players_ids[socket.id]
+            socket.leave(map_name)
             delete sockets[socket.id]
             sendPlayersCount(sockets)
         } else if (sockets[socket.id]){
@@ -314,6 +319,7 @@ io.on('connection', socket => {
         const players_in_room = Object.values(players_ids).filter(e=>e==data.server).length
         if (players_in_room < max_room_players){
             players_ids[socket.id] = data.server
+            socket.join(data.server)
             maps[data.server].postMessage({
                 header: "connection", 
                 id: socket.id,

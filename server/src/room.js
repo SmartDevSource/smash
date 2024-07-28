@@ -2,13 +2,14 @@ const { parentPort } = require('node:worker_threads')
 const Player = require('./player.js')
 
 class Room{
-    constructor(map_data){
+    constructor(map_data, room_name){
         this.map_data = map_data
+        this.room_name = room_name
         this.players = {}
         this.last_delta_time = Date.now()
         this.current_delta_time = 0
         this.interval = setInterval(this.update.bind(this), 1000 / 60)
-        this.max_server_score = 10
+        this.max_server_score = 1
         this.spawn_timeout = 2000
         this.is_game_started = true
         this.timer_before_restart = 4000
@@ -27,7 +28,7 @@ class Room{
                 player.update(this.current_delta_time, this.players)
                 if (!player.isStopped() && player.is_alive){
                     this.toMainThread({
-                        ids: this.getIds([]),
+                        room_name: this.room_name,
                         header: "coords",
                         id: id,
                         position: player.position,
@@ -36,7 +37,7 @@ class Room{
                 }
                 if (player.can_collide_previous != player.can_collide){
                     this.toMainThread({
-                        ids: this.getIds([]),
+                        room_name: this.room_name,
                         header: "can_collide",
                         can_collide: player.can_collide,
                         id: id
@@ -45,7 +46,7 @@ class Room{
                 }
                 if (player.has_collided_by_opponent && player.is_touchable){
                     this.toMainThread({
-                        ids: this.getIds([]),
+                        room_name: this.room_name,
                         header: "collision",
                         by: player.collided_by,
                         id: id
@@ -66,29 +67,21 @@ class Room{
                             })
                         }
                         this.toMainThread({
-                            ids: this.getIds([]),
+                            room_name: this.room_name,
                             header: "score",
                             score: this.players[opponent_id].score,
                             id: opponent_id
                         })
-                    }// else {
-                    //     if (player.score > 0) player.score--
-                    //     this.toMainThread({
-                    //         ids: this.getIds([]),
-                    //         header: "score",
-                    //         score: player.score,
-                    //         id: id
-                    //     })
-                    // }
+                    }
                     this.toMainThread({
-                        ids: this.getIds([]),
+                        room_name: this.room_name,
                         header: "player_dead",
                         id: id
                     })
                     setTimeout(() => {
                         player.respawn()
                         this.toMainThread({
-                            ids: this.getIds([]),
+                            room_name: this.room_name,
                             header: "player_respawn",
                             id: id,
                             position: player.position,
@@ -108,7 +101,7 @@ class Room{
             players_data[id] = this.players[id].getPlayerData()
         }
         this.toMainThread({
-            ids: this.getIds([]),
+            room_name: this.room_name,
             header: "restart_game",
             players_data: players_data
         })
@@ -117,7 +110,7 @@ class Room{
 
     endGame({winner_id, google_id}){
         this.toMainThread({
-            ids: this.getIds([]),
+            room_name: this.room_name,
             header: "end_game",
             winner_id: winner_id,
             google_id: google_id
@@ -134,7 +127,7 @@ class Room{
             setTimeout(()=> {
                 if (counter > 0){
                     this.toMainThread({
-                        ids: this.getIds([]),
+                        room_name: this.room_name,
                         header: "start_counter",
                         counter: counter
                     })
@@ -166,7 +159,6 @@ class Room{
             })
 
         this.toMainThread({
-            ids: [id],
             header: "init_game",
             max_server_score: this.max_server_score,
             map_data: this.map_data,
@@ -179,7 +171,7 @@ class Room{
         })
 
         this.toMainThread({
-            ids: this.getIds({excepted: [id]}),
+            room_name: this.room_name,
             header: "new_player",
             player_data: this.players[id].getPlayerData()
         })
@@ -191,7 +183,7 @@ class Room{
             this.players[id].functions_worker.terminate()
             delete this.players[id]
             this.toMainThread({
-                ids: this.getIds({excepted: [id]}),
+                room_name: this.room_name,
                 header: "del_player",
                 id: id
             })
@@ -223,7 +215,7 @@ let room = null
 parentPort.on('message', data => {
     switch(data.header){
         case "instantiate":
-            room = new Room(data.map_data)
+            room = new Room(data.map_data, data.room_name)
         break
         case "connection":
             room.addPlayer({

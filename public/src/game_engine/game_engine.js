@@ -147,22 +147,23 @@ export class GameEngine{
 
     initSocketListeners(){
         this.socket.on("new_player", player_data => {
-            this.ships[player_data.id] = new Ship({
-                ctx: this.ctx,
-                screen: this.screen,
-                username: player_data.username,
-                position: player_data.position,
-                angle: player_data.angle,
-                color: player_data.color,
-                score: player_data.score,
-                can_collide: player_data.can_collide,
-                max_server_score: this.max_server_score,
-                audios: this.audios,
-                images: this.images
-            })
+            if (player_data.id != this.socket.id){
+                this.ships[player_data.id] = new Ship({
+                    ctx: this.ctx,
+                    screen: this.screen,
+                    username: player_data.username,
+                    position: player_data.position,
+                    angle: player_data.angle,
+                    color: player_data.color,
+                    score: player_data.score,
+                    can_collide: player_data.can_collide,
+                    max_server_score: this.max_server_score,
+                    audios: this.audios,
+                    images: this.images
+                })
+            }
         })
         this.socket.on("del_player", id => {
-            console.log(this.ships[id].username, "s'est déconnecté.")
             delete this.ships[id]
         })
         this.socket.on("coords", data => {
@@ -364,7 +365,6 @@ export class GameEngine{
         if (this.win_screen.show_winner){
             this.ctx.font = "120px quicksand bold"
             const text_width = this.ctx.measureText(this.win_screen.value).width
-            console.log(this.ctx.measureText(text_width).width)
             this.ctx.strokeText(
                 this.win_screen.value,
                 (this.screen.w / 2) - (text_width / 2),

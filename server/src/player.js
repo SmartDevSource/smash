@@ -103,6 +103,7 @@ class Player{
         this.is_waiting_for_respawn = false
         this.has_collided_by_opponent = false
         this.is_alive = true
+        this.directions = {horizontal: '', vertical: ''}
         this.velocity.horizontal = 0
         this.velocity.vertical = 0
     }
@@ -118,11 +119,11 @@ class Player{
         this.velocity = {
             vertical: 0,
             horizontal: 0,
-            vertical_max_default: 6,
-            horizontal_max_default: 6,
-            vertical_max: 6,
-            horizontal_max: 6,
-            step: .006
+            vertical_max_default: 8,
+            horizontal_max_default: 8,
+            vertical_max: 8,
+            horizontal_max: 8,
+            step: .02
         }
         this.collided_by = null
         this.can_collide = false

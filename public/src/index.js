@@ -11,9 +11,6 @@ canvas.width = 1280
 canvas.height = 720
 
 const screen = {w: canvas.width, h: canvas.height}
-
-let title_ost = null
-
 const keys = {'left': {isPressed: false},
               'right': {isPressed: false},
               'down': {isPressed: false},
@@ -71,9 +68,6 @@ const preload = async () => {
     await preloadRessources().then(res=>{
         struct.audios = res.audios
         struct.images = res.images
-        // title_ost = struct.audios.title_ost
-        // title_ost.loop = true
-        // title_ost.volume = .8
         struct.ressources_preloaded = true
         connectToServer()
     })
