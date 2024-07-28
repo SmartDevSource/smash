@@ -42,7 +42,7 @@ class Player{
         this.collide_distance = 1400
         this.collide_spawn = 4500
 
-        this.line_distance_collider = 30
+        this.line_distance_collider = 300
         this.line_collide_bounce_offset = 1.5
 
         this.has_collided_by_opponent = false

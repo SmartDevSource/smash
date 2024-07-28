@@ -28,13 +28,13 @@ const getDistanceToLine = ({first_point, second_point, vector}) => {
         const diff_y = second_point.y > first_point.y ? 0 : (y_max - y_min)
         const y_prop = y_min + scale * (second_point.y - first_point.y) + diff_y
         points = {x: vector.x, y: y_prop}
-        distance = getPythagoreanDistance(
+        distance = getDistance(
             {x: vector.x, y: (vector.y)}, 
             points
         )
     } else if (x_min == x_max && vector.y >= y_min && vector.y <= y_max){
         points = {x: x_min, y: vector.y}
-        distance = getPythagoreanDistance(
+        distance = getDistance(
             {x: vector.x, y: (vector.y)},
             points
         )
