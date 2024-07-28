@@ -35,7 +35,7 @@ class Player{
         this.is_touchable = false
         this.collided_by = null
         this.collided_by_timer = 1000
-        this.collide_interval = 50
+        this.collide_interval = 100
         this.collide_force_multiplier = 1
         this.collide_time_multiplier = 400
         this.collide_offset = 300
@@ -60,7 +60,7 @@ class Player{
         this.functions_worker.on("message", data => {
             switch(data.header){
                 case "lines_colliders":
-                    if (data.intersect){
+                    if (data.intersect && this.is_alive){
                         if (this.collided_by)
                             this.is_alive = false
                         else {
@@ -95,11 +95,13 @@ class Player{
 
     respawn(){
         this.position = {...this.spawn_position}
+        this.collided_by = null
+        this.angle = 0
         this.is_touchable = false
         this.can_collide = false
         this.can_collide_previous = false
-        this.angle = 0
         this.is_waiting_for_respawn = false
+        this.has_collided_by_opponent = false
         this.is_alive = true
         this.velocity.horizontal = 0
         this.velocity.vertical = 0
@@ -184,7 +186,10 @@ class Player{
                 this.has_collided_by_opponent = true
                 this.can_collide = false
                 setTimeout(() => {this.collided_by = null}, this.collided_by_timer)
-                setTimeout(() => {this.can_collide = true}, this.collide_interval)
+                setTimeout(() => {
+                    if (this.is_alive) 
+                        this.can_collide = true}, 
+                this.collide_interval)
             }
         }
     }
