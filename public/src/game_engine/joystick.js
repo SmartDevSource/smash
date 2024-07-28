@@ -7,8 +7,8 @@ export class Joystick{
         this.is_mobile = is_mobile
 
         this.position = {
-            x: 120,
-            y: this.screen.h - 120
+            x: 180,
+            y: this.screen.h - 180
         }
 
         this.initial_position = {...this.position}
