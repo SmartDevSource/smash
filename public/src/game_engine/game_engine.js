@@ -105,12 +105,22 @@ export class GameEngine{
         switch(true){
             case this.background_ost.volume >= this.ost_volume:
                 this.background_ost.volume = 0
+                this.audios.go.volume = 0
+                this.audios.end_game.volume = 0
+                this.audios[1].volume = 0
+                this.audios[2].volume = 0
+                this.audios[3].volume = 0
                 this.button_ingame_music.classList.add("line_through")
                 for (const id in this.ships)
                     this.ships[id].manageSounds({type: "mute"})
             break
             case this.background_ost.volume < this.ost_volume:
                 this.background_ost.volume = this.ost_volume
+                this.audios.go.volume = 1
+                this.audios.end_game.volume = 1
+                this.audios[1].volume = 1
+                this.audios[2].volume = 1
+                this.audios[3].volume = 1
                 this.button_ingame_music.classList.remove("line_through")
                 for (const id in this.ships)
                     this.ships[id].manageSounds({type: "unmute"})
