@@ -5,7 +5,9 @@ const { Worker } = require('node:worker_threads')
 const fs = require('fs')
 const path = require('path')
 
+const helmet = require('helmet')
 const express = require('express')
+const rateLimit = require('express-rate-limiter')
 const app = express()
 const server = require('http').createServer(app)
 const socket_io = require('socket.io')
@@ -149,6 +151,17 @@ database.getAllUsers().then(all_users=>{
     console.log(all_users)
 })
 
+const rate_limiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 100,
+    message: 'Too many requests.',
+    handler: (req, res, next, options) => {
+        res.status(options.statusCode).json({error: 'options.message'})
+    }
+})
+
+app.use(helmet())
+app.use(rate_limiter)
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({extended: true}))
