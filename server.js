@@ -160,15 +160,14 @@ const rate_limiter = rateLimit({
     }
 })
 
-app.use(app.use(
+app.use(
     helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://accounts.google.com"],
-        // Ajoutez d'autres directives si nécessaire
       },
     })
-  ))
+  )
 app.use(rate_limiter)
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
