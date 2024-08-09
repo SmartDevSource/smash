@@ -7,7 +7,7 @@ const path = require('path')
 
 const helmet = require('helmet')
 const express = require('express')
-const rateLimit = require('express-rate-limiter')
+const rateLimit = require('express-rate-limit')
 const app = express()
 const server = require('http').createServer(app)
 const socket_io = require('socket.io')
